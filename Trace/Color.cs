@@ -1,14 +1,28 @@
-﻿namespace Trace;
+﻿using System.ComponentModel;
+
+namespace Trace;
 
 public struct Color
 {
-    public float r, g, b;
+    public float R { get; set; }
+    public float G { get; set; }
+    public float B { get; set; }
 
-    public Color()
+    public Color (float r, float g, float b)
     {
-        this.r = 0.;
-        this.g = 0.;
-        this.b = 0.;
+        R = r;
+        G = g;
+        B = b;
     }
+    
+    public static Color operator +(Color a, Color b)
+        => new Color(a.R + b.R, a.G + b.G, a.B + b.B);
+    public static Color operator -(Color a, Color b)
+        => new Color(a.R - b.R, a.G - b.G, a.B - b.B);
+    public static Color operator *(float a, Color b)
+        => new Color(a * b.R, a * b.G, a * b.B);
+    public static Color operator *(Color a, Color b)
+        => new Color(a.R * b.R, a.G * b.G, a.B * b.B);
+    public override string ToString() => $"({R}, {G}, {B})";
 
 }
