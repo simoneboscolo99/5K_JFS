@@ -9,7 +9,7 @@ public class HdrImage
 
     public List<Color> image;
 
-    public HdrImage (int height, int width)
+    public HdrImage (int width, int height)
     {
         this.height = height;
         this.width = width;
@@ -31,7 +31,7 @@ public class HdrImage
 
     public Color Get_Pixel(int col, int row)
     {
-        Debug.Assert(Valid_Coordinates(col, row));
+        Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
         int pos = Pixel_Offset(col, row); 
         return image[pos];
 
@@ -39,7 +39,7 @@ public class HdrImage
 
     public void Set_Pixel(int col, int row, Color a)
     {
-        Debug.Assert(Valid_Coordinates(col, row));
+        Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
         int pos = Pixel_Offset(col, row); 
         image[pos] = a;
     }
