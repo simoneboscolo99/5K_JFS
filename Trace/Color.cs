@@ -30,6 +30,6 @@ public struct Color
     
     public override string ToString() => $"({R}, {G}, {B})";
     
-	public static bool Is_Close (Color b)
+	public bool Is_Close (Color b)
 		=> Functions.Are_Close(this.R, b.R) && Functions.Are_Close(this.G, b.G) && Functions.Are_Close(this.B , b.B);
 }
