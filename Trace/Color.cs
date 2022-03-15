@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Trace;
+﻿namespace Trace;
 
 public struct Color
 {
@@ -17,12 +15,19 @@ public struct Color
     
     public static Color operator +(Color a, Color b)
         => new Color(a.R + b.R, a.G + b.G, a.B + b.B);
+    
     public static Color operator -(Color a, Color b)
         => new Color(a.R - b.R, a.G - b.G, a.B - b.B);
+    
     public static Color operator *(float a, Color b)
         => new Color(a * b.R, a * b.G, a * b.B);
+    
+    public static Color operator *(Color b, float a)
+        => new Color(a * b.R, a * b.G, a * b.B);
+    
     public static Color operator *(Color a, Color b)
         => new Color(a.R * b.R, a.G * b.G, a.B * b.B);
+    
     public override string ToString() => $"({R}, {G}, {B})";
 
 }
