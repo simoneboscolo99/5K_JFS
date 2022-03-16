@@ -13,7 +13,7 @@ public class HdrImage
     {
         this.height = height;
         this.width = width;
-        this.image = new List<Color>(this.height * this.width);
+        image = new List<Color>(this.height * this.width);
         for (int i = 0; i < this.height; i++)
         {
             for (int j = 0; j < this.width; j++)
@@ -24,10 +24,10 @@ public class HdrImage
     }
 
     public bool Valid_Coordinates (int col, int row)
-        => col >= 0 && col < this.width && row < this.height && row >= 0;
+        => col >= 0 && col < width && row < height && row >= 0;
 
     public int Pixel_Offset(int col, int row)
-        => row * this.width + col;
+        => row * width + col;
 
     public Color Get_Pixel(int col, int row)
     {

@@ -4,8 +4,8 @@ namespace Trace.Tests;
 
 public class ColorTests
 {
-    Color a = new Color(1.0f, 2.0f, 3.0f);
-    Color b = new Color(5.0f, 3.0f, 8.0f);
+    Color a = new(1.0f, 2.0f, 3.0f);
+    Color b = new(5.0f, 3.0f, 8.0f);
     float scalar = 2.0f;
     
     [Fact]

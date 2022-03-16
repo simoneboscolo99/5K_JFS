@@ -8,4 +8,10 @@ public class Functions
         return Math.Abs(val1 - val2) < eps;
     }
 
+    public static void Write_Float (Stream outputStream, float val)
+    {
+        var seq = BitConverter.GetBytes(val);
+        outputStream.Write(seq, 0, seq.Length);
+    }
+
 }
