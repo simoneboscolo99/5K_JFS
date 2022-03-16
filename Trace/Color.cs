@@ -6,6 +6,12 @@ public struct Color
     public float G { get; set; }
     public float B { get; set; }
 
+    /// <summary>
+    /// Color constructor
+    /// </summary>
+    /// <param name="r"><red/param>
+    /// <param name="g"><green/param>
+    /// <param name="b"><blue/param>
     public Color(float r, float g, float b)
     {
         R = r;
