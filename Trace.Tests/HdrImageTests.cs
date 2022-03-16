@@ -4,7 +4,7 @@ namespace Trace.Tests;
 
 public class HdrImageTests
 {
-    HdrImage image = new HdrImage(7, 4);
+    HdrImage image = new(7, 4);
     
     [Fact]
     public void TestCoord()
