@@ -1,3 +1,6 @@
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 using Xunit;
 
 namespace Trace.Tests;
@@ -31,5 +34,15 @@ public class HdrImageTests
         Color a = new Color(2.0f, 3.0f, 5.0f);
         image.Set_Pixel(3, 2, a);
         Assert.True(image.Get_Pixel(3, 2).Is_Close(a));
+    }
+
+    [Fact]
+    public void TestPfmReadLine()
+    {
+        var line = Encoding.ASCII.GetBytes($"hello\nworld");
+        Stream stream = new MemoryStream(line);
+        Assert.True(HdrImage.Read_Line(stream) == "hello", "TestPfmReadLine failed");
+        Assert.True(HdrImage.Read_Line(stream) == "world", "TestPfmReadLine failed");
+        Assert.True(HdrImage.Read_Line(stream) == "", "TestPfmReadLine failed");
     }
 }
