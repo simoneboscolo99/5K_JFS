@@ -1,5 +1,7 @@
 using System.Diagnostics;
 
+using System.Text;
+
 namespace Trace;
 
 public class HdrImage
@@ -50,5 +52,11 @@ public class HdrImage
         outputStream.Write(seq, 0, seq.Length);
     }
 
+    public void Write_pfm(HdrImage a, Stream outputStream, double endiannessValue)
+    {
+        var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
+
+    }
 
 }
+
