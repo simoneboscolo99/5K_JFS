@@ -34,7 +34,7 @@ public class HdrImage
     public Color Get_Pixel(int col, int row)
     {
         Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
-        int pos = Pixel_Offset(col, row); 
+        var pos = Pixel_Offset(col, row); 
         return image[pos];
 
     }
@@ -42,7 +42,7 @@ public class HdrImage
     public void Set_Pixel(int col, int row, Color a)
     {
         Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
-        int pos = Pixel_Offset(col, row); 
+        var pos = Pixel_Offset(col, row); 
         image[pos] = a;
     }
     
@@ -57,6 +57,40 @@ public class HdrImage
         var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
 
     }
+    
+    public static string Read_Line (Stream inputStream)
+    {
+        var result = "";
+        while (true)
+        {
+            var curByte = inputStream.ReadByte();
+            if (curByte is -1 or '\n')
+            {
+                return result;
+            }
+            result += (char)curByte;
+        }
+    }
+
+    public void Write_pfm(HdrImage a, Stream outputStream, double endiannessValue)
+    {
+        var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
+
+    }
 
 }
+=======
+    public static string Read_Line (Stream inputStream)
+    {
+        var result = "";
+        while (true)
+        {
+            var curByte = inputStream.ReadByte();
+            if (curByte is -1 or '\n')
+            {
+                return result;
+            }
+            result += (char)curByte;
+        }
+    }
 
