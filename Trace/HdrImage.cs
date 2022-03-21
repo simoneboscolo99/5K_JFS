@@ -51,7 +51,7 @@ public class HdrImage
     {
         
         var seq = BitConverter.GetBytes(val);
-        if (endianness == 1) outputStream.Write(seq, 0, seq.Length);
+        if ( funzionechedicesesonoconcordi(endianness, +1)) outputStream.Write(seq, 0, seq.Length);
        // else if (endianness == 1) outputStream.Write(seq, seq.Length, 0);
     }
 
