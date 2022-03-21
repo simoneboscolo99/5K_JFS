@@ -9,3 +9,9 @@ public class Functions
     }
 
 }
+
+    public static float Lilliput()
+    {
+    if (BitConverter.IsLittleEndian == true) return -1f;
+    else return 1f;
+    }

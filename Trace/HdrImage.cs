@@ -11,7 +11,7 @@ public class HdrImage
 
     public List<Color> image;
 
-    public HdrImage (int width, int height)
+    public HdrImage(int width, int height)
     {
         this.height = height;
         this.width = width;
@@ -25,7 +25,7 @@ public class HdrImage
         }
     }
 
-    public bool Valid_Coordinates (int col, int row)
+    public bool Valid_Coordinates(int col, int row)
         => col >= 0 && col < width && row < height && row >= 0;
 
     public int Pixel_Offset(int col, int row)
@@ -34,7 +34,7 @@ public class HdrImage
     public Color Get_Pixel(int col, int row)
     {
         Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
-        var pos = Pixel_Offset(col, row); 
+        var pos = Pixel_Offset(col, row);
         return image[pos];
 
     }
@@ -42,23 +42,37 @@ public class HdrImage
     public void Set_Pixel(int col, int row, Color a)
     {
         Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
-        var pos = Pixel_Offset(col, row); 
+        var pos = Pixel_Offset(col, row);
         image[pos] = a;
     }
+
     //read-write
-    private static void Write_Float(Stream outputStream, float val)
+    private void Write_Float(Stream outputStream, float val, float endianness)
     {
+        
         var seq = BitConverter.GetBytes(val);
-        outputStream.Write(seq, 0, seq.Length);
+        if (endianness == 1) outputStream.Write(seq, 0, seq.Length);
+       // else if (endianness == 1) outputStream.Write(seq, seq.Length, 0);
     }
 
-    public void Write_pfm(HdrImage a, Stream outputStream, double endiannessValue)
+    public void Write_pfm(HdrImage a, Stream outputStream, float endiannessValue)
     {
         var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
-
+        outputStream.Write(header);
+        //fill matrix image, after writing (byte-coded) the header
+        for (int y = a.height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x <= a.width; x++)
+            {
+                Color c = a.Get_Pixel(x, y);
+                a.Write_Float(outputStream, c.R, endiannessValue);
+                a.Write_Float(outputStream, c.G, endiannessValue);
+                a.Write_Float(outputStream, c.B, endiannessValue);
+            }
+        }
     }
-    
-    public static string Read_Line (Stream inputStream)
+
+    public static string Read_Line(Stream inputStream)
     {
         var result = "";
         while (true)
@@ -68,29 +82,9 @@ public class HdrImage
             {
                 return result;
             }
-            result += (char)curByte;
+
+            result += (char) curByte;
         }
-    }
-
-    public void Write_pfm(HdrImage a, Stream outputStream, double endiannessValue)
-    {
-        var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
-
     }
 
 }
-=======
-    public static string Read_Line (Stream inputStream)
-    {
-        var result = "";
-        while (true)
-        {
-            var curByte = inputStream.ReadByte();
-            if (curByte is -1 or '\n')
-            {
-                return result;
-            }
-            result += (char)curByte;
-        }
-    }
-
