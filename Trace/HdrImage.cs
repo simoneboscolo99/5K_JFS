@@ -43,8 +43,8 @@ public class HdrImage
         int pos = Pixel_Offset(col, row); 
         image[pos] = a;
     }
-    
-    private static void Write_Float (Stream outputStream, float val)
+    //read-write
+    private static void Write_Float(Stream outputStream, float val)
     {
         var seq = BitConverter.GetBytes(val);
         outputStream.Write(seq, 0, seq.Length);
