@@ -46,15 +46,15 @@ public class HdrImage
         image[pos] = a;
     }
 
-    //read-write
-    private void Write_Float(Stream outputStream, float val, float endianness)
+    //Write_Float(outstream, float) Writes on the output stream the hexadecimal bytes that represent the
+    //float given, using endianness of your system.
+    private void Write_Float(Stream outputStream, float val)
     {
-        
         var seq = BitConverter.GetBytes(val);
-        if ( funzionechedicesesonoconcordi(endianness, +1)) outputStream.Write(seq, 0, seq.Length);
-       // else if (endianness == 1) outputStream.Write(seq, seq.Length, 0);
+        outputStream.Write(seq, 0, seq.Length);
     }
-
+    
+    //Writes an HdrImage on a stream, in PFM format. 
     public void Write_pfm(HdrImage a, Stream outputStream, float endiannessValue)
     {
         var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
@@ -65,9 +65,9 @@ public class HdrImage
             for (int x = 0; x <= a.width; x++)
             {
                 Color c = a.Get_Pixel(x, y);
-                a.Write_Float(outputStream, c.R, endiannessValue);
-                a.Write_Float(outputStream, c.G, endiannessValue);
-                a.Write_Float(outputStream, c.B, endiannessValue);
+                a.Write_Float(outputStream, c.R);
+                a.Write_Float(outputStream, c.G);
+                a.Write_Float(outputStream, c.B);
             }
         }
     }
