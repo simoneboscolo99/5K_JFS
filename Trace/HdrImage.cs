@@ -64,9 +64,11 @@ public class HdrImage
     }
     
     //Writes an HdrImage on a stream, in PFM format. 
-    public void Write_pfm(Stream outputStream, float endiannessValue)
+    //public void Write_pfm(Stream outputStream, float endiannessValue)
+    public void Write_pfm(Stream outputStream)
     {
-        var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{endiannessValue}\n");
+        var end = BitConverter.IsLittleEndian ? "-1.0" : "1.0";
+        var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{end}\n");
         outputStream.Write(header);
         //fill matrix image, after writing (byte-coded) the header
         for (int y = Height - 1; y >= 0; y--)
