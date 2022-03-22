@@ -1,5 +1,7 @@
 using System.Diagnostics;
 
+using System.Text;
+
 namespace Trace;
 
 public class HdrImage
@@ -37,10 +39,28 @@ public class HdrImage
         Image[pos] = a;
     }
 
-    private static void Write_Float(Stream outputStream, float val)
+    //read-write
+    private void Write_Float(Stream outputStream, float val, float endianness)
     {
         var seq = BitConverter.GetBytes(val);
-        outputStream.Write(seq, 0, seq.Length);
+        outputStream.Write(seq, seq.Length, 0);
+    }
+
+    public void Write_pfm(HdrImage a, Stream outputStream, float endiannessValue)
+    {
+        var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{endiannessValue}\n");
+        outputStream.Write(header);
+        //fill matrix image, after writing (byte-coded) the header
+        for (int y = a.Height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x <= a.Width; x++)
+            {
+                Color c = a.Get_Pixel(x, y);
+                a.Write_Float(outputStream, c.R, endiannessValue);
+                a.Write_Float(outputStream, c.G, endiannessValue);
+                a.Write_Float(outputStream, c.B, endiannessValue);
+            }
+        }
     }
 
     public static string Read_Line(Stream inputStream)
@@ -70,7 +90,6 @@ public class HdrImage
         {
             throw new InvalidPfmFileFormat("Impossible to read binary data from the file");
         }
-        
     }
     
     public static bool Parse_Endianness(string str)
@@ -160,4 +179,5 @@ public class HdrImage
             }
         }
     }
+    
 }
