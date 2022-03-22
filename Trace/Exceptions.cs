@@ -7,7 +7,4 @@ public class InvalidPfmFileFormat : Exception
 
     public InvalidPfmFileFormat(string message)
         : base(message) { }
-
-    public InvalidPfmFileFormat(string message, Exception inner)
-        : base(message, inner) { }
 }
