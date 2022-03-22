@@ -173,9 +173,8 @@ public class HdrImageTests
     }
 
 
-   /* [Fact]
-
-       public void TestWritePfm()
+    [Fact]
+    public void TestWritePfm()
     {
         HdrImage img = new(3, 2);
 
@@ -198,15 +197,6 @@ public class HdrImageTests
         img.Write_pfm(streamOut);
         var strOut = streamOut.ToArray();
         Assert.True( strOut.SequenceEqual(referenceBytes), "Memory test");
-
-       using (Stream streamOut = File.OpenWrite("file.pfm"))
-           {
-               img.Write_pfm(streamOut, -1);
-   
-               using (Stream referenceBytes = File.OpenRead("Trace.Tests/reference_le.pfm"))
-               {
-                   Assert.True(streamOut.Equals(referenceBytes), "Test 1");
-               }
-           }*/
+           }
 }    
     
