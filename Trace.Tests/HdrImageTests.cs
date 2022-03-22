@@ -5,6 +5,7 @@ using System.Linq;
 //using System.IO.Compression;
 using System.Text;
 using Xunit;
+using System.Linq;
 
 
 namespace Trace.Tests;
@@ -178,6 +179,7 @@ public class HdrImageTests
     {
         HdrImage img = new(3, 2);
 
+        img.Set_Pixel(0, 0, new Color(1.0e1f, 2.0e1f, 3.0e1f));
         img.Set_Pixel(1, 0, new Color(4.0e1f, 5.0e1f, 6.0e1f));
         img.Set_Pixel(2, 0, new Color(7.0e1f, 8.0e1f, 9.0e1f));
         img.Set_Pixel(0, 1, new Color(1.0e2f, 2.0e2f, 3.0e2f));
@@ -193,9 +195,9 @@ public class HdrImageTests
             0x00, 0x00, 0x8c, 0x42, 0x00, 0x00, 0xa0, 0x42, 0x00, 0x00, 0xb4, 0x42};
 
         MemoryStream streamOut = new MemoryStream();
-        img.Write_pfm(streamOut, -1);
-        var strOut = streamOut.GetBuffer();
-        Assert.True( strOut.Equals(referenceBytes), "Memory test");
+        img.Write_pfm(streamOut);
+        var strOut = streamOut.ToArray();
+        Assert.True( strOut.SequenceEqual(referenceBytes), "Memory test");
 
        using (Stream streamOut = File.OpenWrite("file.pfm"))
            {
