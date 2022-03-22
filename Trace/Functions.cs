@@ -7,6 +7,4 @@ public class Functions
         float eps = 1e-5f;
         return Math.Abs(val1 - val2) < eps;
     }
-
 }
-
