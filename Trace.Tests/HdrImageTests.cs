@@ -147,4 +147,42 @@ public class HdrImageTests
         var ex2 = Assert.Throws<InvalidPfmFileFormat>(() => new HdrImage(streamLe));
         Assert.Contains("Impossible to read binary data from the file", ex2.Message);
     }
+
+    [Fact]
+
+    public void TestWritePfm()
+    {
+        HdrImage img = new(3, 2);
+
+        img.Set_Pixel(1, 0, new Color(4.0e1f, 5.0e1f, 6.0e1f));
+        img.Set_Pixel(2, 0, new Color(7.0e1f, 8.0e1f, 9.0e1f));
+        img.Set_Pixel(0, 1, new Color(1.0e2f, 2.0e2f, 3.0e2f));
+        img.Set_Pixel(1, 1, new Color(4.0e2f, 5.0e2f, 6.0e2f));
+        img.Set_Pixel(2, 1, new Color(7.0e2f, 8.0e2f, 9.0e2f));
+        
+        byte[] referenceBytes = {0x50, 0x46, 0x0a, 0x33, 0x20, 0x32, 0x0a, 0x2d, 0x31, 0x2e, 0x30, 0x0a,
+            0x00, 0x00, 0xc8, 0x42, 0x00, 0x00, 0x48, 0x43, 0x00, 0x00, 0x96, 0x43,
+            0x00, 0x00, 0xc8, 0x43, 0x00, 0x00, 0xfa, 0x43, 0x00, 0x00, 0x16, 0x44,
+            0x00, 0x00, 0x2f, 0x44, 0x00, 0x00, 0x48, 0x44, 0x00, 0x00, 0x61, 0x44,
+            0x00, 0x00, 0x20, 0x41, 0x00, 0x00, 0xa0, 0x41, 0x00, 0x00, 0xf0, 0x41,
+            0x00, 0x00, 0x20, 0x42, 0x00, 0x00, 0x48, 0x42, 0x00, 0x00, 0x70, 0x42,
+            0x00, 0x00, 0x8c, 0x42, 0x00, 0x00, 0xa0, 0x42, 0x00, 0x00, 0xb4};
+
+        MemoryStream streamOut = new MemoryStream();
+        img.Write_pfm(streamOut, -1);
+        var strOut = streamOut.GetBuffer();
+        Assert.True( strOut.Equals(referenceBytes), "Memory test");
+
+        /*   using (Stream streamOut = File.OpenWrite("file.pfm"))
+           {
+               img.Write_pfm(streamOut, -1);
+   
+               using (Stream referenceBytes = File.OpenRead("Trace.Tests/reference_le.pfm"))
+               {
+                   Assert.True(streamOut.Equals(referenceBytes), "Test 1");
+               }
+           }*/
+    }
+    
 }
+

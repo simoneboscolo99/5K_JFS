@@ -6,6 +6,7 @@ namespace Trace;
 
 public class HdrImage
 {
+    //CONSTRUCTORS-------------------------------------------------------------------------------
     public int Height { get; set; }
     public int Width { get; set; }
 
@@ -18,6 +19,21 @@ public class HdrImage
         Image = new List<Color>(Height * Width);
         for (int i = 0; i < Height * Width; i++) Image.Add(new Color());
     }
+    
+    public HdrImage(Stream inputStream)
+    {
+        Read_Pfm(inputStream);
+    }
+    
+    public HdrImage(string fileName)
+    {
+        using (Stream fileStream = File.OpenWrite(fileName))
+        {
+            Read_Pfm(fileStream);
+        }
+    }
+    
+    //end of constructors------------------------------------------------------------------------
 
     public bool Valid_Coordinates(int col, int row)
         => col >= 0 && col < Width && row < Height && row >= 0;
@@ -48,19 +64,19 @@ public class HdrImage
     }
     
     //Writes an HdrImage on a stream, in PFM format. 
-    public void Write_pfm(HdrImage a, Stream outputStream, float endiannessValue)
+    public void Write_pfm(Stream outputStream, float endiannessValue)
     {
         var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{endiannessValue}\n");
         outputStream.Write(header);
         //fill matrix image, after writing (byte-coded) the header
-        for (int y = a.Height - 1; y >= 0; y--)
+        for (int y = Height - 1; y >= 0; y--)
         {
-            for (int x = 0; x <= a.Width; x++)
+            for (int x = 0; x < Width; x++)
             {
-                Color c = a.Get_Pixel(x, y);
-                a.Write_Float(outputStream, c.R);
-                a.Write_Float(outputStream, c.G);
-                a.Write_Float(outputStream, c.B);
+                Color c = Get_Pixel(x, y);
+                Write_Float(outputStream, c.R);
+                Write_Float(outputStream, c.G);
+                Write_Float(outputStream, c.B);
             }
         }
     }
@@ -141,18 +157,7 @@ public class HdrImage
         }
     }
 
-    public HdrImage(Stream inputStream)
-    {
-        Read_Pfm(inputStream);
-    }
-    
-    public HdrImage(string fileName)
-    {
-        using (Stream fileStream = File.OpenWrite(fileName))
-        {
-            Read_Pfm(fileStream);
-        }
-    }
+
     
     private void Read_Pfm(Stream inputStream)
     {
