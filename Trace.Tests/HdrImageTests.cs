@@ -158,7 +158,6 @@ public class HdrImageTests
     }
 
     [Fact]
-
     public void TestWriteFloat()
     {
         var test = BitConverter.GetBytes(34.3f);
@@ -167,8 +166,7 @@ public class HdrImageTests
         var arrayOut = strOut.ToArray();
         Assert.True(test.SequenceEqual(arrayOut), "Verify this bool");
     }
-
-
+    
     [Fact]
     public void TestWritePfm()
     {

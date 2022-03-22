@@ -9,12 +9,11 @@ public class HdrImage
     //CONSTRUCTORS-------------------------------------------------------------------------------
     public int Height { get; set; }
     public int Width { get; set; }
-
     public List<Color> Image { get; set; }
 
     /// <summary>
     /// HdrImage constructor
-    /// </summary>
+    /// </summary> Matrix of elements Color
     /// <param name="width"> image width </param>
     /// <param name="height"> image height </param>
     public HdrImage(int width, int height)
@@ -25,11 +24,19 @@ public class HdrImage
         for (int i = 0; i < Height * Width; i++) Image.Add(new Color());
     }
     
+    /// <summary>
+    /// HdrImage Constructor
+    /// </summary>: Creates an image reading dates from a stream
+    /// <param name="inputStream"></param>
     public HdrImage(Stream inputStream)
     {
         Read_Pfm(inputStream);
     }
     
+    /// <summary>
+    /// HdrImage Constuctor
+    /// </summary>: Creates an HdrImage from an input file-name 
+    /// <param name="fileName"></param>
     public HdrImage(string fileName)
     {
         using (Stream fileStream = File.OpenRead(fileName))
@@ -38,14 +45,32 @@ public class HdrImage
         }
     }
     
-    //end of constructors------------------------------------------------------------------------
+    //END OF CONSTRUCTORS------------------------------------------------------------------------
 
+    /// <summary>
+    /// Valid_Coordinates
+    /// </summary>: returns true if (x,y) is valid, else false
+    /// <param name="col"></param>
+    /// <param name="row"></param>
+    /// <returns></returns>
     public bool Valid_Coordinates(int col, int row)
         => col >= 0 && col < Width && row < Height && row >= 0;
 
+    /// <summary>
+    /// Pixel_Offset
+    /// </summary>: Returns ordinal position of pixel in (x,y)
+    /// <param name="col"></param>
+    /// <param name="row"></param>
+    /// <returns></returns>
     public int Pixel_Offset(int col, int row)
         => row * Width + col;
 
+    /// <summary>
+    /// Get_Pixel
+    /// </summary>: Returns the Color of indexes (row,col)
+    /// <param name="col"></param>
+    /// <param name="row"></param>
+    /// <returns></returns>
     public Color Get_Pixel(int col, int row)
     {
         Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
@@ -53,29 +78,39 @@ public class HdrImage
         return Image[pos];
     }
 
+    /// <summary>
+    /// Set_Pixel
+    /// </summary>: Assigns to a color of indexes x,y the variable Color 'a' given 
+    /// <param name="col"> int </param>
+    /// <param name="row"> int </param>
+    /// <param name="a"> Color type </param>
     public void Set_Pixel(int col, int row, Color a)
     {
         Debug.Assert(Valid_Coordinates(col, row), "Invalid coordinates");
         var pos = Pixel_Offset(col, row);
         Image[pos] = a;
     }
-
-    //Write_Float(outstream, float) Writes on the output stream the hexadecimal bytes that represent the
-    //float given, using endianness of your system.
+    
+    /// <summary>
+    /// Write_Float
+    /// </summary>: Writes on the output stream bytes that represent the float given, using hexadecimal and endianness of your system.
+    /// <param name="outputStream"></param>
+    /// <param name="val"></param>
     public static void Write_Float(Stream outputStream, float val)
     {
         var seq = BitConverter.GetBytes(val);
         outputStream.Write(seq, 0, seq.Length);
     }
-    
-    //Writes an HdrImage on a stream, in PFM format. 
-    //public void Write_pfm(Stream outputStream, float endiannessValue)
+
+    /// <summary>
+    /// Write_pfm
+    /// </summary>: Writes an HdrImage on a stream, in PFM format.
+    /// <param name="outputStream"></param>
     public void Write_pfm(Stream outputStream)
     {
         var end = BitConverter.IsLittleEndian ? "-1.0" : "1.0";
         var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{end}\n");
         outputStream.Write(header);
-        //fill matrix image, after writing (byte-coded) the header
         for (int y = Height - 1; y >= 0; y--)
         {
             for (int x = 0; x < Width; x++)
@@ -88,6 +123,11 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Read_Line
+    /// </summary>: Returns string of a file line 
+    /// <param name="inputStream"></param>
+    /// <returns></returns>
     public static string Read_Line(Stream inputStream)
     {
         var result = "";
@@ -96,6 +136,7 @@ public class HdrImage
             var curByte = inputStream.ReadByte();
             if (curByte is -1 or '\n')
                 return result;
+            Console.WriteLine("var");
             
             result += (char) curByte;
         }
@@ -163,8 +204,6 @@ public class HdrImage
             throw new InvalidPfmFileFormat("Only integer numbers are allowed for width and height");
         }
     }
-
-
     
     private void Read_Pfm(Stream inputStream)
     {
