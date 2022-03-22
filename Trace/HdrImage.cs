@@ -12,6 +12,11 @@ public class HdrImage
 
     public List<Color> Image { get; set; }
 
+    /// <summary>
+    /// HdrImage constructor
+    /// </summary>
+    /// <param name="width"> image width </param>
+    /// <param name="height"> image height </param>
     public HdrImage(int width, int height)
     {
         Height = height;
