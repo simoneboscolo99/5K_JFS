@@ -57,7 +57,7 @@ public class HdrImage
 
     //Write_Float(outstream, float) Writes on the output stream the hexadecimal bytes that represent the
     //float given, using endianness of your system.
-    private void Write_Float(Stream outputStream, float val)
+    public static void Write_Float(Stream outputStream, float val)
     {
         var seq = BitConverter.GetBytes(val);
         outputStream.Write(seq, 0, seq.Length);
