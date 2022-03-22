@@ -27,7 +27,7 @@ public class HdrImage
     
     public HdrImage(string fileName)
     {
-        using (Stream fileStream = File.OpenWrite(fileName))
+        using (Stream fileStream = File.OpenRead(fileName))
         {
             Read_Pfm(fileStream);
         }
