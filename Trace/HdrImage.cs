@@ -24,12 +24,12 @@ public class HdrImage
         Image = new List<Color>(Height * Width);
         for (int i = 0; i < Height * Width; i++) Image.Add(new Color());
     }
-    
+
     public HdrImage(Stream inputStream)
     {
         Read_Pfm(inputStream);
     }
-    
+
     public HdrImage(string fileName)
     {
         using (Stream fileStream = File.OpenRead(fileName))
@@ -37,7 +37,7 @@ public class HdrImage
             Read_Pfm(fileStream);
         }
     }
-    
+
     //end of constructors------------------------------------------------------------------------
 
     public bool Valid_Coordinates(int col, int row)
@@ -67,7 +67,7 @@ public class HdrImage
         var seq = BitConverter.GetBytes(val);
         outputStream.Write(seq, 0, seq.Length);
     }
-    
+
     //Writes an HdrImage on a stream, in PFM format. 
     //public void Write_pfm(Stream outputStream, float endiannessValue)
     public void Write_pfm(Stream outputStream)
@@ -97,7 +97,7 @@ public class HdrImage
             var curByte = inputStream.ReadByte();
             if (curByte is -1 or '\n')
                 return result;
-            
+
             result += (char) curByte;
         }
     }
@@ -117,7 +117,7 @@ public class HdrImage
             throw new InvalidPfmFileFormat("Impossible to read binary data from the file");
         }
     }
-    
+
     public static bool Parse_Endianness(string str)
     {
         try
@@ -147,8 +147,8 @@ public class HdrImage
             var size = Array.ConvertAll(elements, int.Parse);
             if (size[0] < 0 || size[1] < 0)
                 throw new InvalidPfmFileFormat("Only positive numbers are allowed for width and height");
-            
-            var sizes = (width:size[0], height:size[1]);
+
+            var sizes = (width: size[0], height: size[1]);
             return sizes;
         }
         catch (FormatException)
@@ -168,7 +168,7 @@ public class HdrImage
     private void Read_Pfm(Stream inputStream)
     {
         var magic = Read_Line(inputStream);
-        if (magic != "PF") 
+        if (magic != "PF")
             throw new InvalidPfmFileFormat("Invalid magic in PFM file");
 
         var imgSize = Read_Line(inputStream);
@@ -176,10 +176,10 @@ public class HdrImage
 
         var end = Read_Line(inputStream);
         var le = Parse_Endianness(end);
-        
+
         Image = new List<Color>(Height * Width);
         for (int i = 0; i < Height * Width; i++) Image.Add(new Color());
-        
+
         // bottom up, left to right
         for (int row = Height - 1; row >= 0; row--)
         {
@@ -192,5 +192,26 @@ public class HdrImage
             }
         }
     }
-    
+
+    public float Luminosity_Ave(float delta = 1e-10f)
+    {
+        var sum = 0.0d;
+        foreach (var colore in Image)
+            sum += Math.Log10(delta + colore.Luminosity());
+        return (float) Math.Pow(10, sum / Image.Count);
+    }
+
+    public void Luminosity_Norm(float a, float? luminosity = null)
+    {
+        //if luminosity == Null => lum = Lum_Ave, else lum = luminosity
+        var lum = luminosity ?? Luminosity_Ave();
+        for (int i = 0; i < Image.Count; i++)
+            Image[i] = (a / lum) * Image[i];
+    }
+
+    public void Clamp_Image()
+    {
+        for (int i = 0; i < Image.Count; i++)
+            Image[i] = new Color(Functions.Clamp(Image[i].R), Functions.Clamp(Image[i].G), Functions.Clamp(Image[i].B));
+    }
 }

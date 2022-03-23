@@ -77,4 +77,14 @@ public struct Color
     /// <returns></returns>
 	public bool Is_Close (Color b)
 		=> Functions.Are_Close(this.R, b.R) && Functions.Are_Close(this.G, b.G) && Functions.Are_Close(this.B , b.B);
+
+    public float Luminosity()
+    {
+        return (Math.Max(R, Math.Max(G, B)) + Math.Min(R, Math.Min(G, B)))/2.0f;
+    }
+        
+        
+        
 }
+
+    
