@@ -55,6 +55,12 @@ public class HdrImage
     public void Write_pfm(HdrImage a, Stream outputStream, double endiannessValue)
     {
         var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
+        for y (range(self.height)):
+            for x in range(self.width):
+        color = self.get_pixel(x, y)
+        _write_float(stream, color.r, endianness)
+        _write_float(stream, color.g, endianness)
+        _write_float(stream, color.b, endianness)
 
     }
     
@@ -71,26 +77,7 @@ public class HdrImage
             result += (char)curByte;
         }
     }
-
-    public void Write_pfm(HdrImage a, Stream outputStream, double endiannessValue)
-    {
-        var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
-
-    }
-
 }
-=======
-    public static string Read_Line (Stream inputStream)
-    {
-        var result = "";
-        while (true)
-        {
-            var curByte = inputStream.ReadByte();
-            if (curByte is -1 or '\n')
-            {
-                return result;
-            }
-            result += (char)curByte;
-        }
-    }
+
+    
 
