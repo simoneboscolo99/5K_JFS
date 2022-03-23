@@ -72,15 +72,6 @@ public class HdrImage
     //public void Write_pfm(Stream outputStream, float endiannessValue)
     public void Write_pfm(Stream outputStream)
     {
-<<<<<<< HEAD
-        var header = Encoding.ASCII.GetBytes($"PF\n{width} {height}\n{endiannessValue}\n");
-        for y (range(self.height)):
-            for x in range(self.width):
-        color = self.get_pixel(x, y)
-        _write_float(stream, color.r, endianness)
-        _write_float(stream, color.g, endianness)
-        _write_float(stream, color.b, endianness)
-=======
         var end = BitConverter.IsLittleEndian ? "-1.0" : "1.0";
         var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{end}\n");
         outputStream.Write(header);
@@ -96,7 +87,6 @@ public class HdrImage
             }
         }
     }
->>>>>>> 1a0b7ad6d7c59123a7656c60ac973429c9f2c849
 
     public static string Read_Line(Stream inputStream)
     {
@@ -144,11 +134,6 @@ public class HdrImage
             throw new InvalidPfmFileFormat("Invalid endianness specification: expected number");
         }
     }
-<<<<<<< HEAD
-}
-
-    
-=======
 
     public static (int, int) Parse_Img_Size(string str)
     {
@@ -178,10 +163,7 @@ public class HdrImage
             throw new InvalidPfmFileFormat("Only integer numbers are allowed for width and height");
         }
     }
->>>>>>> 1a0b7ad6d7c59123a7656c60ac973429c9f2c849
 
-
-    
     private void Read_Pfm(Stream inputStream)
     {
         var magic = Read_Line(inputStream);
