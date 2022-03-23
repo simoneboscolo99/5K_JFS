@@ -89,7 +89,6 @@ public class HdrImage
         }
     }
 
-
     public static string Read_Line(Stream inputStream)
     {
         var result = "";
@@ -137,7 +136,6 @@ public class HdrImage
         }
     }
 
-
     public static (int, int) Parse_Img_Size(string str)
     {
         var elements = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -167,8 +165,6 @@ public class HdrImage
         }
     }
 
-
-    
     private void Read_Pfm(Stream inputStream)
     {
         var magic = Read_Line(inputStream);
