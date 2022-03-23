@@ -7,35 +7,74 @@ public struct Color
     public float B { get; set; }
 
     /// <summary>
-    /// Color constructor
+    /// Color Constructor
     /// </summary>
-    /// <param name="r"><red/param>
-    /// <param name="g"><green/param>
-    /// <param name="b"><blue/param>
+    /// <param name="r"> red color </param>
+    /// <param name="g"> green color </param>
+    /// <param name="b"> blue color </param>
     public Color(float r, float g, float b)
     {
         R = r;
         G = g;
         B = b;
     }
-
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public static Color operator +(Color a, Color b)
         => new(a.R + b.R, a.G + b.G, a.B + b.B);
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public static Color operator -(Color a, Color b)
         => new(a.R - b.R, a.G - b.G, a.B - b.B);
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public static Color operator *(float a, Color b)
         => new(a * b.R, a * b.G, a * b.B);
     
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="b"></param>
+    /// <param name="a"></param>
+    /// <returns></returns>
     public static Color operator *(Color b, float a)
         => new(a * b.R, a * b.G, a * b.B);
     
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public static Color operator *(Color a, Color b)
         => new(a.R * b.R, a.G * b.G, a.B * b.B);
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public override string ToString() => $"({R}, {G}, {B})";
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="b"></param>
+    /// <returns></returns>
 	public bool Is_Close (Color b)
 		=> Functions.Are_Close(this.R, b.R) && Functions.Are_Close(this.G, b.G) && Functions.Are_Close(this.B , b.B);
 }
