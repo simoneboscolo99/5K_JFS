@@ -1,5 +1,5 @@
 using System.Diagnostics;
-
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Trace;
@@ -28,8 +28,6 @@ public class HdrImage
     /// HdrImage Constructor
     /// </summary>: Creates an image reading dates from a stream
     /// <param name="inputStream"></param>
-
-
     public HdrImage(Stream inputStream)
     {
         Read_Pfm(inputStream);
@@ -110,8 +108,6 @@ public class HdrImage
     /// Write_pfm
     /// </summary>: Writes an HdrImage on a stream, in PFM format.
     /// <param name="outputStream"></param>
-    //Writes an HdrImage on a stream, in PFM format. 
-    //public void Write_pfm(Stream outputStream, float endiannessValue)
     public void Write_pfm(Stream outputStream)
     {
         var end = BitConverter.IsLittleEndian ? "-1.0" : "1.0";
@@ -132,7 +128,7 @@ public class HdrImage
 
     /// <summary>
     /// Read_Line
-    /// </summary>: Returns string of a file line 
+    /// </summary>: Returns a file line in its string representation 
     /// <param name="inputStream"></param>
     /// <returns></returns>
     public static string Read_Line(Stream inputStream)
@@ -149,6 +145,13 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Read_Float
+    /// </summary>: Reads 4 bytes of a file and converts them into a single precision floating variable
+    /// <param name="inputStream"></param>
+    /// <param name="le"> "little endian?" </param>
+    /// <returns></returns>
+    /// <exception cref="InvalidPfmFileFormat"></exception>
     private static float Read_Float(Stream inputStream, bool le)
     {
         var reader = new BinaryReader(inputStream);
@@ -165,6 +168,12 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// Parse_Endianness
+    /// </summary>: Converts a string to its "IsLittleEndian?"-value
+    /// <param name="str"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidPfmFileFormat"></exception>
     public static bool Parse_Endianness(string str)
     {
         try
@@ -183,8 +192,16 @@ public class HdrImage
         }
     }
 
-    public static (int, int) Parse_Img_Size(string str)
+    
+    /// <summary>
+    /// Parse_Img_Size
+    /// </summary>: returns image size (width,height)
+    /// <param name="str"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidPfmFileFormat"></exception>
+    public static (int, int) Parse_Img_Size(string str) //returns a tuple made of 2 ints
     {
+        //elements is an array containing decomposed line
         var elements = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (elements.Length != 2)
             throw new InvalidPfmFileFormat("Invalid Image Size Specification");
@@ -214,15 +231,18 @@ public class HdrImage
     
     private void Read_Pfm(Stream inputStream)
     {
+        //first row
         var magic = Read_Line(inputStream);
         if (magic != "PF")
             throw new InvalidPfmFileFormat("Invalid magic in PFM file");
-
+        
+        //second row
         var imgSize = Read_Line(inputStream);
         (Width, Height) = Parse_Img_Size(imgSize);
-
-        var end = Read_Line(inputStream);
-        var le = Parse_Endianness(end);
+        
+        //third row
+        var endianness = Read_Line(inputStream);
+        var le = Parse_Endianness(endianness);
 
         Image = new List<Color>(Height * Width);
         for (int i = 0; i < Height * Width; i++) Image.Add(new Color());

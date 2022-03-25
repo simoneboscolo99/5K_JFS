@@ -20,8 +20,8 @@ public struct Color
     }
     
     /// <summary>
-    /// 
-    /// </summary>
+    /// Operator +
+    /// </summary>: Overloading operator '+'
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
@@ -29,8 +29,8 @@ public struct Color
         => new(a.R + b.R, a.G + b.G, a.B + b.B);
     
     /// <summary>
-    /// 
-    /// </summary>
+    /// Operator -
+    /// </summary>: Overloading operator '-'
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
@@ -38,46 +38,50 @@ public struct Color
         => new(a.R - b.R, a.G - b.G, a.B - b.B);
     
     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// Operator *
+    /// </summary>: Overloading operator '*' 
+    /// <param name="a" > scalar </param> 
+    /// <param name="b"> Color </param> Color
     /// <returns></returns>
     public static Color operator *(float a, Color b)
         => new(a * b.R, a * b.G, a * b.B);
     
     /// <summary>
-    ///
-    /// </summary>
-    /// <param name="b"></param>
-    /// <param name="a"></param>
+    /// Operator *
+    /// </summary>: Overloading operator '*' 
+    /// <param name="b"> Color </param>
+    /// <param name="a"> Scalar </param>
     /// <returns></returns>
     public static Color operator *(Color b, float a)
         => new(a * b.R, a * b.G, a * b.B);
     
     /// <summary>
-    ///
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// Operator *-cross product
+    /// </summary>: Gives the scalar A*B
+    /// <param name="a"> Color </param>
+    /// <param name="b"> Color </param>
     /// <returns></returns>
     public static Color operator *(Color a, Color b)
         => new(a.R * b.R, a.G * b.G, a.B * b.B);
     
     /// <summary>
-    /// 
-    /// </summary>
+    /// Override 'ToString'
+    /// </summary>: Converts to a string the Color's components
     /// <returns></returns>
     public override string ToString() => $"({R}, {G}, {B})";
     
     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="b"></param>
+    /// Is_Close
+    /// </summary>: Returns true if the color variable is close to the current color class
+    /// <param name="b"> Color </param>
     /// <returns></returns>
 	public bool Is_Close (Color b)
-		=> Functions.Are_Close(this.R, b.R) && Functions.Are_Close(this.G, b.G) && Functions.Are_Close(this.B , b.B);
+		=> Functions.Are_Close(R, b.R) && Functions.Are_Close(G, b.G) && Functions.Are_Close(B , b.B);
 
+    /// <summary>
+    /// Luminosity
+    /// </summary>: Returns the average luminosity of a pixel (just numerical, not already normalized)
+    /// <returns></returns>
     public float Luminosity()
     {
         return (Math.Max(R, Math.Max(G, B)) + Math.Min(R, Math.Min(G, B)))/2.0f;
