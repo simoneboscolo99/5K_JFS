@@ -37,4 +37,14 @@ public class ColorTests
         Assert.True((a * b).Is_Close(new Color(5.0f, 6.0f, 24.0f)), "Test 1");
         Assert.False((a * b).Is_Close(new Color(4.0f, 6.0f, 24.0f)), "Test 2");
     }
+
+    [Fact]
+    public void TestLuminosity()
+    {
+        Color col1 = new Color(1.0f, 2.0f, 3.0f);
+        Color col2 = new Color(9.0f, 5.0f, 7.0f);
+        Assert.True(Functions.Are_Close(col1.Luminosity(), 2.0f), "Luminosity does not work");
+        Assert.True(Functions.Are_Close(col2.Luminosity(), 7.0f), "Luminosity does not work");
+
+    }
 }

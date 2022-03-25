@@ -195,7 +195,42 @@ public class HdrImageTests
         var strOut = streamOut.ToArray();
 
         Assert.True( strOut.SequenceEqual(referenceBytes), "Memory test");
-           } 
+    }
 
+    [Fact]
+    public void TestLuminosity_Ave()
+    {
+        image = new HdrImage(2, 1);
+        image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
+        image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
+        Assert.True(Functions.Are_Close(100.0f, image.Luminosity_Ave(0.0f)));
+    }
+
+    [Fact]
+    public void TestLuminosityNorm()
+    {
+        image = new HdrImage(2, 1);
+        image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
+        image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
+        image.Luminosity_Norm(1000.0f, 100.0f);
+        Assert.True(image.Get_Pixel(0, 0).Is_Close(new Color(0.5e2f, 1.0e2f, 1.5e2f)));
+        Assert.True(image.Get_Pixel(1, 0).Is_Close(new Color(0.5e4f, 1.0e4f, 1.5e4f)));
+    }
+
+    [Fact]
+    public void TestClampImage()
+    {
+        image = new HdrImage(2, 1);
+        image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
+        image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
+        image.Clamp_Image();
+        //Just check that the R/G/B values are within the expected boundaries
+        foreach (var curPixel in image.Image)
+        {
+            Assert.True(curPixel.R is >= 0 and <= 1);
+            Assert.True(curPixel.G is >= 0 and <= 1);
+            Assert.True(curPixel.B is >= 0 and <= 1);
+        }
+    }
 }
     
