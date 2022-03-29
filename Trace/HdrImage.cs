@@ -1,5 +1,12 @@
 using System.Diagnostics;
 using System.Text;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Pbm;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Trace;
 
@@ -31,8 +38,8 @@ public class HdrImage
     {
         Read_Pfm(inputStream);
     }
-    
-    
+
+
     /// <summary>
     /// HdrImage Constuctor
     /// </summary>: Creates an HdrImage from an input file-name 
@@ -45,7 +52,7 @@ public class HdrImage
             Read_Pfm(fileStream);
         }
     }
-    
+
     //END OF CONSTRUCTORS------------------------------------------------------------------------
 
     /// <summary>
@@ -91,7 +98,7 @@ public class HdrImage
         var pos = Pixel_Offset(col, row);
         Image[pos] = a;
     }
-    
+
     /// <summary>
     /// Write_Float
     /// </summary>: Writes on the output stream bytes that represent the float given, using hexadecimal and endianness of your system.
@@ -102,7 +109,7 @@ public class HdrImage
         var seq = BitConverter.GetBytes(val);
         outputStream.Write(seq, 0, seq.Length);
     }
-    
+
     /// <summary>
     /// Write_pfm
     /// </summary>: Writes an HdrImage on a stream, in PFM format.
@@ -112,7 +119,7 @@ public class HdrImage
         var end = BitConverter.IsLittleEndian ? "-1.0" : "1.0";
         var header = Encoding.ASCII.GetBytes($"PF\n{Width} {Height}\n{end}\n");
         outputStream.Write(header);
-        
+
         for (int y = Height - 1; y >= 0; y--)
         {
             for (int x = 0; x < Width; x++)
@@ -138,7 +145,7 @@ public class HdrImage
             var curByte = inputStream.ReadByte();
             if (curByte is -1 or '\n')
                 return result;
-            
+
             Console.WriteLine("var");
             result += (char) curByte;
         }
@@ -191,7 +198,7 @@ public class HdrImage
         }
     }
 
-    
+
     /// <summary>
     /// Parse_Img_Size
     /// </summary>: returns image size (width,height)
@@ -227,18 +234,18 @@ public class HdrImage
             throw new InvalidPfmFileFormat("Only integer numbers are allowed for width and height");
         }
     }
-    
+
     private void Read_Pfm(Stream inputStream)
     {
         //first row
         var magic = Read_Line(inputStream);
         if (magic != "PF")
             throw new InvalidPfmFileFormat("Invalid magic in PFM file");
-        
+
         //second row
         var imgSize = Read_Line(inputStream);
         (Width, Height) = Parse_Img_Size(imgSize);
-        
+
         //third row
         var endianness = Read_Line(inputStream);
         var le = Parse_Endianness(endianness);
@@ -262,8 +269,8 @@ public class HdrImage
     public float Luminosity_Ave(float delta = 1e-10f)
     {
         var sum = 0.0d;
-        foreach (var colore in Image)
-            sum += Math.Log10(delta + colore.Luminosity());
+        foreach (var color in Image)
+            sum += Math.Log10(delta + color.Luminosity());
         return (float) Math.Pow(10, sum / Image.Count);
     }
 
@@ -279,5 +286,63 @@ public class HdrImage
     {
         for (int i = 0; i < Image.Count; i++)
             Image[i] = new Color(Functions.Clamp(Image[i].R), Functions.Clamp(Image[i].G), Functions.Clamp(Image[i].B));
+    }
+
+    
+    /// <summary>
+    /// 
+    /// </summary>: Write an image with a desired format
+    /// <param name="outputStream"></param>
+    /// <param name="format"></param>
+    /// <param name="gamma"></param>
+    public void Write_Ldr_Image(Stream outputStream, string? format = null, float? gamma = null)
+    {
+        var g = gamma ?? 1.0f;
+        var f = format ?? "Png";
+        var bitmap = new Image<Rgb24>(Configuration.Default, Width, Height);
+
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                var aColor = Get_Pixel(x, y);
+                bitmap[x, y] = new Rgb24((byte) Math.Pow(aColor.R,1/g),(byte) Math.Pow(aColor.G,1/g), (byte) Math.Pow(aColor.B,1/g));
+            }
+        }
+        
+        var extension = f.ToUpper();
+        switch (extension)
+        {
+            case "PNG":
+            {
+                using Stream fileStream = File.OpenWrite("output.png");
+                bitmap.Save(fileStream, new PngEncoder());
+                break;
+            }
+            case "JPEG":
+            {
+                using Stream fileStream = File.OpenWrite("output.jpg");
+                bitmap.Save(fileStream, new JpegEncoder());
+                break;
+            }
+            case "BMP":
+            {
+                using Stream fileStream = File.OpenWrite("output.bmp");
+                bitmap.Save(fileStream, new BmpEncoder());
+                break;
+            }
+            case "GIF":
+            {
+                using Stream fileStream = File.OpenWrite("output.gif");
+                bitmap.Save(fileStream, new GifEncoder());
+                break;
+            }
+            case "PBM":
+            {
+                using Stream fileStream = File.OpenWrite("output.pbm");
+                bitmap.Save(fileStream, new PbmEncoder());
+                break;
+            }
+        }
     }
 }
