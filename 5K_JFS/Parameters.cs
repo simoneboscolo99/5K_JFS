@@ -5,7 +5,7 @@ namespace _5K_JFS;
 public class Parameters
 {
     public static string InputPfmFileName = "";
-    public static float a = 0.2f;
+    public static float A = 0.2f;
     public static float Gamma = 1.0f;
     public static string OutputPngFileName = "";
     
@@ -16,7 +16,7 @@ public class Parameters
         InputPfmFileName = args[0];
         try
         {
-            a = Convert.ToSingle(args[1]);
+            A = Convert.ToSingle(args[1]);
         }
         catch
         {
