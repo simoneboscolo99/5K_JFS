@@ -146,7 +146,6 @@ public class HdrImage
             if (curByte is -1 or '\n')
                 return result;
 
-            Console.WriteLine("var");
             result += (char) curByte;
         }
     }
@@ -306,7 +305,7 @@ public class HdrImage
             for (int x = 0; x < Width; x++)
             {
                 var aColor = Get_Pixel(x, y);
-                bitmap[x, y] = new Rgb24((byte) Math.Pow(aColor.R,1/g),(byte) Math.Pow(aColor.G,1/g), (byte) Math.Pow(aColor.B,1/g));
+                bitmap[x, y] = new Rgb24((byte) (int)(255 * Math.Pow(aColor.R,1/g)),(byte) (int)(255 * Math.Pow(aColor.G,1/g)), (byte) (int)(255 *Math.Pow(aColor.B,1/g)));
             }
         }
         
@@ -314,7 +313,7 @@ public class HdrImage
         switch (extension)
         {
             case "PNG":
-            {
+            { 
                 using Stream fileStream = File.OpenWrite("output.png");
                 bitmap.Save(fileStream, new PngEncoder());
                 break;

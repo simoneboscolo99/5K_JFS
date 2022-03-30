@@ -8,3 +8,12 @@ public class InvalidPfmFileFormat : Exception
     public InvalidPfmFileFormat(string message)
         : base(message) { }
 }
+
+[Serializable]
+public class RuntimeException : Exception   
+{
+    public RuntimeException() { }
+    
+    public RuntimeException(string message)
+        : base(message) { }
+}
