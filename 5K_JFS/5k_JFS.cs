@@ -22,11 +22,10 @@ try
     // Create a sRGB bitmap
     //var bitmap = new Image<Rgb24>(Configuration.Default, image.Width, image.Height);
 
-// Save the bitmap as a PNG file
-   using (Stream fileStream = File.OpenWrite("output.pfm")) {
-   //   bitmap.Save(fileStream, new PngEncoder());
+    // Save the bitmap as a PNG file
+    using Stream fileStream = File.OpenWrite("output.pfm");
+    //bitmap.Save(fileStream, new PngEncoder());
     image.Write_Ldr_Image(fileStream, "png", Parameters.Gamma);
-   }
 }
 catch (Exception ex)
 {
@@ -34,11 +33,6 @@ catch (Exception ex)
 }
 
 Console.WriteLine("Hello, World!");
-
-image = new HdrImage("memorial.pfm");
-Stream outputStream = new MemoryStream();
-
-image.Write_Ldr_Image(outputStream, "Png", 1.8f);
 
 
 
