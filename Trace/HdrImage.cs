@@ -41,7 +41,7 @@ public class HdrImage
 
 
     /// <summary>
-    /// HdrImage Constuctor
+    /// HdrImage Constructor
     /// </summary>: Creates an HdrImage from an input file-name 
     /// <param name="fileName"></param>
 

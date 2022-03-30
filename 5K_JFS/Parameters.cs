@@ -2,7 +2,7 @@ using Trace;
 
 namespace _5K_JFS;
 
-public class Parameters
+public static class Parameters
 {
     public static string InputPfmFileName = "";
     public static float A = 0.2f;
