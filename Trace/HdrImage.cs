@@ -36,6 +36,7 @@ public class HdrImage
     /// <param name="inputStream"></param>
     public HdrImage(Stream inputStream)
     {
+        Image = new List<Color>();
         Read_Pfm(inputStream);
     }
 
@@ -47,10 +48,9 @@ public class HdrImage
 
     public HdrImage(string fileName)
     {
-        using (Stream fileStream = File.OpenRead(fileName))
-        {
-            Read_Pfm(fileStream);
-        }
+        Image = new List<Color>();
+        using Stream fileStream = File.OpenRead(fileName);
+        Read_Pfm(fileStream);
     }
 
     //END OF CONSTRUCTORS------------------------------------------------------------------------
@@ -292,9 +292,9 @@ public class HdrImage
     /// 
     /// </summary>: Write an image with a desired format
     /// <param name="outputStream"></param>
-    /// <param name="format"></param>
-    /// <param name="gamma"></param>
-    public void Write_Ldr_Image(Stream outputStream, string? format = null, float? gamma = null)
+    /// <param name="format"> string </param>
+    /// <param name="gamma"> float </param>
+    public void Write_Ldr_Image(Stream outputStream, string? format, float? gamma = null)
     {
         var g = gamma ?? 1.0f;
         var f = format ?? "Png";

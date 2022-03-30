@@ -3,11 +3,11 @@
 using _5K_JFS;
 using Trace;
 
+HdrImage image;
 try
 {
     Parameters.Parse_Command_Line(args);
-
-    var image = new HdrImage(Parameters.InputPfmFileName);
+    image = new HdrImage(Parameters.InputPfmFileName);
     // Tone mapping
     image.Luminosity_Norm(Parameters.A);
     image.Clamp_Image();
@@ -22,6 +22,3 @@ catch (Exception ex)
 }
 
 Console.WriteLine("Hello, World!");
-
-
-
