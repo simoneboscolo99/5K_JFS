@@ -5,16 +5,14 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using Trace;
 
+Console.WriteLine("Hello, World!");
 
 var image = new HdrImage("memorial.pfm");
-// Create a sRGB bitmap
-var bitmap = new Image<Rgb24>(Configuration.Default, image.Width, image.Height);
+Stream outputStream = new MemoryStream();
 
-// Save the bitmap as a PNG file
-using (Stream fileStream = File.OpenWrite("output.png")) {
-    bitmap.Save(fileStream, new PngEncoder());
-}
-Console.WriteLine("Hello, World!");
+image.Write_Ldr_Image(outputStream, "Png", 1.8f);
+
+
 
 
 
