@@ -34,8 +34,65 @@ public struct Point
     /// <returns></returns>
     public bool Is_Close (Point b)
         => Functions.Are_Close(X, b.X) && Functions.Are_Close(Y, b.Y) && Functions.Are_Close(Z , b.Z);
-
     
+    /// <summary>
+    /// Operator +
+    /// </summary>: Overloading operator '+'
+    /// <param name="a"> Point </param>
+    /// <param name="b"> Vec </param>
+    /// <returns></returns>
+    public static Point operator +(Point a, Vec b)
+        => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     
+    /// <summary>
+    /// Operator +
+    /// </summary>: Overloading operator '+'
+    /// <param name="a"> Point </param>
+    /// <param name="b"> Point </param>
+    /// <returns></returns>
+    public static Point operator +(Point a, Point b)
+        => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
     
+    /// <summary>
+    /// Operator -
+    /// </summary>: Overloading operator '-'
+    /// <param name="a" > Point </param> 
+    /// <param name="b" > Point </param>
+    /// <returns></returns>
+    public static Vec operator -(Point a, Point b)
+        => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+    
+    /// <summary>
+    /// Operator -
+    /// </summary>: Overloading operator '-'
+    /// <param name="a" > Point </param> 
+    /// <param name="b" > Vec </param>
+    /// <returns></returns>
+    public static Point operator -(Point a, Vec b)
+        => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+    
+    /// <summary>
+    /// Operator *
+    /// </summary>: Overloading operator '*' 
+    /// <param name="b"> Point </param>
+    /// <param name="a"> Scalar </param>
+    /// <returns></returns>
+    public static Point operator *(Point b, float a)
+        => new(a * b.X, a * b.Y, a * b.Z);
+    
+    /// <summary>
+    /// Operator *
+    /// </summary>: Overloading operator '*' 
+    /// <param name="a" > scalar </param> 
+    /// <param name="b"> Point </param> 
+    /// <returns></returns>
+    public static Point operator *(float a, Point b)
+        => new(a * b.X, a * b.Y, a * b.Z);
+    
+    /// <summary>
+    /// Override 'Point.To_Vec()'
+    /// </summary>: Converts to a Vec the Point's components
+    /// <returns></returns>
+    public Vec To_Vec()
+        => new(X, Y, Z);
 }
