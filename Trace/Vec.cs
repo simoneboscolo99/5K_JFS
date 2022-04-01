@@ -63,6 +63,9 @@ public struct Vec
 
     public float Dot(Vec v)
         => X * v.X + Y * v.Y + Z * v.Z;
+   //dot product <vec,normal>
+    public float Dot(Normal m)
+        => X * m.X + Y * m.Y + Z * m.Z;
 
     public Vec Cross(Vec v)
         => new(Y * v.Z - Z * v.Y, Z * v.X - X * v.Z, X * v.Y - Y * v.X);
