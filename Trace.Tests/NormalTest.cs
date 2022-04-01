@@ -28,12 +28,12 @@ public class NormalTest
         Assert.True((_a * scalar).Is_Close(new Normal(2.0f, 4.0f, 6.0f)), "Test normal*scalar");
         Assert.True(Functions.Are_Close(35.0f, _a.Dot(_v)), "Test dot product(normals)");
         Assert.True(Functions.Are_Close(35.0f, _a.Dot(_b)), "Test dot product(normals)");
-        Assert.True(_a.Cross(_v).Is_Close(new Normal(7.0f, 7.0f, -7.0f)), "Test cross product 1");
-        Assert.True(_a.Cross(_b).Is_Close(new Normal(7.0f, 7.0f, -7.0f)), "Test cross product 1"); 
+        Assert.True(_a.Cross(_v).Is_Close(new Normal(7.0f, 7.0f, -7.0f)), "Test cross product 1(V,N)");
+        Assert.True(_a.Cross(_b).Is_Close(new Normal(7.0f, 7.0f, -7.0f)), "Test cross product 1(N,N)"); 
         Assert.True(Functions.Are_Close(_a.SquaredNorm(),14.0f),"SquaredNorm doesn't work");
         _testOutputHelper.WriteLine($"{_a.Norm()}");
         Assert.True(Functions.Are_Close(_a.Norm(),(float) Math.Sqrt(14.0f)),"Norm doesnt work");
-        Assert.True(_aNorm.Is_Close(_a.Normalize()));
+        Assert.True(_aNorm.Is_Close(_a.Normalize()),"Normalization problem(Normal class)");
         
     }
     
