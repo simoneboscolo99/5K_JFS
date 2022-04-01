@@ -55,9 +55,6 @@ public struct Vec
     public static Vec operator *(Vec v, float a)
         => new(a * v.X, a * v.Y, a * v.Z);
 
-    public Vec Neg()
-        => new(-X, -Y, -Z);
-    
     public static Vec operator -(Vec v)
         => new(-v.X, -v.Y, -v.Z);
 
@@ -84,8 +81,9 @@ public struct Vec
         var mod = Norm();
         return new Vec(X / mod, Y / mod, Z / mod);
     }
-       
 
+    public Normal ToNormal()
+        => new Normal(X, Y, Z);
 
     /// <summary>
     /// Is_Close
