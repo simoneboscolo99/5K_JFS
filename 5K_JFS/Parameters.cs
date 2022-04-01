@@ -7,7 +7,8 @@ public static class Parameters
     public static string InputPfmFileName = "";
     public static float A = 0.2f;
     public static float Gamma = 1.0f;
-    public static string OutputPngFileName = "";
+    public static string OutputFileName = "";
+    public static string Format = "";
     
     public static void Parse_Command_Line(string[] args)
     {
@@ -31,6 +32,7 @@ public static class Parameters
             throw new RuntimeException($"Invalid factor {args[2]}, it must be a floating-point number ");
         }
 
-        OutputPngFileName = args[3];
+        OutputFileName = args[3];
+        Format = Path.GetExtension(OutputFileName);
     }
 }

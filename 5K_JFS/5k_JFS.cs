@@ -11,10 +11,9 @@ try
     // Tone mapping
     image.Luminosity_Norm(Parameters.A);
     image.Clamp_Image();
-    
-    using (Stream fileStream = File.OpenWrite(Parameters.OutputPngFileName)) {
-        image.Write_Ldr_Image(fileStream, "png", Parameters.Gamma);
-    }
+
+    //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
+    image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
 }
 catch (Exception ex)
 {

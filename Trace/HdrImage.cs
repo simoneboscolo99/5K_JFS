@@ -287,17 +287,18 @@ public class HdrImage
             Image[i] = new Color(Functions.Clamp(Image[i].R), Functions.Clamp(Image[i].G), Functions.Clamp(Image[i].B));
     }
 
-    
+
     /// <summary>
     /// 
     /// </summary>: Write an image with a desired format
-    /// <param name="outputStream"></param>
+    /// <param name="fileName"></param>
     /// <param name="format"> string </param>
     /// <param name="gamma"> float </param>
-    public void Write_Ldr_Image(Stream outputStream, string? format, float? gamma = null)
+    public void Write_Ldr_Image(string? fileName, string? format, float? gamma = null)
     {
         var g = gamma ?? 1.0f;
-        var f = format ?? "Png";
+        var f = format ?? ".Png";
+        var name = fileName ?? "output.png";
         var bitmap = new Image<Rgb24>(Configuration.Default, Width, Height);
 
         for (int y = 0; y < Height; y++)
@@ -312,33 +313,34 @@ public class HdrImage
         var extension = f.ToUpper();
         switch (extension)
         {
-            case "PNG":
+            case ".PNG":
             { 
-                using Stream fileStream = File.OpenWrite("output.png");
+                using Stream fileStream = File.OpenWrite(name);
                 bitmap.Save(fileStream, new PngEncoder());
                 break;
             }
-            case "JPEG":
+            case ".JPG":
+            case ".JPEG":
             {
-                using Stream fileStream = File.OpenWrite("output.jpg");
+                using Stream fileStream = File.OpenWrite(name);
                 bitmap.Save(fileStream, new JpegEncoder());
                 break;
             }
-            case "BMP":
+            case ".BMP":
             {
-                using Stream fileStream = File.OpenWrite("output.bmp");
+                using Stream fileStream = File.OpenWrite(name);
                 bitmap.Save(fileStream, new BmpEncoder());
                 break;
             }
-            case "GIF":
+            case ".GIF":
             {
-                using Stream fileStream = File.OpenWrite("output.gif");
+                using Stream fileStream = File.OpenWrite(name);
                 bitmap.Save(fileStream, new GifEncoder());
                 break;
             }
-            case "PBM":
+            case ".PBM":
             {
-                using Stream fileStream = File.OpenWrite("output.pbm");
+                using Stream fileStream = File.OpenWrite(name);
                 bitmap.Save(fileStream, new PbmEncoder());
                 break;
             }
