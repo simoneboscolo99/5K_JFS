@@ -18,6 +18,7 @@ public class VecTests
     {
         var v = new Vec(1.0f, 2.0f, 3.0f);
         var w = new Vec(4.0f, 6.0f, 8.0f);
+        var m = new Normal(5.0f, 3.0f, 8.0f);
         Assert.True((v + w).Is_Close(new Vec(5.0f, 8.0f, 11.0f)), "Test add");
         Assert.True((w - v).Is_Close(new Vec(3.0f, 4.0f, 5.0f)), "Test diff");
         Assert.True((v * 2.0f).Is_Close(new Vec(2.0f, 4.0f, 6.0f)), "Test scalar mult 1");
@@ -25,6 +26,7 @@ public class VecTests
         Assert.True(v.Neg().Is_Close(new Vec(-1.0f, -2.0f, -3.0f)), "Test neg 1");
         Assert.True((-v).Is_Close(new Vec(-1.0f, -2.0f, -3.0f)), "Test neg 2");
         Assert.True(Functions.Are_Close(v.Dot(w), 40.0f), "Test scalar product");
+        Assert.True(Functions.Are_Close(35.0f,v.Dot(m)), "Test scalar vec*normal");
         Assert.True(v.Cross(w).Is_Close(new Vec(-2.0f, 4.0f, -2.0f)), "Test cross product 1");
         Assert.True(Vec.Cross(v,w).Is_Close(new Vec(-2.0f, 4.0f, -2.0f)), "Test cross product 2");
         Assert.True(w.Cross(v).Is_Close(new Vec(2.0f, -4.0f, 2.0f)), "Test cross product 3");
