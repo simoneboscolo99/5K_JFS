@@ -16,4 +16,21 @@ public class TransformationTests
         //var T2 = new Transformation();
         //Assert.True(T2.M.Equals(Matrix4x4.Identity), "Test constructor");
     }
+
+    [Fact]
+    public void TestScale()
+    {
+        var v = new Vec(1f, 2f, 3f);
+        var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 1.0f);
+        Assert.True();
+        
+    }
+
+    [Fact]
+    public void TestIdentity()
+    {
+        var t = new Transformation(Matrix4x4.Identity, Matrix4x4.Identity);
+        Assert.True(t.Is_Close(Transformation(Matrix4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1),Matrix4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1));
+    }
+    
 }
