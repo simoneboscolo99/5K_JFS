@@ -77,5 +77,12 @@ public struct Transformation
 
     public bool Is_Close(Transformation T)
         => Functions.Are_Matr_close(M, T.M) && Functions.Are_Matr_close(InvM, T.InvM);
+    
+    public Transformation Clone()
+    { 
+        // ReSharper disable once HeapView.BoxingAllocation
+        return ((Transformation)MemberwiseClone());
+        
+    }
 
 }
