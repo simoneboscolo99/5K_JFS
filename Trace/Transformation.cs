@@ -27,5 +27,9 @@ public struct Transformation
         var I = Matrix4x4.Multiply(M, InvM);
         return Functions.Are_Matr_close(I, Matrix4x4.Identity);
     }
-    
+    public void Scale_Uniform(float v)
+    {
+        M = Matrix4x4.CreateScale(v);
+        InvM = Matrix4x4.CreateScale(v);
+    }    
 }

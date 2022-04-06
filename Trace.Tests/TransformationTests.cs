@@ -2,6 +2,7 @@ using System.Numerics;
 using Xunit;
 
 namespace Trace.Tests;
+using System.Numerics;
 
 public class TransformationTests
 {
