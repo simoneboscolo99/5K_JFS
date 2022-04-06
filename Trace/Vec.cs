@@ -1,5 +1,8 @@
 namespace Trace;
 
+/// <summary>
+/// 
+/// </summary>
 public struct Vec
 {
     public float X { get; set; }
@@ -22,8 +25,8 @@ public struct Vec
     /// <summary>
     /// Operator +
     /// </summary>: Overloading operator '+'
-    /// <param name="v"></param>
-    /// <param name="w"></param>
+    /// <param name="v"> <see cref="Vec"/> </param>
+    /// <param name="w"> <see cref="Vec"/> </param>
     /// <returns></returns>
     public static Vec operator +(Vec v, Vec w)
         => new(v.X + w.X, v.Y + w.Y, v.Z + w.Z);
@@ -55,6 +58,11 @@ public struct Vec
     public static Vec operator *(Vec v, float a)
         => new(a * v.X, a * v.Y, a * v.Z);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="v"></param>
+    /// <returns></returns>
     public static Vec operator -(Vec v)
         => new(-v.X, -v.Y, -v.Z);
 
