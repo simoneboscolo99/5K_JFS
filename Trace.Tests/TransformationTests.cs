@@ -12,7 +12,5 @@ public class TransformationTests
         var invm = new Matrix4x4(-3.75f, 2.75f, -1.0f, 0.0f, 4.375f, -3.875f, 2.0f, -0.5f, 0.5f, 0.5f, -1.0f, 1.0f, -1.375f, 0.875f, 0.0f, -0.5f);
         var T1 = new Transformation(m, invm);
         Assert.True(T1.Is_Consistent(), "Test consistent");
-        //var T2 = new Transformation();
-        //Assert.True(T2.M.Equals(Matrix4x4.Identity), "Test constructor");
     }
 }

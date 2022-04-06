@@ -9,15 +9,23 @@ public struct Transformation
     
     public Transformation(Matrix4x4 m, Matrix4x4 invM)
     {
-        //var m1 = m ?? Matrix4x4.Identity;
         M = m;
         InvM = invM;
     }
 
+    public Transformation Rotation_X(float angle)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(angle)), Matrix4x4.CreateRotationX(angle));
+    
+    public Transformation Rotation_Y(float angle)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(angle)), Matrix4x4.CreateRotationY(angle));
+    
+    public Transformation Rotation_Z(float angle)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(angle)), Matrix4x4.CreateRotationZ(angle));
+
     public bool Is_Consistent()
     {
         var I = Matrix4x4.Multiply(M, InvM);
-        return I.IsIdentity;
+        return Functions.Are_Matr_close(I, Matrix4x4.Identity);
     }
     
 }
