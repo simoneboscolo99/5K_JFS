@@ -7,10 +7,57 @@ public struct Transformation
     public Matrix4x4 M = new Matrix4x4(); 
     public Matrix4x4 InvM = new Matrix4x4();
 
-    public Transformation Translation(Vec v)
+
+    public Transformation(Matrix4x4 m, Matrix4x4 invM)
     {
-        M = (1.0f, 0.0f, 0.0f, v.X, 0.0f, 1.0f, 0.0f, v.Y, 0.0f, 0.0f, 1.0f, v.Z, 0.0f, 0.0f, 0.0f, 1.0f);
-        InvM = (1.0f, 0.0f, 0.0f, -v.X, 0.0f, 1.0f, 0.0f, -v.Y, 0.0f, 0.0f, 1.0f, -v.Z, 0.0f, 0.0f, 0.0f, 1.0f);
+        //var m1 = m ?? Matrix4x4.Identity;
+        M = m;
+        InvM = invM;
+    }
+
+    public bool Is_Consistent()
+    {
+        var I = Matrix4x4.Multiply(M, InvM);
+        return I.IsIdentity;
+    }
+
+    public Transformation Translation(Vec v)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)), Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
+
+    public Transformation Inverse
+        => new Transformation(InvM, M);
+    
+    public static Transformation operator *(Transformation a, Transformation b)
+        => new (Matrix4x4.Multiply(a.M, b.M), Matrix4x4.Multiply(b.InvM, a.InvM));
+
+    public static Point operator *(Transformation a, Point p)
+    {
+        var newp = new Point(p.X * a.M.M11 + p.Y * a.M.M12 + p.Z * a.M.M13 + a.M.M14,
+            p.X * a.M.M21 + p.Y * a.M.M22 + p.Z * a.M.M23 + a.M.M24,
+            p.X * a.M.M31 + p.Y * a.M.M32 + p.Z * a.M.M33 + a.M.M34);
+        var w = p.X * a.M.M41 + p.Y * a.M.M42 + p.Z * a.M.M43 + a.M.M44;
+        if (Math.Abs(w - 1.0) < 10e-5)
+            return newp;
+        else
+        {
+            var newpNorm = new Point(newp.X / w, newp.Y / w, newp.Z / w);
+            return newpNorm;
+        }
+    }
+
+    public static Vec operator *(Transformation a, Vec v)
+    {
+        var newVec = new Vec(v.X * a.M.M11 + v.Y * a.M.M12 + v.Z * a.M.M13,
+            v.X * a.M.M21 + v.Y * a.M.M22 + v.Z * a.M.M23,
+            v.X * a.M.M31 + v.Y * a.M.M32 + v.Z * a.M.M33);
+        return newVec;
     }
     
+    public static Normal operator *(Transformation a, Normal n)
+    {
+        var c = new Normal(n.X * a.InvM.M11 + n.Y * a.InvM.M21 + n.Z * a.InvM.M31,
+            n.X * a.InvM.M12 + n.Y * a.InvM.M22 + n.Z * a.InvM.M32,
+            n.X * a.InvM.M13 + n.Y * a.InvM.M23 + n.Z * a.InvM.M33);
+        return c;
+    }
 }
