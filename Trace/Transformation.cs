@@ -13,6 +13,12 @@ public struct Transformation
         InvM = invM;
     }
 
+    public void Scale_Uniform(float v)
+    {
+        M = Matrix4x4.CreateScale(v);
+        InvM = Matrix4x4.CreateScale(v);
+    }  
+    
     public Transformation Rotation_X(float angle)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(angle)), Matrix4x4.CreateRotationX(angle));
     
@@ -27,9 +33,4 @@ public struct Transformation
         var I = Matrix4x4.Multiply(M, InvM);
         return Functions.Are_Matr_close(I, Matrix4x4.Identity);
     }
-    public void Scale_Uniform(float v)
-    {
-        M = Matrix4x4.CreateScale(v);
-        InvM = Matrix4x4.CreateScale(v);
-    }    
 }
