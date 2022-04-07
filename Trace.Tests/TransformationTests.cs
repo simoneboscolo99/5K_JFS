@@ -20,8 +20,11 @@ public class TransformationTests
     {
         var v = new Vec(1f, 2f, 3f);
         var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f, 1.0f);
-        //Assert.True();
-        
+        var invm = new Matrix4x4(-3.75f, 2.75f, -1.0f, 0.0f, 4.375f, -3.875f, 2.0f, -0.5f, 0.5f, 0.5f, -1.0f, 1.0f, -1.375f, 0.875f, 0.0f, -0.5f);
+        var t = new Transformation(m, invm);
+        var scaleT = t.Scale(v);
+        Assert.True(scaleT.Is_Consistent());
+
     }
 
     [Fact]
