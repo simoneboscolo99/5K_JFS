@@ -15,7 +15,12 @@ public class Functions
     {
         return Math.Abs(val1 - val2) < eps;
     }
-
+    /// <summary>
+    /// Are_Matr_Close
+    /// </summary>: returns true if each entry of two matrixes are_close(10^-5) else returns false 
+    /// <param name="m"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
     public static bool Are_Matr_close(Matrix4x4 m, Matrix4x4 n)
     {
         return Are_Close(m.M11, n.M11) && Are_Close(m.M12, n.M12) && Are_Close(m.M13, n.M13) && Are_Close(m.M14, n.M14) && 
@@ -26,7 +31,7 @@ public class Functions
 
     /// <summary>
     /// Clamp
-    /// </summary>: Normalizes float from 0 to 1
+    /// </summary>: normalizes float from 0 to 1
     /// /// <param name="x"></param>
     /// <returns></returns>
     public static float Clamp(float x)

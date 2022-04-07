@@ -44,7 +44,7 @@ public class TransformationTests
         Assert.True(m2.Is_Consistent(), "Test consistent");
     }
 
-
+    [Fact]
     public void TestScale()
     {
         var v = new Vec(1f, 2f, 3f);
@@ -62,7 +62,7 @@ public class TransformationTests
         var t = new Matrix4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
         var invent = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         var tra = new Transformation(t, invent);
-        var idee = Transformation.Identity();
-        Assert.True(condition: tra.Is_Close(idee));
+        var idt = Transformation.Identity();
+        Assert.True(condition: tra.Is_Close(idt));
     }
 }

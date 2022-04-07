@@ -15,7 +15,11 @@ public struct Transformation
         M = m;
         InvM = invM;
     }
-    
+    /// <summary>
+    /// Scale
+    /// </summary>: Returns a Transformation with scale factors v.X, v.Y, v.Z, 1.0.
+    /// <param name="v"> Vec </param>
+    /// <returns></returns>
     public Transformation Scale(Vec v)
         => new(Matrix4x4.CreateScale(v.X,v.Y,v.Z), Matrix4x4.CreateScale(1/v.X,1/v.Y,1/v.Z));
 
@@ -37,7 +41,10 @@ public struct Transformation
 
     public Transformation Translation(Vec v)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)), Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
-
+    
+    /// <summary>
+    /// Inverse
+    /// </summary>: returns a new Transformation with each Matrix4x4 inverted
     public Transformation Inverse
         => new Transformation(InvM, M);
     
