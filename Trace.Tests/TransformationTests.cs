@@ -25,7 +25,7 @@ public class TransformationTests
         m4.InvM.M22 += 1;
         Assert.False(m1.Is_Close(m4), "Test is not consistent");
     }
-    
+
     [Fact]
     public void Test_Multiplication()
     {
@@ -35,34 +35,39 @@ public class TransformationTests
             -1.375f, 0.875f, 0.0f, -0.5f);
         var m1 = new Transformation(m, inv);
         Assert.True(m1.Is_Consistent(), "Test consistent");
-        var m_2 = new Matrix4x4(3.0f, 5.0f, 2.0f, 4.0f, 4.0f, 1.0f, 0.0f, 5.0f, 6.0f, 3.0f, 2.0f, 0.0f, 1.0f, 4.0f, 2.0f,
+        var m_2 = new Matrix4x4(3.0f, 5.0f, 2.0f, 4.0f, 4.0f, 1.0f, 0.0f, 5.0f, 6.0f, 3.0f, 2.0f, 0.0f, 1.0f, 4.0f,
+            2.0f,
             1.0f);
         var inv_2 = new Matrix4x4(0.4f, -0.2f, 0.2f, -0.6f, 2.9f, -1.7f, 0.2f, -3.1f, -5.55f, 3.15f, -0.4f, 6.45f,
             -0.9f, 0.7f, -0.2f, 1.1f);
         var m2 = new Transformation(m_2, inv_2);
         Assert.True(m2.Is_Consistent(), "Test consistent");
-        var m_expected = new Matrix4x4(33.0f, 32.0f, 16.0f, 18.0f, 89.0f, 84.0f, 40.0f, 58.0f, 118.0f, 106.0f, 48.0f, 88.0f, 63.0f, 51.0f, 22.0f, 50.0f);
-        var inv_expected = new Matrix4x4(-1.45f, 1.45f, -1.0f, 0.6f, -13.95f, 11.95f, -6.5f, 2.6f, 25.525f, -22.025f, 12.25f, -5.2f, 4.825f, -4.325f, 2.5f, -1.1f);
+        var m_expected = new Matrix4x4(33.0f, 32.0f, 16.0f, 18.0f, 89.0f, 84.0f, 40.0f, 58.0f, 118.0f, 106.0f, 48.0f,
+            88.0f, 63.0f, 51.0f, 22.0f, 50.0f);
+        var inv_expected = new Matrix4x4(-1.45f, 1.45f, -1.0f, 0.6f, -13.95f, 11.95f, -6.5f, 2.6f, 25.525f, -22.025f,
+            12.25f, -5.2f, 4.825f, -4.325f, 2.5f, -1.1f);
         var expected = new Transformation(m_expected, inv_expected);
         //Assert.True(expected.Is_Consistent(), "Test Consistent");
-        Assert.True(expected.Is_Close(m1*m2), "Test consistent");
+        Assert.True(expected.Is_Close(m1 * m2), "Test consistent");
     }
 
     [Fact]
     public void Test_Vec_Point_Multiplication()
     {
-        var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-        var inv = new Matrix4x4(-3.75f, 2.75f, -1.0f, 0.0f, 5.75f, -4.75f, 2.0f, 1.0f, -2.25f, 2.25f, -1.0f, -2.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 0.0f, 0.0f, 0.0f,
+            1.0f);
+        var inv = new Matrix4x4(-3.75f, 2.75f, -1.0f, 0.0f, 5.75f, -4.75f, 2.0f, 1.0f, -2.25f, 2.25f, -1.0f, -2.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
         var m1 = new Transformation(m, inv);
         Assert.True(m1.Is_Consistent(), "Test consistent");
         Vec expectedV = new(14.0f, 38.0f, 51.0f);
-        Assert.True(expectedV.Is_Close(m1*new Vec(1.0f, 2.0f, 3.0f)), "Test consistent");
+        Assert.True(expectedV.Is_Close(m1 * new Vec(1.0f, 2.0f, 3.0f)), "Test consistent");
         Point expectedP = new(18.0f, 46.0f, 58.0f);
-        Assert.True(expectedP.Is_Close(m1*new Point(1.0f, 2.0f, 3.0f)), "Test consistent");
+        Assert.True(expectedP.Is_Close(m1 * new Point(1.0f, 2.0f, 3.0f)), "Test consistent");
         Normal expectedN = new(-8.75f, 7.75f, -3.0f);
-        Assert.True(expectedN.Is_Close(m1*new Normal(3.0f, 2.0f, 4.0f)), "Test consistent");
+        Assert.True(expectedN.Is_Close(m1 * new Normal(3.0f, 2.0f, 4.0f)), "Test consistent");
     }
-    
+
     [Fact]
     public void Test_Inverse()
     {
@@ -98,11 +103,15 @@ public class TransformationTests
         Assert.True(Transformation.Rotation_X(0.1f).Is_Consistent(), "Test consistent");
         Assert.True(Transformation.Rotation_Y(0.1f).Is_Consistent(), "Test consistent");
         Assert.True(Transformation.Rotation_Z(0.1f).Is_Consistent(), "Test consistent");
-        var prova = Transformation.Rotation_X(90.0f);
-        var prova2 = prova * (new Vec(0.0f, 1.0f, 0.0f));
-        //Assert.True(prova2.Is_Close(new Vec(0.0f, 0.0f, 1.0f)), "Test consistent");
-        Assert.True(((Transformation.Rotation_X((float) Math.PI/2.0f))*(new Vec(0.0f, 0.0f, 1.0f))).Is_Close(new Vec(0.0f, 1.0f, 0.0f)), "Test consistent");
-        //Assert.True(((Transformation.Rotation_Z(90.0f))*(new Vec(1.0f, 0.0f, 0.0f))).Is_Close(new Vec(0.0f, 1.0f, 0.0f)), "Test consistent");
+        Assert.True(
+            ((Transformation.Rotation_X(90.0f)) * (new Vec(0.0f, 1.0f, 0.0f))).Is_Close(new Vec(0.0f, 0.0f, 1.0f)),
+            "Test consistent");
+        Assert.True(
+            ((Transformation.Rotation_Y(90.0f)) * (new Vec(0.0f, 0.0f, 1.0f))).Is_Close(new Vec(1.0f, 0.0f, 0.0f)),
+            "Test consistent");
+        Assert.True(
+            ((Transformation.Rotation_Z(90.0f)) * (new Vec(1.0f, 0.0f, 0.0f))).Is_Close(new Vec(0.0f, 1.0f, 0.0f)),
+            "Test consistent");
     }
 
     [Fact]
@@ -116,22 +125,13 @@ public class TransformationTests
         Assert.True(expected.Is_Close(tr1 * tr2), "Test consistent");
     }
 
-
     [Fact]
     public void TestIdentity()
     {
-        var m = new Matrix4x4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+        var m = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         var inv = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         var m1 = new Transformation(m, inv);
         var m2 = Transformation.Identity();
         Assert.True(condition: m1.Is_Close(m2));
-    }
-
-    [Fact]
-    public void TestRotations()
-    {
-        Assert.True(Transformation.Rotation_X(0.1f).Is_Consistent());
-        Assert.True(Transformation.Rotation_Y(0.1f).Is_Consistent());
-        Assert.True(Transformation.Rotation_Z(0.1f).Is_Consistent());
     }
 }
