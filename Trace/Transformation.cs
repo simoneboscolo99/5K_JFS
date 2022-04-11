@@ -16,16 +16,16 @@ public struct Transformation
         InvM = invM;
     }
     
-    public Transformation Scale(Vec v)
+    public static Transformation Scale(Vec v)
         => new(Matrix4x4.CreateScale(v.X,v.Y,v.Z), Matrix4x4.CreateScale(1/v.X,1/v.Y,1/v.Z));
 
-    public Transformation Rotation_X(float angle)
+    public static Transformation Rotation_X(float angle)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(angle)), Matrix4x4.CreateRotationX(angle));
     
-    public Transformation Rotation_Y(float angle)
+    public static Transformation Rotation_Y(float angle)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(angle)), Matrix4x4.CreateRotationY(angle));
     
-    public Transformation Rotation_Z(float angle)
+    public static Transformation Rotation_Z(float angle)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(angle)), Matrix4x4.CreateRotationZ(angle));
 
     public bool Is_Consistent()
@@ -35,7 +35,7 @@ public struct Transformation
     }
 
 
-    public Transformation Translation(Vec v)
+    public static Transformation Translation(Vec v)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)), Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
 
     public Transformation Inverse
