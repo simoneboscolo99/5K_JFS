@@ -92,6 +92,7 @@ public class TransformationTests
     }
 
     [Fact]
+
     public void Test_Rotations()
     {
         Assert.True(Transformation.Rotation_X(0.1f).Is_Consistent(), "Test consistent");
@@ -103,7 +104,7 @@ public class TransformationTests
         Assert.True(((Transformation.Rotation_X((float) Math.PI/2.0f))*(new Vec(0.0f, 0.0f, 1.0f))).Is_Close(new Vec(0.0f, 1.0f, 0.0f)), "Test consistent");
         //Assert.True(((Transformation.Rotation_Z(90.0f))*(new Vec(1.0f, 0.0f, 0.0f))).Is_Close(new Vec(0.0f, 1.0f, 0.0f)), "Test consistent");
     }
-    
+
     [Fact]
     public void TestScalings()
     {
@@ -112,8 +113,9 @@ public class TransformationTests
         var tr2 = Transformation.Scale(new Vec(3.0f, 2.0f, 4.0f));
         Assert.True(tr2.Is_Consistent(), "Test consistent");
         var expected = Transformation.Scale(new Vec(6.0f, 10.0f, 40.0f));
-        Assert.True(expected.Is_Close(tr1*tr2), "Test consistent");
+        Assert.True(expected.Is_Close(tr1 * tr2), "Test consistent");
     }
+
 
     [Fact]
     public void TestIdentity()
