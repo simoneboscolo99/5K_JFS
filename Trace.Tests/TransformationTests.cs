@@ -126,4 +126,12 @@ public class TransformationTests
         var m2 = Transformation.Identity();
         Assert.True(condition: m1.Is_Close(m2));
     }
+
+    [Fact]
+    public void TestRotations()
+    {
+        Assert.True(Transformation.Rotation_X(0.1f).Is_Consistent());
+        Assert.True(Transformation.Rotation_Y(0.1f).Is_Consistent());
+        Assert.True(Transformation.Rotation_Z(0.1f).Is_Consistent());
+    }
 }
