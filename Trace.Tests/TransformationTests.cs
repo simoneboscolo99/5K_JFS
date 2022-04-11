@@ -14,4 +14,12 @@ public class TransformationTests
         var T1 = new Transformation(m, invm);
         Assert.True(T1.Is_Consistent(), "Test consistent");
     }
+
+    [Fact]
+    public void TestRotations()
+    {
+        Assert.True(Transformation.Rotation_X(0.1f).Is_Consistent());
+        Assert.True(Transformation.Rotation_Y(0.1f).Is_Consistent());
+        Assert.True(Transformation.Rotation_Z(0.1f).Is_Consistent());
+    }
 }

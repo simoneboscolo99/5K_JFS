@@ -31,4 +31,7 @@ public class Functions
     /// <returns></returns>
     public static float Clamp(float x)
         => x / (1 + x);
+
+    public static float ToRadians(float val)
+        =>  (float) (val * Math.PI / 180.0);
 }
