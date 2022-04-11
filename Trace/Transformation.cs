@@ -23,14 +23,14 @@ public struct Transformation
     public static Transformation Scale(Vec v)
         => new(Matrix4x4.CreateScale(v.X,v.Y,v.Z), Matrix4x4.CreateScale(1/v.X,1/v.Y,1/v.Z));
     
-    public static Transformation Rotation_X(float angle)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(angle)), Matrix4x4.CreateRotationX(angle));
+    public static Transformation Rotation_X(float angleDeg)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
     
-    public static Transformation Rotation_Y(float angle)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(angle)), Matrix4x4.CreateRotationY(angle));
+    public static Transformation Rotation_Y(float angleDeg)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
     
-    public static Transformation Rotation_Z(float angle)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(angle)), Matrix4x4.CreateRotationZ(angle));
+    public static Transformation Rotation_Z(float angleDeg)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
 
 
     public bool Is_Consistent()
