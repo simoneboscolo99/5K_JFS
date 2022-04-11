@@ -19,14 +19,14 @@ public struct Transformation
         InvM = Matrix4x4.CreateScale(v);
     }  
     
-    public static Transformation Rotation_X(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
+    public Transformation Rotation_X(float angle)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(angle)), Matrix4x4.CreateRotationX(angle));
     
-    public static Transformation Rotation_Y(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
+    public Transformation Rotation_Y(float angle)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(angle)), Matrix4x4.CreateRotationY(angle));
     
-    public static Transformation Rotation_Z(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
+    public Transformation Rotation_Z(float angle)
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(angle)), Matrix4x4.CreateRotationZ(angle));
 
     public bool Is_Consistent()
     {
