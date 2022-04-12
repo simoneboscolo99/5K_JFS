@@ -89,7 +89,6 @@ public class NormalTest
         _testOutputHelper = testOutputHelper;
     }
 
-
     [Fact]
     public void TestNormal()
     {
