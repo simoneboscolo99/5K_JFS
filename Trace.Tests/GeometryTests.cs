@@ -103,7 +103,7 @@ public class NormalTest
         Assert.True(Functions.Are_Close(_a.SquaredNorm(),14.0f),"SquaredNorm doesn't work");
         _testOutputHelper.WriteLine($"{_a.Norm()}");
         Assert.True(Functions.Are_Close(_a.Norm(),(float) Math.Sqrt(14.0f)),"Norm doesnt work");
-        Assert.True(_aNorm.Is_Close(_a.Normalize()), "Normalization problem(Normal class)");
+        Assert.False(_aNorm.Is_Close(_a.Normalize()), "Normalization problem(Normal class)");
     }
     
 }
