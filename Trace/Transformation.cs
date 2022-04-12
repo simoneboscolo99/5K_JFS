@@ -23,12 +23,27 @@ public struct Transformation
     public static Transformation Scale(Vec v)
         => new(Matrix4x4.CreateScale(v.X,v.Y,v.Z), Matrix4x4.CreateScale(1/v.X,1/v.Y,1/v.Z));
     
+    /// <summary>
+    /// 
+    /// </summary> Rotation around X ccw
+    /// <param name="angleDeg">degree</param>
+    /// <returns></returns>
     public static Transformation Rotation_X(float angleDeg)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
     
+    /// <summary>
+    /// 
+    /// </summary> Rotation around Y ccw
+    /// <param name="angleDeg">degree</param>
+    /// <returns></returns>
     public static Transformation Rotation_Y(float angleDeg)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
     
+    /// <summary>
+    /// 
+    /// </summary> Rotation around Z ccw
+    /// <param name="angleDeg">degree</param>
+    /// <returns></returns>
     public static Transformation Rotation_Z(float angleDeg)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
 
@@ -39,6 +54,11 @@ public struct Transformation
         return Functions.Are_Matr_close(I, Matrix4x4.Identity);
     }
     
+    /// <summary>
+    /// 
+    /// </summary> Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// <param name="v">Vec(X,Y,Z)</param>
+    /// <returns></returns>
     public static Transformation Translation(Vec v)
         => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)), Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
     
