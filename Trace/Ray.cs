@@ -1,6 +1,6 @@
 namespace Trace;
 
-public class Ray
+public struct Ray
 {
     
 }
