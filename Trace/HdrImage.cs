@@ -146,7 +146,7 @@ public class HdrImage
             if (curByte is -1 or '\n')
                 return result;
 
-            result += (char) curByte;
+            result += (char)curByte;
         }
     }
 
@@ -270,7 +270,7 @@ public class HdrImage
         var sum = 0.0d;
         foreach (var color in Image)
             sum += Math.Log10(delta + color.Luminosity());
-        return (float) Math.Pow(10, sum / Image.Count);
+        return (float)Math.Pow(10, sum / Image.Count);
     }
 
     public void Luminosity_Norm(float a, float? luminosity = null)
@@ -306,44 +306,44 @@ public class HdrImage
             for (int x = 0; x < Width; x++)
             {
                 var aColor = Get_Pixel(x, y);
-                bitmap[x, y] = new Rgb24((byte) (int)(255 * Math.Pow(aColor.R,1/g)),(byte) (int)(255 * Math.Pow(aColor.G,1/g)), (byte) (int)(255 *Math.Pow(aColor.B,1/g)));
+                bitmap[x, y] = new Rgb24((byte)(int)(255 * Math.Pow(aColor.R, 1 / g)), (byte)(int)(255 * Math.Pow(aColor.G, 1 / g)), (byte)(int)(255 * Math.Pow(aColor.B, 1 / g)));
             }
         }
-        
+
         var extension = f.ToUpper();
         switch (extension)
         {
             case ".PNG":
-            { 
-                using Stream fileStream = File.OpenWrite(name);
-                bitmap.Save(fileStream, new PngEncoder());
-                break;
-            }
+                {
+                    using Stream fileStream = File.OpenWrite(name);
+                    bitmap.Save(fileStream, new PngEncoder());
+                    break;
+                }
             case ".JPG":
             case ".JPEG":
-            {
-                using Stream fileStream = File.OpenWrite(name);
-                bitmap.Save(fileStream, new JpegEncoder());
-                break;
-            }
+                {
+                    using Stream fileStream = File.OpenWrite(name);
+                    bitmap.Save(fileStream, new JpegEncoder());
+                    break;
+                }
             case ".BMP":
-            {
-                using Stream fileStream = File.OpenWrite(name);
-                bitmap.Save(fileStream, new BmpEncoder());
-                break;
-            }
+                {
+                    using Stream fileStream = File.OpenWrite(name);
+                    bitmap.Save(fileStream, new BmpEncoder());
+                    break;
+                }
             case ".GIF":
-            {
-                using Stream fileStream = File.OpenWrite(name);
-                bitmap.Save(fileStream, new GifEncoder());
-                break;
-            }
+                {
+                    using Stream fileStream = File.OpenWrite(name);
+                    bitmap.Save(fileStream, new GifEncoder());
+                    break;
+                }
             case ".PBM":
-            {
-                using Stream fileStream = File.OpenWrite(name);
-                bitmap.Save(fileStream, new PbmEncoder());
-                break;
-            }
+                {
+                    using Stream fileStream = File.OpenWrite(name);
+                    bitmap.Save(fileStream, new PbmEncoder());
+                    break;
+                }
         }
     }
 }
