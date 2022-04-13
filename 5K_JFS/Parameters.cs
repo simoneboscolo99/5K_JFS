@@ -9,7 +9,7 @@ public static class Parameters
     public static float Gamma = 1.0f;
     public static string OutputFileName = "";
     public static string Format = "";
-    
+
     public static void Parse_Command_Line(string[] args)
     {
         if (args.Length != 4)
