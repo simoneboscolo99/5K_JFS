@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+//not yet :) .... This program is an "image order" RayTracer
 
 using _5K_JFS;
 using Trace;
