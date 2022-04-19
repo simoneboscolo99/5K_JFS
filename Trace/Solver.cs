@@ -1,6 +1,23 @@
 namespace Trace;
 
-public class Solver
+// Abstract class
+public abstract class Solver
 {
-    //class abstract
+    
+    // Abstract method
+    public abstract Color AbstractMethod();
+
+    // Abstract properties
+    
 }
+
+class DerivedClass : Solver
+{
+    public override Color AbstractMethod()
+    {
+        var color = new Color(1.0f, 2.0f, 3.0f);
+        return color;
+    }
+}
+
+
