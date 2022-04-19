@@ -7,21 +7,21 @@ public class ColorTests
     Color a = new(1.0f, 2.0f, 3.0f);
     Color b = new(5.0f, 3.0f, 8.0f);
     float scalar = 2.0f;
-    
+
     [Fact]
     public void TestAdd()
     {
         Assert.True((a + b).Is_Close(new Color(6.0f, 5.0f, 11.0f)), "Test 1");
         Assert.False((a + b).Is_Close(new Color(6.0f, 5.0f, 10.0f)), "Test 2");
     }
-    
+
     [Fact]
-    public void TestDiff() 
+    public void TestDiff()
     {
         Assert.True((b - a).Is_Close(new Color(4.0f, 1.0f, 5.0f)), "Test 1");
         Assert.False((b - a).Is_Close(new Color(4.0f, 0.0f, 5.0f)), "Test 2");
     }
-    
+
     [Fact]
     public void TestScalar()
     {
