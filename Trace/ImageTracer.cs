@@ -29,12 +29,10 @@ public class ImageTracer
             for (int col = 0; col < ImageTracer.Image.Width; col++)
             {
                 //var ray = ImageTracer.Fire_Ray(col, row, 0.5f, 0.5f);
-                var color = new DerivedClass();
-                ImageTracer.Image.Set_Pixel(col, row, color.AbstractMethod());
+                //var color = new DerivedClass();
+                ImageTracer.Image.Set_Pixel(col, row, solver.AbstractMethod());
             }
-            
         }
-            
     }
 
 }

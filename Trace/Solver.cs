@@ -11,7 +11,7 @@ public abstract class Solver
     
 }
 
-class DerivedClass : Solver
+public class DerivedClass : Solver
 {
     public override Color AbstractMethod()
     {

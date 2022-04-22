@@ -36,7 +36,7 @@ public class CameraTests
     [Fact]
     public void TestPerspectiveCamera()
     {
-        var cam = new PerspectiveCamera(1.0f, 2.0f);
+        var cam = new PerspectiveCamera(aspectRatio:2.0f);
         var ray1 = cam.Fire_Ray(0.0f, 0.0f);
         var ray2 = cam.Fire_Ray(1.0f, 0.0f);
         var ray3 = cam.Fire_Ray(0.0f, 1.0f);
@@ -58,18 +58,20 @@ public class CameraTests
     public void TestImageTracer()
     {
         var image = new HdrImage(4, 2);
-        var camera = new PerspectiveCamera(1.0f,  1.0f, Transformation.Identity());
+        var camera = new PerspectiveCamera(aspectRatio:2.0f);
         var tracer = new ImageTracer(image, camera);
         var ray1 = tracer.Fire_Ray(0, 0, 2.5f, 1.5f);
         var ray2 = tracer.Fire_Ray(2, 1);
         Assert.True(ray1.Is_Close(ray2), "Test Fire Ray ray1-ray2");
-        //tracer.Fire_All_Rays(solver);
-        //for row in range(image.height):
-        //for col in range(image.width):
-        //assert image.get_pixel(col, row) == Color(1.0, 2.0, 3.0)
-
-
+        
+        var solve = new DerivedClass();
+        tracer.Fire_All_Rays(solve);
+        for (int row = 0; row < image.Height; row++)
+        {
+            for (int col = 0; col < image.Width; col++)
+            {
+                Assert.True(image.Get_Pixel(col, row).Is_Close(new Color(1.0f, 2.0f, 3.0f)), "Test solver");
+            }
+        }
     }
-    
-    
 }
