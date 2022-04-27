@@ -67,7 +67,7 @@ public class ImageTracerTests
     {
         // Fire a ray against top-left corner of the screen
         var topLeftRay = tracer.Fire_Ray(0, 0, 0.0f, 0.0f);
-        Assert.True(topLeftRay.At(1.0f).Is_Close(new Point(0.0f, 0.0f, 0.0f)), "Test ray top-left corner");
+        Assert.True(topLeftRay.At(1.0f).Is_Close(new Point(0.0f, 2.0f, 1.0f)), "Test ray top-left corner");
         
         // Fire a ray against bottom-right corner of the screen
         var bottomRightRay = tracer.Fire_Ray(3, 1, 1.0f, 1.0f);
