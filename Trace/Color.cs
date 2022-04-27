@@ -18,7 +18,7 @@ public struct Color
         G = g;
         B = b;
     }
-    
+
     /// <summary>
     /// Operator +
     /// </summary>: Overloading operator '+'
@@ -27,7 +27,7 @@ public struct Color
     /// <returns></returns>
     public static Color operator +(Color a, Color b)
         => new(a.R + b.R, a.G + b.G, a.B + b.B);
-    
+
     /// <summary>
     /// Operator -
     /// </summary>: Overloading operator '-'
@@ -36,7 +36,7 @@ public struct Color
     /// <returns></returns>
     public static Color operator -(Color a, Color b)
         => new(a.R - b.R, a.G - b.G, a.B - b.B);
-    
+
     /// <summary>
     /// Operator *
     /// </summary>: Overloading operator '*' 
@@ -45,7 +45,7 @@ public struct Color
     /// <returns></returns>
     public static Color operator *(float a, Color b)
         => new(a * b.R, a * b.G, a * b.B);
-    
+
     /// <summary>
     /// Operator *
     /// </summary>: Overloading operator '*' 
@@ -54,7 +54,7 @@ public struct Color
     /// <returns></returns>
     public static Color operator *(Color b, float a)
         => new(a * b.R, a * b.G, a * b.B);
-    
+
     /// <summary>
     /// Operator *-cross product
     /// </summary>: Gives the scalar A*B
@@ -63,20 +63,20 @@ public struct Color
     /// <returns></returns>
     public static Color operator *(Color a, Color b)
         => new(a.R * b.R, a.G * b.G, a.B * b.B);
-    
+
     /// <summary>
     /// Override 'ToString'
     /// </summary>: Converts to a string the Color's components
     /// <returns></returns>
     public override string ToString() => $"({R}, {G}, {B})";
-    
+
     /// <summary>
     /// Is_Close
     /// </summary>: Returns true if the color variable is close to the current color class
     /// <param name="b"> Color </param>
     /// <returns></returns>
-	public bool Is_Close (Color b)
-		=> Functions.Are_Close(R, b.R) && Functions.Are_Close(G, b.G) && Functions.Are_Close(B , b.B);
+    public bool Is_Close(Color b)
+        => Functions.Are_Close(R, b.R) && Functions.Are_Close(G, b.G) && Functions.Are_Close(B, b.B);
 
     /// <summary>
     /// Luminosity
@@ -84,11 +84,10 @@ public struct Color
     /// <returns></returns>
     public float Luminosity()
     {
-        return (Math.Max(R, Math.Max(G, B)) + Math.Min(R, Math.Min(G, B)))/2.0f;
+        return (Math.Max(R, Math.Max(G, B)) + Math.Min(R, Math.Min(G, B))) / 2.0f;
     }
-        
-        
-        
+
+
+
 }
 
-    

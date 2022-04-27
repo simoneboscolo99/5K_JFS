@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using Xunit;
 
 namespace Trace.Tests;
@@ -166,7 +167,7 @@ public class HdrImageTests
         var arrayOut = strOut.ToArray();
         Assert.True(test.SequenceEqual(arrayOut), "Verify this bool");
     }
-    
+
     [Fact]
     public void TestWritePfm()
     {
@@ -194,7 +195,7 @@ public class HdrImageTests
         img.Write_pfm(streamOut);
         var strOut = streamOut.ToArray();
 
-        Assert.True( strOut.SequenceEqual(referenceBytes), "Memory test");
+        Assert.True(strOut.SequenceEqual(referenceBytes), "Memory test");
     }
 
     [Fact]
@@ -232,16 +233,5 @@ public class HdrImageTests
             Assert.True(curPixel.B is >= 0 and <= 1);
         }
     }
-
-    [Fact]
-
-    public void TestWritePfmImage()
-    {
-        HdrImage img = new(2, 1);
-
-        img.Set_Pixel(0, 0, new Color(255*(float)Math.Pow(1.0e1f, 1/1.5), 255*(float)Math.Pow(2.0e1f,1/1.5), 255*(float)Math.Pow(3.0e1f,1/1.5)));
-        img.Set_Pixel(1, 0, new Color(255*(float)Math.Pow(4.0e1f, 1/1.5), 255*(float)Math.Pow(5.0e1f,1/1.5), 255*(float)Math.Pow(6.0e1f,1/1.5)));
-        
-    }
 }
-    
+
