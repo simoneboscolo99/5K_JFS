@@ -9,8 +9,12 @@ public class Sphere: Shape
 
     public Vec2D Sphere_Point_to_uv(Point p)
     {
-        var u = Math.Atan2(p.Y, p.X) / (2.0 * Math.PI);
-        var vec = Vec2D(3, Math.Acos(Math.Cos((p.Z)/Math.PI)));
+        float u = (float) (Math.Atan2(p.Y, p.X) / (2.0 * Math.PI));
+        if (u < 0)
+        {
+            u = u +1.0f;
+        }
+        var vec = new Vec2D(u, (float) Math.Acos(Math.Cos((p.Z)/Math.PI)));
         return vec;
     }
 }
