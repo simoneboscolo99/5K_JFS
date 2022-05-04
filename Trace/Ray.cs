@@ -12,7 +12,7 @@ public struct Ray
     {
         Origin = p;
         Dir = v;
-        if (tmin != null) TMin = (float) tmin;
+        if (tmin != null) TMin = (float)tmin;
     }
 
     public bool Is_Close(Ray b, float eps = 1e-5f)
@@ -21,5 +21,5 @@ public struct Ray
 
     public Point At(float t) //returns the point reached by the ray at a distance t, measured in units length of Dir
         => Origin + Dir * t;
-        
+
 }

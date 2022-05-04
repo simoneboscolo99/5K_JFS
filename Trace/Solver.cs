@@ -3,12 +3,12 @@ namespace Trace;
 // Abstract class
 public abstract class Solver
 {
-    
+
     // Abstract method
     public abstract Color AbstractMethod();
 
     // Abstract properties
-    
+
 }
 
 public class DerivedClass : Solver

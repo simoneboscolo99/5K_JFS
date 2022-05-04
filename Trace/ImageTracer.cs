@@ -5,7 +5,7 @@ public class ImageTracer
 
     public HdrImage Image { get; set; }
     public ICamera Cam { get; set; }
-    
+
 
     public ImageTracer(HdrImage image, ICamera camera)
     {
@@ -16,11 +16,11 @@ public class ImageTracer
     public Ray Fire_Ray(int col, int row, float uPixels = 0.5f, float vPixels = 0.5f)
     {
         //There is an error in this formula, but implement it as is anyway!
-        var u = (col + uPixels) / (Image.Width-1);
-        var v = (row + vPixels) / (Image.Height-1);
+        var u = (col + uPixels) / (Image.Width - 1);
+        var v = (row + vPixels) / (Image.Height - 1);
         return Cam.Fire_Ray(u, v);
     }
-    
+
     public void Fire_All_Rays(Solver solver)
     {
         for (int row = 0; row < Image.Height; row++)
