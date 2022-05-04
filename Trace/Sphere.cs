@@ -1,6 +1,6 @@
 namespace Trace;
 
-public class Sphere: Shape
+public class Sphere : Shape
 {
 
     public Sphere(Transformation? T = null)
@@ -35,16 +35,8 @@ public class Sphere: Shape
         return new HitRecord(
             Tr * hitPoint,
             Tr * Sphere_Normal(hitPoint, invRay.Dir),
-            Sphere_Point_to_uv(hitPoint),
             firstHitT,
-            r);
-    }
-
-
-    public Vec2D Sphere_Point_to_uv(Point p)
-    {
-        var u = Math.Atan2(p.Y, p.X) / (2.0 * Math.PI);
-        var vec = new Vec2D(3, (float) Math.Acos(Math.Cos((p.Z)/Math.PI)));
-        return vec;
+            r,
+            Sphere_Point_to_uv(hitPoint));
     }
 }
