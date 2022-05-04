@@ -4,7 +4,7 @@ public struct Ray
 {
     public Point Origin { get; set; }
     public Vec Dir { get; set; }
-    private float TMin = 1e-5f;
+    public float TMin = 1e-5f;
     public float TMax = float.PositiveInfinity;
     public int Depth = 0;
 
