@@ -2,7 +2,7 @@ namespace Trace;
 
 public class Sphere : Shape
 {
-
+    
     public Sphere(Transformation? T = null)
         : base(T) { }
 
@@ -41,5 +41,23 @@ public class Sphere : Shape
             firstHitT,
             r,
             Sphere_Point_to_uv(hitPoint));
+    }
+    
+    public override bool? Quick_Ray_Intersection(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        var originVec = invRay.Origin.To_Vec();
+        var a = invRay.Dir.Squared_Norm();
+        var b = 2.0f * originVec.Dot(invRay.Dir);
+        var c = originVec.Squared_Norm() - 1.0f;
+
+        var delta = b * b - 4.0f * a * c;
+        if (delta <= 0.0f) return false;
+        var sqrt_delta = Math.Sqrt(delta);
+        var tmin = (-b - sqrt_delta) / (2.0 * a);
+        var tmax = (-b + sqrt_delta) / (2.0 * a);
+        return (tmin > invRay.TMin && tmin < invRay.TMax) || (tmax > invRay.TMin  && tmax < invRay.TMax);
+
+
     }
 }
