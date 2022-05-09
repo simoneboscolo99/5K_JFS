@@ -85,7 +85,7 @@ public class ImageTracerTests
     [Fact]
     public void TestImageCoverage() 
     {
-        var solve = new DerivedClass();
+        var solve = new SameColor();
         tracer.Fire_All_Rays(solve);
         for (int row = 0; row < image.Height; row++)
         {

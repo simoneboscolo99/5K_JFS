@@ -27,9 +27,9 @@ public class ImageTracer
         {
             for (int col = 0; col < Image.Width; col++)
             {
-                //var ray = ImageTracer.Fire_Ray(col, row, 0.5f, 0.5f);
+                var ray = Fire_Ray(col, row, 0.5f, 0.5f);
                 //var color = new DerivedClass();
-                Image.Set_Pixel(col, row, solver.AbstractMethod());
+                Image.Set_Pixel(col, row, solver.Tracing(ray));
             }
         }
     }
