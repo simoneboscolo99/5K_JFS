@@ -38,7 +38,7 @@ try
     ICamera camera;
     if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspetcRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
     else camera = new PerspectiveCamera(aspectRatio: aspetcRatio, t:  obsRot * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
-    
+
     var tracer = new ImageTracer(image, camera);
     
     // Rendering
