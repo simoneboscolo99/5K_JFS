@@ -54,6 +54,13 @@ public class CameraTests
         Assert.True(ray3.At(1.0f).Is_Close(new Point(0.0f, 2.0f, 1.0f)), "Test point ray3");
         Assert.True(ray4.At(1.0f).Is_Close(new Point(0.0f, -2.0f, 1.0f)), "Test point ray4");
     }
+}
+
+public class ImageTracerTests 
+{
+    static HdrImage image = new(4, 2);
+    static PerspectiveCamera camera = new (aspectRatio: 2.0f);
+    ImageTracer tracer = new (image, camera);
 
 }
 
@@ -86,18 +93,24 @@ public class ImageTracerTests
         Assert.True(ray1.Is_Close(ray2), "Test Fire Ray ray1-ray2");
 
     }
-
+    
     [Fact]
-    public void TestImageCoverage()
+    public void Test_uv_SubMapping()
+    {
+        var ray1 = tracer.Fire_Ray(0, 0, 2.5f, 1.5f);
+        var ray2 = tracer.Fire_Ray(2, 1);
+        Assert.True(ray1.Is_Close(ray2), "Test Fire Ray ray1-ray2");
+    }
+    
+    [Fact]
+    public void TestImageCoverage() 
     {
         var solve = new SameColor();
         tracer.Fire_All_Rays(solve);
         for (int row = 0; row < image.Height; row++)
         {
             for (int col = 0; col < image.Width; col++)
-            {
                 Assert.True(image.Get_Pixel(col, row).Is_Close(new Color(1.0f, 2.0f, 3.0f)), "Test solver");
-            }
         }
     }
 }
