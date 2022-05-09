@@ -56,14 +56,6 @@ public class CameraTests
     }
 }
 
-public class ImageTracerTests 
-{
-    static HdrImage image = new(4, 2);
-    static PerspectiveCamera camera = new (aspectRatio: 2.0f);
-    ImageTracer tracer = new (image, camera);
-
-}
-
 public class ImageTracerTests
 {
     static HdrImage image = new(4, 2);
@@ -82,18 +74,6 @@ public class ImageTracerTests
         Assert.True(bottomRightRay.At(1.0f).Is_Close(new Point(0.0f, -2.0f, -1.0f)), "Test ray bottom-right corner");
     }
 
-    [Fact]
-    public void Test_uv_SubMapping()
-    {
-        var image = new HdrImage(4, 2);
-        var camera = new PerspectiveCamera(aspectRatio: 2.0f);
-        var tracer = new ImageTracer(image, camera);
-        var ray1 = tracer.Fire_Ray(0, 0, 2.5f, 1.5f);
-        var ray2 = tracer.Fire_Ray(2, 1);
-        Assert.True(ray1.Is_Close(ray2), "Test Fire Ray ray1-ray2");
-
-    }
-    
     [Fact]
     public void Test_uv_SubMapping()
     {
