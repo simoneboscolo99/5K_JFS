@@ -21,7 +21,7 @@ public static class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {args[1]}, it must be a floating-point number ");
+            throw new RuntimeException($"Invalid factor {args[1]}, it must be a floating-point number");
         }
         try
         {
@@ -29,10 +29,59 @@ public static class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {args[2]}, it must be a floating-point number ");
+            throw new RuntimeException($"Invalid factor {args[2]}, it must be a floating-point number");
         }
 
         OutputFileName = args[3];
         Format = Path.GetExtension(OutputFileName);
+    }
+
+    // DEMO
+    public static int Width = 480;
+    public static int Height = 480;
+    public static float AngleDeg = 0.0f;
+    public static bool Orthogonal = false;
+    public static void Parse_Command_Line_Demo(string[] args)
+    {
+        if (args.Length < 2) 
+            throw new RuntimeException("Usage: dotnet run WIDTH HEIGHT ANGLE_DEG ORTHOGONAL \n" +
+                                       "If ANGLE_DEG and ORTHOGONAL are not specified, default values are used \n" +
+                                       "Default values: \n" +
+                                       "ANGLE_DEG = 0.0 \n" +
+                                       "ORTHOGONAL = false \n");
+        try
+        {
+            Width = Convert.ToInt32(args[0]);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {args[0]}, it must be an integer");
+        }
+        try
+        {
+            Height = Convert.ToInt32(args[1]);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {args[1]}, it must be an integer");
+        }
+
+        if (args.Length > 2)
+        {
+            try
+            {
+                AngleDeg = Convert.ToSingle(args[2]);
+            }
+            catch
+            {
+                throw new RuntimeException($"Invalid factor {args[2]}, it must be a floating-point number");
+            }
+        }
+
+        if (args.Length == 4)
+        {
+            if (args[3].ToUpper() == "ORTHOGONAL") Orthogonal = true;
+            else throw new RuntimeException($"Invalid factor {args[3]}, it must be the word orthogonal se si vuole usare proiezione ortogonale");
+        } 
     }
 }
