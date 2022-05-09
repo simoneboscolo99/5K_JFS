@@ -8,10 +8,10 @@ public struct Ray
     public float TMax = float.PositiveInfinity;
     public int Depth = 0;
 
-    public Ray(Point p, Vec v, float? tmin = null)
+    public Ray(Point o, Vec dir, float? tmin = null)
     {
-        Origin = p;
-        Dir = v;
+        Origin = o;
+        Dir = dir;
         if (tmin != null) TMin = (float)tmin;
     }
 
