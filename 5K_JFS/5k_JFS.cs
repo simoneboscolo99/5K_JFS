@@ -5,7 +5,7 @@ using _5K_JFS;
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
 
-// References for CLI
+// References for CLI (Command Line Interface)
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
 // https://www.areilly.com/2017/04/21/command-line-argument-parsing-in-net-core-with-microsoft-extensions-commandlineutils/
 
@@ -84,6 +84,7 @@ app.Command("demo", (command) =>
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
                         + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
+            
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
     
@@ -211,7 +212,7 @@ app.OnExecute(() =>
 try
 {
     // This begins the actual execution of the application
-    // Console.WriteLine("Executing... \n\n\n");
+    Console.WriteLine("Executing... \n\n\n");
     app.Execute(args);
 }
 catch (CommandParsingException ex)
