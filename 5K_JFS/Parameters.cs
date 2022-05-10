@@ -37,13 +37,41 @@ public static class Parameters
     }
 
     // DEMO
-    public static int Width = 480;
-    public static int Height = 480;
-    public static float AngleDeg = 0.0f;
-    public static bool Orthogonal = false;
-    public static void Parse_Command_Line_Demo(string[] args)
+    public static int Width;
+    public static int Height ;
+    public static float AngleDeg;
+    public static bool Orthogonal;
+    public static void Parse_Command_Line_Demo(string? width, string? height, string? angle)
     {
-        if (args.Length < 2) 
+        var w = width ?? "480";
+        var h = height ?? "480";
+        var a = angle ?? "0";
+
+        try
+        {
+            Width = Convert.ToInt32(w);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {w}, it must be an integer");
+        }
+        try
+        {
+            Height = Convert.ToInt32(h);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {h}, it must be an integer");
+        }
+        try
+        {
+            AngleDeg = Convert.ToInt32(a);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {a}, it must be a floating-point number");
+        }
+        /*if (args.Length < 2) 
             throw new RuntimeException("Usage: dotnet run WIDTH HEIGHT ANGLE_DEG ORTHOGONAL \n" +
                                        "If ANGLE_DEG and ORTHOGONAL are not specified, default values are used \n" +
                                        "Default values: \n" +
@@ -82,6 +110,6 @@ public static class Parameters
         {
             if (args[3].ToUpper() == "ORTHOGONAL") Orthogonal = true;
             else throw new RuntimeException($"Invalid factor {args[3]}, it must be the word orthogonal se si vuole usare proiezione ortogonale");
-        } 
+        } */
     }
 }
