@@ -2,37 +2,53 @@ using Trace;
 
 namespace _5K_JFS;
 
-public static class Parameters
+public class Parameters
 {
     public static string InputPfmFileName = "";
-    public static float A = 0.2f;
+    public static float Factor = 0.2f;
     public static float Gamma = 1.0f;
     public static string OutputFileName = "";
     public static string Format = "";
 
-    public static void Parse_Command_Line(string[] args)
+    public static void Parse_Command_Line_Convert(string? inputFilename, string? outputFilename, string? gamma, string? factor)
     {
-        if (args.Length != 4)
-            throw new RuntimeException("Usage: dotnet run INPUT_PFM_FILE FACTOR_A GAMMA OUTPUT_FILE");
-        InputPfmFileName = args[0];
+        var i = inputFilename ?? "Input_Pfm/memorial.pfm";
+        var o = outputFilename ?? "Images/output.png";
+        var g = gamma ?? "1";
+        var f = factor ?? "0,2";
+        
         try
         {
-            A = Convert.ToSingle(args[1]);
+            InputPfmFileName = Convert.ToString(i);
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {args[1]}, it must be a floating-point number");
+            throw new RuntimeException($"Invalid factor {i}, it must be a string");
         }
         try
         {
-            Gamma = Convert.ToSingle(args[2]);
+            OutputFileName = Convert.ToString(o);
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {args[2]}, it must be a floating-point number");
+            throw new RuntimeException($"Invalid factor {o}, it must be a string");
         }
-
-        OutputFileName = args[3];
+        try
+        {
+            Gamma = Convert.ToSingle(g);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {g}, it must be a floating-point number");
+        }
+        try
+        {
+            Factor = Convert.ToSingle(f);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {f}, it must be a floating-point number");
+        }
         Format = Path.GetExtension(OutputFileName);
     }
 

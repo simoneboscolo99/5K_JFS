@@ -2,8 +2,8 @@
 //not yet :) .... This program is an "image order" RayTracer
 
 using _5K_JFS;
-using Trace;
 using Microsoft.Extensions.CommandLineUtils;
+using Trace;
 
 // References for CLI
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
@@ -80,7 +80,7 @@ app.Command("demo", (command) =>
             Parameters.Parse_Command_Line_Demo(w, h, angle);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
-                        + $"A: {Parameters.A} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
+                        + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
@@ -122,7 +122,7 @@ app.Command("demo", (command) =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.A);
+            image.Luminosity_Norm(Parameters.Factor);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
@@ -149,23 +149,60 @@ app.Command("demo", (command) =>
 // e.g ConsoleArgs "first value" "second value"
 // This is OK for really simple tasks, but generally you're better off using Options
 // since they avoid confusion
+app.Command("convert", (command) =>
+{
+    command.Description = "This is the description for convert.";
 
-/*HdrImage image;
+    var inputFilename = command.Option("-i|--inputFilename <INPUT_FILENAME>", "Name of the input file", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Name of the output file", CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <GAMMA>", "Exponent for gamma-correction", CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FACTOR>", "Multiplicative factor", CommandOptionType.SingleValue);
+    
+    command.HelpOption("-?|-h|--help");
+
+    command.OnExecute(() =>
+    {
+        Console.WriteLine("Executing convert");
+
+        var i = inputFilename.Value();
+        var o = outputFilename.Value();
+        var g = gamma.Value();
+        var f = factor.Value();
+        try
+        {
+            Parameters.Parse_Command_Line_Convert(i,o,g,f);
+            var image = new HdrImage(Parameters.InputPfmFileName);
+            // Tone mapping
+            image.Luminosity_Norm(Parameters.Factor);
+            image.Clamp_Image();
+
+            //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
+            image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }   
+        return 0; // return 0 on a successful execution
+    });
+});
+
+// Executed when no commands are specified
+app.OnExecute(() =>
+{
+    app.ShowHelp();
+    return 0;
+});
+
 try
 {
-    Parameters.Parse_Command_Line(args);
-    image = new HdrImage(Parameters.InputPfmFileName);
-    // Tone mapping
-    image.Luminosity_Norm(Parameters.A);
-    image.Clamp_Image();
-
-    //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
-    image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
+    app.Execute(args);
 }
 catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
-}*/
+    app.ShowHelp();
+}
 
 // When no commands are specified, this block will execute.
 // This is the main "command"
