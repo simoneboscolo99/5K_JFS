@@ -65,7 +65,7 @@ public static class Parameters
         }
         try
         {
-            AngleDeg = Convert.ToInt32(a);
+            AngleDeg = Convert.ToSingle(a);
         }
         catch
         {

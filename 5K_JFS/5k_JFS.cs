@@ -5,10 +5,19 @@ using _5K_JFS;
 using Trace;
 using Microsoft.Extensions.CommandLineUtils;
 
-var app = new CommandLineApplication();
-app.Name = "dotnet run";
-app.Description = ".NET Core console app with argument parsing.";
+// References for CLI
+// https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
+// https://www.areilly.com/2017/04/21/command-line-argument-parsing-in-net-core-with-microsoft-extensions-commandlineutils/
 
+// Instantiate the command line app
+var app = new CommandLineApplication
+{
+    Name = "dotnet run",
+    Description = ".NET Core console app with argument parsing.",
+    ExtendedHelpText = "\n This is the extended help text for the application.\n"
+};
+
+// Set the arguments to display the description and help text
 app.HelpOption("-?|-h|--help");
 
 // ===========================================================================
@@ -18,7 +27,10 @@ app.HelpOption("-?|-h|--help");
 // This is a command with no arguments - it just does default action.
 app.Command("demo", (command) =>
 {
+    // This is a command that has it's own options
+    // description and help text of the command
     command.Description = "This is the description for demo.";
+    command.ExtendedHelpText = "\nThis is the extended help text for demo.\n";
 
     // OPTIONS
     // There are 3 possible option types:
@@ -31,15 +43,18 @@ app.Command("demo", (command) =>
     
     // SingleValue: A basic Option with a single value
     // e.g. -s sampleValue
-    var width = command.Option("--width <WIDTH>", "Width of the image", CommandOptionType.SingleValue);
-    var height = command.Option("--height <HEIGHT>", "Height of the image", CommandOptionType.SingleValue);
-    var angleDeg = command.Option("-a|--angle-deg <ANGLE_DEG>", "Angle of view", CommandOptionType.SingleValue);
+    // Option: it starts with a pipe-delimited list of option flags/names to use
+    // Optionally, It is then followed by a space and a short description of the value to specify.
+    // e.g. here we could also just use "-o|--option"
+    var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
+    var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
+    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
 
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
-    
-    command.HelpOption("-?|-h|--help");
 
+    command.HelpOption("-?|-h|--help");
+    
     command.OnExecute(() =>
     {
         // Do the command's work here, or via another object/method  
@@ -50,6 +65,10 @@ app.Command("demo", (command) =>
 
         // The NoValue type has no Value property, just the HasValue() method.
         Parameters.Orthogonal = orthogonal.HasValue();
+        
+        // Check if the various options have values and display them.
+        // Here we're checking HasValue() to see if there is a value before displaying the output.
+        // Alternatively, you could just handle nulls from the Value properties
         
         // SingleValue returns a single string
         var w = width.Value();
@@ -122,27 +141,14 @@ app.Command("demo", (command) =>
     });
 });
 
-// Executed when no commands are specified
-app.OnExecute(() =>
-{
-    app.ShowHelp();
-    return 0;
-});
-
-try
-{
-    app.Execute(args);
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-    app.ShowHelp();
-}
-
-
 // ===========================================================================
-// === PFM2PNG === PFM2PNG === PFM2PNG === PFM2PNG === PFM2PNG === PFM2PNG === 
+// === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === 
 // ===========================================================================
+
+// Arguments are basic arguments, that are parsed in the order they are given
+// e.g ConsoleArgs "first value" "second value"
+// This is OK for really simple tasks, but generally you're better off using Options
+// since they avoid confusion
 
 /*HdrImage image;
 try
@@ -160,3 +166,30 @@ catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
 }*/
+
+// When no commands are specified, this block will execute.
+// This is the main "command"
+app.OnExecute(() =>
+{
+    app.ShowHelp();
+    return 0;
+});
+
+try
+{
+    // This begins the actual execution of the application
+    Console.WriteLine("Executing... \n\n\n");
+    app.Execute(args);
+}
+catch (CommandParsingException ex)
+{
+    // You'll always want to catch this exception, otherwise it will generate a messy and confusing error for the end user.
+    // the message will usually be something like:
+    // "Unrecognized command or argument '<invalid-command>'"
+    Console.WriteLine(ex.Message);
+    app.ShowHelp();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Unable to execute application: {0}", ex.Message);
+}
