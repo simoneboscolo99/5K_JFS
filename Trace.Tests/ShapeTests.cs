@@ -208,16 +208,15 @@ public class PlaneTests
     {
         var plane = new Plane();
 
-        /*var ray1 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, -1.0f));
+        var ray1 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, -1.0f));
         var intersection1 = plane.Ray_Intersection(ray1);
         
+        Assert.True(intersection1 != null, "Check intersection 1");
         Assert.True(new HitRecord(
-            new Point(0.0f, 0.0f, 0.0f),
-            new Normal(0.0f, 0.0f, 1.0f),
-            1.0f,
-            ray1,
+            new Point(0.0f, 0.0f, 0.0f), 
+            new Normal(0.0f, 0.0f, 1.0f), 1.0f, ray1, 
             new Vec2D(0.0f, 0.0f)
-        ).Is_Close(intersection1), "Test hit plane 1"); */
+            ).Is_Close(intersection1), "Test hit plane 1"); 
 
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
@@ -238,7 +237,7 @@ public class PlaneTests
     public void TestTransformationPlane()
     {
         var plane = new Plane(Transformation.Rotation_Y(90.0f));
-        /*var ray1 = new Ray(new Point(1.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
+        var ray1 = new Ray(new Point(1.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
         var intersection1 = plane.Ray_Intersection(ray1);
         
         Assert.True(new HitRecord(
@@ -247,7 +246,7 @@ public class PlaneTests
             1.0f,
             ray1,
             new Vec2D(0.0f, 0.0f)
-        ).Is_Close(intersection1), "Test hTplane 1");*/
+        ).Is_Close(intersection1), "Test hTplane 1");
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
         var intersection2 = plane.Quick_Ray_Intersection(ray2);
@@ -262,7 +261,7 @@ public class PlaneTests
         Assert.False((intersection4 != null), "Hit 4 transformPlane");
 
     }
-/*
+
     [Fact]
     public void TestUvCoordinatesPlane()
     {
@@ -281,7 +280,7 @@ public class PlaneTests
         var intersection3 = plane.Ray_Intersection(ray3);
         Assert.True(intersection3 != null && intersection3.SurfacePoint.Is_Close(new Vec2D(0.25f, 0.75f)),
             "test UV coord planes 3");
-    }*/
+    }
 }
         
 

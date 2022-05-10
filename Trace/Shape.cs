@@ -137,17 +137,31 @@ public class Sphere : Shape
     
 }
 
+/// <summary>
+/// A 3D infinite plane parallel to the x and y axis and passing through the origin.
+/// </summary>
 public class Plane : Shape
 {
+    
+    /// <summary>
+    /// Create a xy plane, potentially associating a transformation to it
+    /// </summary>
+    /// <param name="T"></param>
     public Plane(Transformation? T = null)
         : base(T) { }
 
+    /// <summary>
+    /// Checks if a ray intersects the plane. Return a `HitRecord`, or `None` if no intersection was found.
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
     { 
-        // checks if a ray intersects a plane
         var invRay = Tr.Inverse * r;
+        // Direction of the ray must not be parallel to the plane: z-component of dir different from zero (10^-5)
         if (Math.Abs(invRay.Dir.Z) < 1e-5f) return null;
-        var t = -invRay.Dir.Z / invRay.Dir.Y;
+        
+        var t = -invRay.Origin.Z / invRay.Dir.Z;
         //return null if the ray run out of range
         if (t < invRay.TMin || t >= invRay.TMax) return null;
 
@@ -167,12 +181,16 @@ public class Plane : Shape
         );
     }
     
+    /// <summary>
+    /// Quickly checks if a ray intersects the plane
+    /// </summary>
+    /// <param name="r"> Ray </param>
+    /// <returns> True if there is intersection, otherwise false </returns>
     public override bool Quick_Ray_Intersection(Ray r)
         {
-            //Quickly checks if a ray intersects the plane
             var invRay = Tr.Inverse * r;
             if (Math.Abs(invRay.Dir.Z) < 1e-5) return false;
             var t = -invRay.Origin.Z / invRay.Dir.Z;
-            return (invRay.TMin < t & t < invRay.TMax);
+            return (invRay.TMin < t && t < invRay.TMax);
         }
 }
