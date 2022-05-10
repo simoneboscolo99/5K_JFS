@@ -14,7 +14,7 @@ public class World
         World1.Add(shape);
     }
 
-    public HitRecord? ray_intersection(Ray ray)
+    public HitRecord? Ray_Intersection(Ray ray)
     {
         HitRecord? closest = null;
         foreach (var v in World1)
