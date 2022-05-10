@@ -33,7 +33,7 @@ public class OnOffTracing : Solver
     
     public override Color Tracing(Ray ray)
     {
-        return World.ray_intersection(ray) != null ? Color.White : Color.Black;
+        return World.Ray_Intersection(ray) != null ? Color.White : Color.Black;
     }
 }
 

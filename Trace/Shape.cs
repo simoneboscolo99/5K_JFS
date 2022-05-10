@@ -136,3 +136,43 @@ public class Sphere : Shape
         }
     
 }
+
+public class Plane : Shape
+{
+    public Plane(Transformation? T = null)
+        : base(T) { }
+
+    public override HitRecord? Ray_Intersection(Ray r)
+    { 
+        // checks if a ray intersects a plane
+        var invRay = Tr.Inverse * r;
+        if (Math.Abs(invRay.Dir.Z) < 1e-5f) return null;
+        var t = (float) -invRay.Dir.Z / invRay.Dir.Y;
+        //return null if the ray run out of range
+        if (t < invRay.TMin || t >= invRay.TMax) return null;
+
+        var hitPoint = invRay.At(t);
+
+        float dZ;
+        if (invRay.Dir.Z < 0.0f) dZ = 1.0f;
+        else dZ = -1.0f;
+
+        var vec2d = new Vec2D(hitPoint.X - (float)Math.Floor(hitPoint.X), hitPoint.Y - (float)Math.Floor(hitPoint.Y)); 
+        return new HitRecord(
+            Tr * hitPoint,
+            Tr * new Normal(0.0f, 0.0f, dZ),
+            t,
+            r,
+            vec2d
+        );git add
+    }
+    
+    public override bool Quick_Ray_Intersection(Ray r)
+        {
+            //Quickly checks if a ray intersects the plane
+            var invRay = Tr.Inverse * r;
+            if (Math.Abs(invRay.Dir.Z) < 1e-5) return false;
+            var t = -invRay.Origin.Z / invRay.Dir.Z;
+            return (invRay.TMin < t & t < invRay.TMax);
+        }
+}
