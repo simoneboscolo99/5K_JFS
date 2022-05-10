@@ -147,7 +147,7 @@ public class Plane : Shape
         // checks if a ray intersects a plane
         var invRay = Tr.Inverse * r;
         if (Math.Abs(invRay.Dir.Z) < 1e-5f) return null;
-        var t = (float) -invRay.Dir.Z / invRay.Dir.Y;
+        var t = -invRay.Dir.Z / invRay.Dir.Y;
         //return null if the ray run out of range
         if (t < invRay.TMin || t >= invRay.TMax) return null;
 
@@ -157,14 +157,14 @@ public class Plane : Shape
         if (invRay.Dir.Z < 0.0f) dZ = 1.0f;
         else dZ = -1.0f;
 
-        var vec2d = new Vec2D(hitPoint.X - (float)Math.Floor(hitPoint.X), hitPoint.Y - (float)Math.Floor(hitPoint.Y)); 
+        var vec2d = new Vec2D(hitPoint.X - (float)Math.Floor(hitPoint.X), hitPoint.Y - (float)Math.Floor(hitPoint.Y));
         return new HitRecord(
             Tr * hitPoint,
             Tr * new Normal(0.0f, 0.0f, dZ),
             t,
             r,
             vec2d
-        );git add
+        );
     }
     
     public override bool Quick_Ray_Intersection(Ray r)
