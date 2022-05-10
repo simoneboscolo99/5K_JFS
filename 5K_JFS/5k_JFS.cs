@@ -14,7 +14,7 @@ var app = new CommandLineApplication
 {
     Name = "dotnet run",
     Description = ".NET Core console app with argument parsing.",
-    ExtendedHelpText = "\n This is the extended help text for the application.\n"
+    ExtendedHelpText = "\nThis is the extended help text for the application.\n"
 };
 
 // Set the arguments to display the description and help text
@@ -49,6 +49,7 @@ app.Command("demo", (command) =>
     var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
     var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
     var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
 
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
@@ -74,10 +75,11 @@ app.Command("demo", (command) =>
         var w = width.Value();
         var h = height.Value();
         var angle = angleDeg.Value();
+        var output = outputFilename.Value();
         
         try
         {
-            Parameters.Parse_Command_Line_Demo(w, h, angle);
+            Parameters.Parse_Command_Line_Demo(w, h, angle, output);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
                         + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
@@ -126,10 +128,10 @@ app.Command("demo", (command) =>
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
-            const string pngDemoPath = "Demo.png";
-            Parameters.Format = Path.GetExtension(pngDemoPath);
-            image.Write_Ldr_Image(pngDemoPath, Parameters.Format, Parameters.Gamma);
-            Console.WriteLine($"PNG demo image written to {pngDemoPath}");
+            //const string pngDemoPath = "Demo.png";
+            //Parameters.Format = Path.GetExtension(pngDemoPath);
+            image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
+            Console.WriteLine($"PNG demo image written to {Parameters.OutputFileName}");
         }
         
         catch (Exception ex)
@@ -140,6 +142,10 @@ app.Command("demo", (command) =>
         return 0; // return 0 on a successful execution
     });
 });
+// ===========================================================================
+// === END === END === END === END === END === END === END === END === END ==
+// ===========================================================================
+
 
 // ===========================================================================
 // === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === 
@@ -152,9 +158,11 @@ app.Command("demo", (command) =>
 app.Command("convert", (command) =>
 {
     command.Description = "This is the description for convert.";
+    command.ExtendedHelpText = "\nThis is the extended help text for convert.\n";
 
-    var inputFilename = command.Option("-i|--inputFilename <INPUT_FILENAME>", "Name of the input file", CommandOptionType.SingleValue);
-    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Name of the output file", CommandOptionType.SingleValue);
+
+    var inputFilename = command.Option("-i|--inputFilename <INPUT_FILENAME>", "Path of the input file", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
     var gamma = command.Option("-g|--gamma <GAMMA>", "Exponent for gamma-correction", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FACTOR>", "Multiplicative factor", CommandOptionType.SingleValue);
     
@@ -186,23 +194,11 @@ app.Command("convert", (command) =>
         return 0; // return 0 on a successful execution
     });
 });
+// ===========================================================================
+// === END === END === END === END === END === END === END === END === END ==
+// ===========================================================================
 
-// Executed when no commands are specified
-app.OnExecute(() =>
-{
-    app.ShowHelp();
-    return 0;
-});
 
-try
-{
-    app.Execute(args);
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
-    app.ShowHelp();
-}
 
 // When no commands are specified, this block will execute.
 // This is the main "command"
@@ -215,7 +211,7 @@ app.OnExecute(() =>
 try
 {
     // This begins the actual execution of the application
-    Console.WriteLine("Executing... \n\n\n");
+    // Console.WriteLine("Executing... \n\n\n");
     app.Execute(args);
 }
 catch (CommandParsingException ex)

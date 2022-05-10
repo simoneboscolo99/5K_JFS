@@ -57,11 +57,12 @@ public class Parameters
     public static int Height ;
     public static float AngleDeg;
     public static bool Orthogonal;
-    public static void Parse_Command_Line_Demo(string? width, string? height, string? angle)
+    public static void Parse_Command_Line_Demo(string? width, string? height, string? angle, string? outputFilename)
     {
         var w = width ?? "480";
         var h = height ?? "480";
         var a = angle ?? "0";
+        var output = outputFilename ?? "demo.png";
 
         try
         {
@@ -87,6 +88,15 @@ public class Parameters
         {
             throw new RuntimeException($"Invalid factor {a}, it must be a floating-point number");
         }
+        try
+        {
+            OutputFileName = Convert.ToString(output);
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {output}, it must be a string");
+        }
+        Format = Path.GetExtension(OutputFileName);
         /*if (args.Length < 2) 
             throw new RuntimeException("Usage: dotnet run WIDTH HEIGHT ANGLE_DEG ORTHOGONAL \n" +
                                        "If ANGLE_DEG and ORTHOGONAL are not specified, default values are used \n" +

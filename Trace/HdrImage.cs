@@ -12,11 +12,12 @@ namespace Trace;
 
 public class HdrImage
 {
-    //CONSTRUCTORS-------------------------------------------------------------------------------
     public int Height { get; set; }
     public int Width { get; set; }
     public List<Color> Image { get; set; }
 
+    // ======== CONSTRUCTORS ========
+    
     /// <summary>
     /// HdrImage constructor
     /// </summary> Matrix of elements Color
@@ -344,6 +345,11 @@ public class HdrImage
                     bitmap.Save(fileStream, new PbmEncoder());
                     break;
                 }
+                        
+            // statements to execute when a match expression doesn't match any other case pattern
+            default:
+                throw new InvalidPfmFileFormat("\nInvalid output Ldr file format. Possible formats are:" +
+                                               "\n -.PNG\n -.JPG or .JPEG\n -.GIF\n -.BMP\n -.PBM\n");
         }
     }
 }
