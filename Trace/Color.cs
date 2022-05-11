@@ -5,6 +5,9 @@ public struct Color
     public float R { get; set; }
     public float G { get; set; }
     public float B { get; set; }
+    
+    public static Color Black = new Color();
+    public static Color White = new Color(1.0f, 1.0f, 1.0f);
 
     /// <summary>
     /// Color Constructor
@@ -86,8 +89,6 @@ public struct Color
     {
         return (Math.Max(R, Math.Max(G, B)) + Math.Min(R, Math.Min(G, B))) / 2.0f;
     }
-
-
-
+    
 }
 

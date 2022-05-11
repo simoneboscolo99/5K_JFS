@@ -21,6 +21,13 @@ public class ImageTracer
         return Cam.Fire_Ray(u, v);
     }
     
+    /// <summary>
+    /// Shoot several light rays crossing each of the pixels in the image.
+    /// For each pixel in the :class:`.HdrImage` object fire one ray, and pass it to the function `func`, which
+    /// must accept a :class:`.Ray` as its only parameter and must return a :class:`.Color` instance telling the
+    /// color to assign to that pixel in the image.
+    /// </summary>
+    /// <param name="solver"></param>
     public void Fire_All_Rays(Solver solver)
     {
         for (int row = 0; row < Image.Height; row++)

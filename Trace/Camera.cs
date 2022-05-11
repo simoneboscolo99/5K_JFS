@@ -14,12 +14,12 @@ public interface ICamera
 /// Implementation of ICamera, axonometric view, all the rays come from infinity with the same direction
 /// </summary>
 public class OrthogonalCamera : ICamera
-{    
+{
     /// <summary>
     /// This parameter defines how larger than the height is the image. For fullscreen images, you should probably set `AspectRatio` to 16/9.
     /// </summary>
     public float AspectRatio { get; set; }
-    
+
     public Transformation T { get; set; }
 
     public OrthogonalCamera(float aspectRatio = 1.0f, Transformation? t = null)

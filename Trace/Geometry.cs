@@ -252,3 +252,30 @@ public struct Normal
         => new(X / Norm(), Y / Norm(), Z / Norm());
 
 }
+
+/// <summary>
+/// A 2D vector used to represent a point on a surface.
+/// The fields are named `u` and `v` to distinguish them from the usual 3D coordinates `x`, `y`, `z`.
+/// </summary>
+public struct Vec2D
+{
+    public float U = 0.0f;
+    public float V = 0.0f;
+
+    public Vec2D(float u, float v)
+    {
+        U = u;
+        V = v;
+    }
+
+    /// <summary>
+    /// Check whether two `Vec2d` points are roughly the same or not
+    /// </summary>
+    /// <param name="v"></param>
+    /// <returns></returns>
+    public bool Is_Close(Vec2D v)
+        => Functions.Are_Close(U, v.U) && Functions.Are_Close(V, v.V);
+
+    public override string ToString() => $"({U}, {V})";
+
+}

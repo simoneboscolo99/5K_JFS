@@ -4,15 +4,15 @@ public struct Ray
 {
     public Point Origin { get; set; }
     public Vec Dir { get; set; }
-    private float TMin = 1e-5f;
+    public float TMin = 1e-5f;
     public float TMax = float.PositiveInfinity;
     public int Depth = 0;
 
-    public Ray(Point p, Vec v, float? tmin = null)
+    public Ray(Point o, Vec dir, float? tmin = null)
     {
-        Origin = p;
-        Dir = v;
-        if (tmin != null) TMin = (float) tmin;
+        Origin = o;
+        Dir = dir;
+        if (tmin != null) TMin = (float)tmin;
     }
 
     public bool Is_Close(Ray b, float eps = 1e-5f)
@@ -21,5 +21,5 @@ public struct Ray
 
     public Point At(float t) //returns the point reached by the ray at a distance t, measured in units length of Dir
         => Origin + Dir * t;
-        
+
 }
