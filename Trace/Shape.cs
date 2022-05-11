@@ -142,7 +142,6 @@ public class Sphere : Shape
 /// </summary>
 public class Plane : Shape
 {
-    
     /// <summary>
     /// Create a xy plane, potentially associating a transformation to it
     /// </summary>
