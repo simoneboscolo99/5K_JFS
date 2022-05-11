@@ -87,4 +87,38 @@ public class CheckeredPigment : Pigment
   
 }
 
+public abstract class Brdf
+//An abstract class representing a Bidirectional Reflectance Distribution Function
+{
+  public Pigment? Pg;
+
+  protected Brdf(Pigment? pigment)
+  {
+    Pg = pigment;
+  }
+
+  public virtual Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
+  {
+    return Color.Black;
+  }
+
+  public abstract Ray Scatter_Ray(Pcg pcg, Vec incomingDir, 
+    Point interactionPoint, Normal normal, int depth);
+}
+
+public class DiffuseBrdf : Brdf
+//A class representing an ideal diffuse BRDF (also called «Lambertian»)
+{
+  public DiffuseBrdf(Pigment? p) : base(p)
+  {
+    Pg = new UniformPigment(Color.White);
+  }
+  public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
+    {
+      return Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
+    }
+  //manca override Scatter_Ray
+  }
+
+
 
