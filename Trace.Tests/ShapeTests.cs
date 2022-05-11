@@ -11,6 +11,8 @@ public class SphereTests
         var sphere = new Sphere();
         var ray1 = new Ray(new Point(0.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
         var intersection1 = sphere.Ray_Intersection(ray1);
+        var hit1 = sphere.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
         Assert.True(intersection1!=null, "Test intersection 1");
         Assert.True(new HitRecord(
             new Point(0.0f, 0.0f, 1.0f), 
@@ -22,6 +24,8 @@ public class SphereTests
         
         var ray2 = new Ray(new Point(3.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
         var intersection2 = sphere.Ray_Intersection(ray2);
+        var hit2 = sphere.Quick_Ray_Intersection(ray1);
+        Assert.True(hit2, "Test quick intersection 2");
         Assert.True(intersection2!=null, "Test intersection 2");
         Assert.True(new HitRecord(
             new Point(1.0f, 0.0f, 0.0f), 
@@ -32,6 +36,8 @@ public class SphereTests
         ).Is_Close(intersection2), "Test hit 2");
         
         Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 10.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null, "Test no intersection");
+        Assert.False(sphere.Quick_Ray_Intersection(new Ray(new Point(0.0f, 10.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))), "Test no quick intersection");
+
     }
     [Fact]
     public void TestInnerHit()
@@ -55,6 +61,8 @@ public class SphereTests
         var sphere = new Sphere(Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f)));
         var ray1 = new Ray(new Point(10.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
         var intersection1 = sphere.Ray_Intersection(ray1);
+        var hit1 = sphere.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
         Assert.True(intersection1 != null, "Test intersection 1");
         Assert.True(new HitRecord(
             new Point(10.0f, 0.0f, 1.0f),
@@ -210,7 +218,9 @@ public class PlaneTests
 
         var ray1 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, -1.0f));
         var intersection1 = plane.Ray_Intersection(ray1);
-        
+        var hit1 = plane.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+
         Assert.True(intersection1 != null, "Check intersection 1");
         Assert.True(new HitRecord(
             new Point(0.0f, 0.0f, 0.0f), 
@@ -221,6 +231,8 @@ public class PlaneTests
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
         var intersection2 = plane.Ray_Intersection(ray2);
+        var hit2 = plane.Quick_Ray_Intersection(ray2);
+        Assert.False(hit2, "Test quick intersection 2");
         Assert.False((intersection2 != null), "Hit 2 Plane");
 
         var ray3 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.1f, 0.0f, 0.0f));
@@ -239,6 +251,8 @@ public class PlaneTests
         var plane = new Plane(Transformation.Rotation_Y(90.0f));
         var ray1 = new Ray(new Point(1.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
         var intersection1 = plane.Ray_Intersection(ray1);
+        var hit1 = plane.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
         
         Assert.True(new HitRecord(
             new Point(0.0f, 0.0f, 0.0f),
@@ -249,8 +263,10 @@ public class PlaneTests
         ).Is_Close(intersection1), "Test hTplane 1");
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
-        var intersection2 = plane.Quick_Ray_Intersection(ray2);
-        Assert.False(intersection2, "Test hTp 2");
+        var intersection2 = plane.Ray_Intersection(ray2);
+        var hit2 = plane.Quick_Ray_Intersection(ray2);
+        Assert.False(hit2, "Test quick intersection 2");
+        Assert.False(intersection2 != null, "Test hTp 2");
 
         var ray3 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(1.0f, 0.0f, 0.0f));
         var intersection3 = plane.Ray_Intersection(ray3);
