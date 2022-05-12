@@ -1,6 +1,3 @@
-using System.Xml.Schema;
-using SixLabors.ImageSharp.Processing;
-
 namespace Trace;
 
 // Abstract class
@@ -37,6 +34,7 @@ public class OnOffTracing : Solver
     }
 }
 
+/*
 /// <summary>
 /// A «flat» renderer.
 /// </summary>
@@ -63,5 +61,5 @@ public class FlatTracing : Solver
                 Material.EmittedRadiance.Get_Color(hit.SurfacePoint));
 
     }
-}
+} */
 
