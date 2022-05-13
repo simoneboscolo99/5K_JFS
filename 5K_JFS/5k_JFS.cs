@@ -49,6 +49,8 @@ app.Command("demo", (command) =>
     var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
     var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
     var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <Float> ", "Gamma parameter", CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <Float> ", "Factor parameter", CommandOptionType.SingleValue);
     var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
 
     // NoValue are basically booleans: true if supplied, false otherwise
@@ -75,11 +77,13 @@ app.Command("demo", (command) =>
         var w = width.Value();
         var h = height.Value();
         var angle = angleDeg.Value();
+        var g = gamma.Value();
+        var f = factor.Value();
         var output = outputFilename.Value();
-        
+
         try
         {
-            Parameters.Parse_Command_Line_Demo(w, h, angle, output);
+            Parameters.Parse_Command_Line_Demo(w, h, angle, g, f,output);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
                         + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
@@ -106,7 +110,7 @@ app.Command("demo", (command) =>
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, -0.0f, 0.0f)));
             else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.0f)));
 
             var tracer = new ImageTracer(image, camera);

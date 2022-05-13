@@ -19,7 +19,8 @@ public class SphereTests
             new Normal(0.0f, 0.0f, 1.0f), 
             1.0f, 
             ray1, 
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f),
+            new Material()
             ).Is_Close(intersection1), "Test hit 1");
         
         var ray2 = new Ray(new Point(3.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
@@ -32,7 +33,7 @@ public class SphereTests
             new Normal(1.0f, 0.0f, 0.0f), 
             2.0f, 
             ray2, 
-            new Vec2D(0.0f, 0.5f)
+            new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection2), "Test hit 2");
         
         Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 10.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null, "Test no intersection");
@@ -51,7 +52,7 @@ public class SphereTests
             new Normal(-1.0f, 0.0f, 0.0f),
             1.0f,
             ray,
-            new Vec2D(0.0f, 0.5f)
+            new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection), "Test hit");
     }
 
@@ -69,7 +70,7 @@ public class SphereTests
             new Normal(0.0f, 0.0f, 1.0f),
             1.0f,
             ray1,
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f), new Material()
         ).Is_Close(intersection1), "Test hit 1");
 
         var ray2 = new Ray(new Point(13.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
@@ -80,7 +81,7 @@ public class SphereTests
             new Normal(1.0f, 0.0f, 0.0f),
             2.0f,
             ray2,
-            new Vec2D(0.0f, 0.5f)
+            new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection2), "Test hit 2");
 
         // Check if the sphere failed to move by trying to hit the untransformed shape
@@ -225,7 +226,7 @@ public class PlaneTests
         Assert.True(new HitRecord(
             new Point(0.0f, 0.0f, 0.0f), 
             new Normal(0.0f, 0.0f, 1.0f), 1.0f, ray1, 
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f), new Material()
             ).Is_Close(intersection1), "Test hit plane 1"); 
 
 
@@ -259,7 +260,7 @@ public class PlaneTests
             new Normal(1.0f, 0.0f, 0.0f),
             1.0f,
             ray1,
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f), new Material()
         ).Is_Close(intersection1), "Test hTplane 1");
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));

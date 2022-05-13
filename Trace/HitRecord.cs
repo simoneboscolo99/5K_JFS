@@ -16,6 +16,7 @@ public class HitRecord
     public float T { get; set; }
     public Ray Ray { get; set; }
     public Vec2D SurfacePoint { get; set; }
+    public Material Mt { get; set; }
 
     /// <summary>
     /// Constructor
@@ -25,13 +26,15 @@ public class HitRecord
     /// <param name="t"> T </param>
     /// <param name="ray"> Ray </param>
     /// <param name="sp"> Surface Point </param>
-    public HitRecord(Point wp, Normal nm, float t, Ray ray, Vec2D sp)
+    /// <param name="mt"></param>
+    public HitRecord(Point wp, Normal nm, float t, Ray ray, Vec2D sp, Material mt)
     {
         WorldPoint = wp;
         Normal = nm;
         T = t;
         Ray = ray;
         SurfacePoint = sp;
+        Mt = mt;
     }
 
     /// <summary>
