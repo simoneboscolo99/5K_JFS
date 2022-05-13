@@ -94,13 +94,10 @@ public abstract class Brdf
 
   protected Brdf(Pigment? pigment)
   {
-    Pg = pigment;
+    Pg = pigment ?? new UniformPigment(Color.White);
   }
 
-  public virtual Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
-  {
-    return Color.Black;
-  }
+  public virtual Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv) => Color.Black;
 
   public abstract Ray Scatter_Ray(Pcg pcg, Vec incomingDir, 
     Point interactionPoint, Normal normal, int depth);
@@ -111,14 +108,24 @@ public class DiffuseBrdf : Brdf
 {
   public DiffuseBrdf(Pigment? p) : base(p)
   {
-    Pg = new UniformPigment(Color.White);
+    Pg = p ?? new UniformPigment(Color.White);
   }
   public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
-    {
-      return Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
-    }
-  //manca override Scatter_Ray
+  {
+    if (Pg != null) return Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
+    return default;
   }
 
+  public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
+  {
+    throw new NotImplementedException();
+  }
+}
+
+public class Material
+{
+  public DiffuseBrdf? BRdf;
+  public Pigment EmittedRadiance = new UniformPigment(Color.Black);
+}
 
 

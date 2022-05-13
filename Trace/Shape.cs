@@ -8,14 +8,17 @@ namespace Trace;
 public abstract class Shape
 {
     public Transformation Tr { get; set; }
+    public Material Mt { get; set; }
 
     /// <summary>
     /// Create a shape, potentially associating a transformation to it
     /// </summary>
     /// <param name="t"></param>
-    public Shape(Transformation? t = null)
+    /// <param name="material"></param>
+    public Shape(Transformation? t = null, Material? material = null)
     {
         Tr = t ?? Transformation.Identity();
+        Mt = material ?? new Material();
     }
 
     /// <summary>
@@ -66,13 +69,13 @@ public abstract class Shape
 /// </summary>
 public class Sphere : Shape
 {
-    
-        /// <summary>
-        /// Create a unit sphere, potentially associating a transformation to it
-        /// </summary>
-        /// <param name="T"></param>
-        public Sphere(Transformation? T = null)
-            : base(T) { }
+    /// <summary>
+    /// Create a unit sphere, potentially associating a transformation to it
+    /// </summary>
+    /// <param name="T"></param>
+    /// <param name="material"></param>
+    public Sphere(Transformation? T = null, Material? material =null )
+            : base(T, material) { }
         
         /// <summary>
         /// Checks if a ray intersects the sphere. Return a `HitRecord`, or `Null` if no intersection was found.
@@ -110,7 +113,7 @@ public class Sphere : Shape
                 Tr * Sphere_Normal(hitPoint, invRay.Dir),
                 firstHitT,
                 r,
-                Sphere_Point_to_uv(hitPoint));
+                Sphere_Point_to_uv(hitPoint), Mt);
         }
         
         /// <summary>
@@ -142,13 +145,13 @@ public class Sphere : Shape
 /// </summary>
 public class Plane : Shape
 {
-    
     /// <summary>
     /// Create a xy plane, potentially associating a transformation to it
     /// </summary>
     /// <param name="T"></param>
-    public Plane(Transformation? T = null)
-        : base(T) { }
+    /// <param name="material"></param>
+    public Plane(Transformation? T = null, Material? material = null)
+        : base(T, material) { }
 
     /// <summary>
     /// Checks if a ray intersects the plane. Return a `HitRecord`, or `None` if no intersection was found.
@@ -175,9 +178,7 @@ public class Plane : Shape
         return new HitRecord(
             Tr * hitPoint,
             Tr * new Normal(0.0f, 0.0f, dZ),
-            t,
-            r,
-            vec2d
+            t, r, vec2d, Mt
         );
     }
     
