@@ -19,8 +19,7 @@ public class SphereTests
             new Normal(0.0f, 0.0f, 1.0f), 
             1.0f, 
             ray1, 
-            new Vec2D(0.0f, 0.0f),
-            new Material()
+            new Vec2D(0.0f, 0.0f), new Material()
             ).Is_Close(intersection1), "Test hit 1");
         
         var ray2 = new Ray(new Point(3.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
@@ -299,7 +298,3 @@ public class PlaneTests
             "test UV coord planes 3");
     }
 }
-        
-
-
-

@@ -49,8 +49,8 @@ app.Command("demo", (command) =>
     var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
     var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
     var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
-    var gamma = command.Option("-g|--gamma <Float> ", "Gamma parameter", CommandOptionType.SingleValue);
-    var factor = command.Option("-f|--factor <Float> ", "Factor parameter", CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <FLOAT>", "Gamma parameter", CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FLOAT>", "Factor parameter", CommandOptionType.SingleValue);
     var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
 
     // NoValue are basically booleans: true if supplied, false otherwise
@@ -83,7 +83,7 @@ app.Command("demo", (command) =>
 
         try
         {
-            Parameters.Parse_Command_Line_Demo(w, h, angle, g, f,output);
+
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
                         + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
