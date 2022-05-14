@@ -50,8 +50,10 @@ public class OnOffTracing : Solver
 ///to determine how to compute the final radiance.
 public class FlatTracing : Solver
 {
-    public FlatTracing(World world, Color? background) : base(world, background) {}
-   
+    public FlatTracing(World world, Color? background = null) : base(world, background)
+    {
+    }
+
     public override Color Tracing(Ray ray)
     {
         var hit = World.Ray_Intersection(ray);

@@ -128,5 +128,11 @@ public class Material
 {
   public  DiffuseBrdf? BRdf;
   public Pigment EmittedRadiance = new UniformPigment(Color.Black);
+  
+  public Material(DiffuseBrdf? brdf = null, Pigment? emittedRadiance = null)
+  {
+    BRdf = brdf;
+    EmittedRadiance = emittedRadiance;
+  }
 }
 
