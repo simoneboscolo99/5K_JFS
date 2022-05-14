@@ -1,6 +1,3 @@
-using System.Xml.Schema;
-using SixLabors.ImageSharp.Processing;
-
 namespace Trace;
 
 // Abstract class

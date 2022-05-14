@@ -298,7 +298,3 @@ public class PlaneTests
             "test UV coord planes 3");
     }
 }
-        
-
-
-

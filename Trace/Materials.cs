@@ -87,30 +87,32 @@ public class CheckeredPigment : Pigment
   
 }
 
+//Class representing bidirectional reflectance distribution function
 public abstract class Brdf
-//An abstract class representing a Bidirectional Reflectance Distribution Function
 {
   public Pigment? Pg;
 
   protected Brdf(Pigment? pigment)
   {
-    Pg = pigment ?? new UniformPigment(Color.White);
+    if (pigment == new UniformPigment(Color.White))
+      Pg = new UniformPigment(Color.White);
+    else
+      Pg = pigment;
   }
 
-  public virtual Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv) => Color.Black;
+  public virtual Color Eval(Normal n, Vec vIn, Vec vOut, Vec2D uv) => Color.Black;
 
-  public abstract Ray Scatter_Ray(Pcg pcg, Vec incomingDir, 
-    Point interactionPoint, Normal normal, int depth);
+  public abstract Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth);
 }
 
 public class DiffuseBrdf : Brdf
-//A class representing an ideal diffuse BRDF (also called «Lambertian»)
 {
   public DiffuseBrdf(Pigment? p) : base(p)
   {
-    Pg = p ?? new UniformPigment(Color.White);
+    Pg = p ?? new UniformPigment(Color.White) ;
   }
-  public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
+
+  public override Color Eval(Normal n, Vec vIn, Vec vOut, Vec2D uv)
   {
     if (Pg != null) return Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
     return default;
@@ -124,8 +126,7 @@ public class DiffuseBrdf : Brdf
 
 public class Material
 {
-  public DiffuseBrdf? BRdf;
+  public  DiffuseBrdf? BRdf;
   public Pigment EmittedRadiance = new UniformPigment(Color.Black);
 }
-
 

@@ -73,9 +73,9 @@ public class Sphere : Shape
     /// Create a unit sphere, potentially associating a transformation to it
     /// </summary>
     /// <param name="T"></param>
-    /// <param name="material"></param>
-    public Sphere(Transformation? T = null, Material? material =null )
-            : base(T, material) { }
+    /// <param name="m"></param>
+    public Sphere(Transformation? T = null, Material? m = null)
+            : base(T,m) { }
         
         /// <summary>
         /// Checks if a ray intersects the sphere. Return a `HitRecord`, or `Null` if no intersection was found.
@@ -113,7 +113,9 @@ public class Sphere : Shape
                 Tr * Sphere_Normal(hitPoint, invRay.Dir),
                 firstHitT,
                 r,
-                Sphere_Point_to_uv(hitPoint), Mt);
+                Sphere_Point_to_uv(hitPoint),
+                Mt
+                );
         }
         
         /// <summary>
@@ -149,9 +151,9 @@ public class Plane : Shape
     /// Create a xy plane, potentially associating a transformation to it
     /// </summary>
     /// <param name="T"></param>
-    /// <param name="material"></param>
-    public Plane(Transformation? T = null, Material? material = null)
-        : base(T, material) { }
+    /// <param name="m"></param>
+    public Plane(Transformation? T = null, Material? m = null )
+        : base(T,m) { }
 
     /// <summary>
     /// Checks if a ray intersects the plane. Return a `HitRecord`, or `None` if no intersection was found.
@@ -178,7 +180,10 @@ public class Plane : Shape
         return new HitRecord(
             Tr * hitPoint,
             Tr * new Normal(0.0f, 0.0f, dZ),
-            t, r, vec2d, Mt
+            t,
+            r,
+            vec2d,
+            Mt
         );
     }
     

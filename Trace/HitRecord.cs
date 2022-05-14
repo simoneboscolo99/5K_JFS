@@ -45,7 +45,8 @@ public class HitRecord
     public bool Is_Close(HitRecord? hr = null)
     {
         if (hr == null) return false;
-        return WorldPoint.Is_Close(hr.WorldPoint) && Normal.Is_Close(hr.Normal) && Functions.Are_Close(T, hr.T) && Ray.Is_Close(hr.Ray) && SurfacePoint.Is_Close(hr.SurfacePoint);
+        return WorldPoint.Is_Close(hr.WorldPoint) && Normal.Is_Close(hr.Normal) && Functions.Are_Close(T, hr.T) &&
+               Ray.Is_Close(hr.Ray) && SurfacePoint.Is_Close(hr.SurfacePoint);
     }
 
 }
