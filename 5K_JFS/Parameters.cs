@@ -5,8 +5,8 @@ namespace _5K_JFS;
 public class Parameters
 {
     public static string InputPfmFileName = "";
-    public static float Factor;
-    public static float Gamma;
+    public static float Factor = 0.2f;
+    public static float Gamma = 1.0f;
     public static string OutputFileName = "";
     public static string Format = "";
 

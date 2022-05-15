@@ -1,10 +1,16 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
 
-using _5K_JFS;
-using Microsoft.Extensions.CommandLineUtils;
-using Trace;
+namespace _5K_JFS
+{
+    using Microsoft.Extensions.CommandLineUtils;
+    using Trace;
+    
+    class Program
+    {
 
+        public static void Main(params string[] args)
+        {
 // References for CLI (Command Line Interface)
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
 // https://www.areilly.com/2017/04/21/command-line-argument-parsing-in-net-core-with-microsoft-extensions-commandlineutils/
@@ -227,3 +233,11 @@ catch (Exception ex)
 {
     Console.WriteLine("Unable to execute application: {0}", ex.Message);
 }
+
+        } //Main
+
+    } //Program class
+
+
+
+} //NM4PIG namespace
