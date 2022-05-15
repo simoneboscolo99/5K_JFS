@@ -1,9 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
 
+using System.Drawing;
 using _5K_JFS;
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
+using Color = Trace.Color;
 
 // References for CLI (Command Line Interface)
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
@@ -97,6 +99,7 @@ app.Command("demo", (command) =>
             // Creating the scene
             var world = new World();
             var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
+            var red = new Color(0.9f, 0.15f, 0.33f);
 
             var cube = new List<float> {-0.5f, 0.5f};
             foreach (var x in cube)
@@ -118,7 +121,7 @@ app.Command("demo", (command) =>
             // Rendering
             Console.WriteLine("Using on/off renderer");
             tracer.Fire_All_Rays(new OnOffTracing(world));
-    
+
             Console.WriteLine("Rendering completed");
             
             // Save pfm file

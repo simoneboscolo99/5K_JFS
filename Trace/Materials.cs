@@ -107,7 +107,7 @@ public abstract class Brdf
 
 public class DiffuseBrdf : Brdf
 {
-  public DiffuseBrdf(Pigment? p) : base(p)
+  public DiffuseBrdf(Pigment? p = null) : base(p)
   {
     Pg = p ?? new UniformPigment(Color.White) ;
   }
@@ -127,12 +127,12 @@ public class DiffuseBrdf : Brdf
 public class Material
 {
   public  DiffuseBrdf? BRdf;
-  public Pigment EmittedRadiance = new UniformPigment(Color.Black);
+  public Pigment EmittedRadiance;
   
   public Material(DiffuseBrdf? brdf = null, Pigment? emittedRadiance = null)
   {
     BRdf = brdf;
-    EmittedRadiance = emittedRadiance;
+    EmittedRadiance = emittedRadiance ?? new UniformPigment(Color.Black);
   }
 }
 

@@ -31,7 +31,7 @@ public class SolverTests
         Assert.True(image.Get_Pixel(2, 2).Is_Close(Color.Black));
     }
 
-    [Fact]
+   [Fact]
     public void TestFlatRenderer()
     {
         var sphereColor = new Color(1.0f, 2.0f, 3.0f);
@@ -46,17 +46,17 @@ public class SolverTests
         var renderer = new FlatTracing(world);
         tracer.Fire_All_Rays(renderer);
         
-        Assert.True(image.Get_Pixel(0, 0).Is_Close(Color.Black));
-        Assert.True(image.Get_Pixel(1, 0).Is_Close(Color.Black));
-        Assert.True(image.Get_Pixel(2, 0).Is_Close(Color.Black));
+        Assert.True(image.Get_Pixel(0, 0).Is_Close(Color.Black), "Test 1");
+        Assert.True(image.Get_Pixel(1, 0).Is_Close(Color.Black), "Test 2");
+        Assert.True(image.Get_Pixel(2, 0).Is_Close(Color.Black), "Test 3");
         
-        Assert.True(image.Get_Pixel(0, 1).Is_Close(Color.Black));
-        Assert.True(image.Get_Pixel(1, 1).Is_Close(sphereColor));
-        Assert.True(image.Get_Pixel(2, 1).Is_Close(Color.Black));
+        Assert.True(image.Get_Pixel(0, 1).Is_Close(Color.Black),"Test 4");
+        Assert.True(image.Get_Pixel(1, 1).Is_Close(sphereColor), "Test 5");
+        Assert.True(image.Get_Pixel(2, 1).Is_Close(Color.Black),"Test 6");
         
-        Assert.True(image.Get_Pixel(0, 2).Is_Close(Color.Black));
-        Assert.True(image.Get_Pixel(1, 2).Is_Close(Color.Black));
-        Assert.True(image.Get_Pixel(2, 2).Is_Close(Color.Black));
+        Assert.True(image.Get_Pixel(0, 2).Is_Close(Color.Black),"Test 7");
+        Assert.True(image.Get_Pixel(1, 2).Is_Close(Color.Black), "Test 8");
+        Assert.True(image.Get_Pixel(2, 2).Is_Close(Color.Black), "Test 9");
     }
     
 }

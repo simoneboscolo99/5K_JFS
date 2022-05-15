@@ -54,44 +54,43 @@ public class SphereTests
             new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection), "Test hit");
     }
-
-    [Fact]
-    public void TestTransformation()
-    {
-        var sphere = new Sphere(Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f)));
-        var ray1 = new Ray(new Point(10.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
-        var intersection1 = sphere.Ray_Intersection(ray1);
-        var hit1 = sphere.Quick_Ray_Intersection(ray1);
-        Assert.True(hit1, "Test quick intersection 1");
-        Assert.True(intersection1 != null, "Test intersection 1");
-        Assert.True(new HitRecord(
-            new Point(10.0f, 0.0f, 1.0f),
-            new Normal(0.0f, 0.0f, 1.0f),
-            1.0f,
-            ray1,
-            new Vec2D(0.0f, 0.0f), new Material()
-        ).Is_Close(intersection1), "Test hit 1");
-
-        var ray2 = new Ray(new Point(13.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
-        var intersection2 = sphere.Ray_Intersection(ray2);
-        Assert.True(intersection2 != null, "Test intersection 2");
-        Assert.True(new HitRecord(
-            new Point(11.0f, 0.0f, 0.0f),
-            new Normal(1.0f, 0.0f, 0.0f),
-            2.0f,
-            ray2,
-            new Vec2D(0.0f, 0.5f), new Material()
-        ).Is_Close(intersection2), "Test hit 2");
-
-        // Check if the sphere failed to move by trying to hit the untransformed shape
-        Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
-            "Test no intersection 1");
-
-        // Check if the *inverse* transformation was wrongly applied
-        Assert.False(
-            sphere.Ray_Intersection(new Ray(new Point(-10.0f, 0.0f, 0.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
-            "Test no intersection 2");
-    }
+     [Fact]
+     public void TestTransformation()
+     {
+         var sphere = new Sphere(Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f)));
+         var ray1 = new Ray(new Point(10.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
+         var intersection1 = sphere.Ray_Intersection(ray1);
+         var hit1 = sphere.Quick_Ray_Intersection(ray1);
+         Assert.True(hit1, "Test quick intersection 1");
+         Assert.True(intersection1 != null, "Test intersection 1");
+         Assert.True(new HitRecord(
+             new Point(10.0f, 0.0f, 1.0f),
+             new Normal(0.0f, 0.0f, 1.0f),
+             1.0f,
+             ray1,
+             new Vec2D(0.0f, 0.0f), new Material()
+         ).Is_Close(intersection1), "Test hit 1");
+ 
+         var ray2 = new Ray(new Point(13.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
+         var intersection2 = sphere.Ray_Intersection(ray2);
+         Assert.True(intersection2 != null, "Test intersection 2");
+         Assert.True(new HitRecord(
+             new Point(11.0f, 0.0f, 0.0f),
+             new Normal(1.0f, 0.0f, 0.0f),
+             2.0f,
+             ray2,
+             new Vec2D(0.0f, 0.5f), new Material()
+         ).Is_Close(intersection2), "Test hit 2");
+ 
+         // Check if the sphere failed to move by trying to hit the untransformed shape
+         Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
+             "Test no intersection 1");
+ 
+         // Check if the *inverse* transformation was wrongly applied
+         Assert.False(
+             sphere.Ray_Intersection(new Ray(new Point(-10.0f, 0.0f, 0.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
+             "Test no intersection 2");
+     }
 
     [Fact]
     public void TestNormals()

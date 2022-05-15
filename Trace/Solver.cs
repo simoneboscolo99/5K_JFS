@@ -3,12 +3,12 @@ namespace Trace;
 // Abstract class
 public abstract class Solver
 {
-    public World World;
+    public World Wd;
     public Color BackgroundColor;
 
     public Solver(World? world = null, Color? backgroundColor = null)
     {
-        World = world ?? new World();
+        Wd = world ?? new World();
         BackgroundColor = backgroundColor ?? Color.Black; 
     }
     
@@ -29,16 +29,16 @@ public class SameColor : Solver
 public class OnOffTracing : Solver
 {
     public Color ObjectColor;
-    public OnOffTracing(World world, Color? background = null, Color? objects = null) : base(world, background)
+    public OnOffTracing(World? world = null , Color? background = null, Color? objects = null) : base(world, background)
     {
-        World = world;
+        Wd = world ?? new World() ;
         BackgroundColor = background ?? Color.Black;
         ObjectColor = objects ?? Color.White;
     }
     
     public override Color Tracing(Ray ray)
     {
-        return World.Ray_Intersection(ray) != null ? ObjectColor : BackgroundColor;
+        return Wd.Ray_Intersection(ray) != null ? ObjectColor : BackgroundColor;
     }
 }
 
@@ -50,13 +50,11 @@ public class OnOffTracing : Solver
 ///to determine how to compute the final radiance.
 public class FlatTracing : Solver
 {
-    public FlatTracing(World world, Color? background = null) : base(world, background)
-    {
-    }
+    public FlatTracing(World? world = null, Color? background = null) : base(world, background) {}
 
     public override Color Tracing(Ray ray)
     {
-        var hit = World.Ray_Intersection(ray);
+        var hit = Wd.Ray_Intersection(ray);
         if (hit == null) return BackgroundColor;
         var material = hit.Mt;
         if (material.BRdf?.Pg != null)
