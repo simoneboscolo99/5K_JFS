@@ -16,6 +16,7 @@ public class HitRecord
     public float T { get; set; }
     public Ray Ray { get; set; }
     public Vec2D SurfacePoint { get; set; }
+    public Material Mt { get; set; }
 
     /// <summary>
     /// Constructor
@@ -25,13 +26,15 @@ public class HitRecord
     /// <param name="t"> T </param>
     /// <param name="ray"> Ray </param>
     /// <param name="sp"> Surface Point </param>
-    public HitRecord(Point wp, Normal nm, float t, Ray ray, Vec2D sp)
+    /// <param name="material"></param>
+    public HitRecord(Point wp, Normal nm, float t, Ray ray, Vec2D sp, Material material)
     {
         WorldPoint = wp;
         Normal = nm;
         T = t;
         Ray = ray;
         SurfacePoint = sp;
+        Mt = material;
     }
 
     /// <summary>
@@ -42,7 +45,8 @@ public class HitRecord
     public bool Is_Close(HitRecord? hr = null)
     {
         if (hr == null) return false;
-        return WorldPoint.Is_Close(hr.WorldPoint) && Normal.Is_Close(hr.Normal) && Functions.Are_Close(T, hr.T) && Ray.Is_Close(hr.Ray) && SurfacePoint.Is_Close(hr.SurfacePoint);
+        return WorldPoint.Is_Close(hr.WorldPoint) && Normal.Is_Close(hr.Normal) && Functions.Are_Close(T, hr.T) &&
+               Ray.Is_Close(hr.Ray) && SurfacePoint.Is_Close(hr.SurfacePoint);
     }
 
 }

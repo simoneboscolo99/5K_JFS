@@ -54,5 +54,5 @@ public class Pcg
     /// <returns> Floating-point number between 0 and 1 </returns>
     public float Random_Float()
         => Random() / (float) uint.MaxValue;
-
+    
 }

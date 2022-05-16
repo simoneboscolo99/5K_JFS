@@ -55,8 +55,8 @@ public struct Transformation
     }
 
     /// <summary>
-    /// 
-    /// </summary> Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// </summary> 
     /// <param name="v">Vec(X,Y,Z)</param>
     /// <returns></returns>
     public static Transformation Translation(Vec v)

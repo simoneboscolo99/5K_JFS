@@ -3,12 +3,22 @@ namespace Trace;
 // Abstract class
 public abstract class Solver
 {
+    public World Wd;
+    public Color BackgroundColor;
+
+    public Solver(World? world = null, Color? backgroundColor = null)
+    {
+        Wd = world ?? new World();
+        BackgroundColor = backgroundColor ?? Color.Black; 
+    }
+    
     // Abstract method
     public abstract Color Tracing(Ray ray);
 }
 
 public class SameColor : Solver
 {
+    public SameColor(World? world = null, Color? backgroundColor = null) : base(world, backgroundColor){}
     public override Color Tracing(Ray ray)
     {
         var color = new Color(1.0f, 2.0f, 3.0f);
@@ -18,48 +28,39 @@ public class SameColor : Solver
 
 public class OnOffTracing : Solver
 {
-    public World World;
-    public Color BackgroundColor;
     public Color ObjectColor;
-    public OnOffTracing(World world, Color? background = null, Color? objects = null)
+    public OnOffTracing(World? world = null , Color? background = null, Color? objects = null) : base(world, background)
     {
-        World = world;
+        Wd = world ?? new World() ;
         BackgroundColor = background ?? Color.Black;
         ObjectColor = objects ?? Color.White;
     }
     
     public override Color Tracing(Ray ray)
     {
-        return World.Ray_Intersection(ray) != null ? ObjectColor : BackgroundColor;
+        return Wd.Ray_Intersection(ray) != null ? ObjectColor : BackgroundColor;
     }
 }
 
-/*
+
 /// <summary>
 /// A «flat» renderer.
-/// </summary>
-/// This renderer estimates the solution of the rendering equation
+/// /// This renderer estimates the solution of the rendering equation
 ///by neglecting any contribution of the light. It just uses the pigment of each surface
 ///to determine how to compute the final radiance.
+/// </summary>
 public class FlatTracing : Solver
 {
-    public World World;
-    public Color BackgroundColor;
-    
-    public FlatTracing(World world, Color? background)
-    {
-        World = world;
-        BackgroundColor = background ?? Color.Black;
-    }
-    
+    public FlatTracing(World? world = null, Color? background = null) : base(world, background) {}
+
     public override Color Tracing(Ray ray)
     {
-        var hit = World.Ray_Intersection(ray);
+        var hit = Wd.Ray_Intersection(ray);
         if (hit == null) return BackgroundColor;
-        var material = hit.Material;
-        return (material.Brdf.Pigment.Get_Color(hit.SurfacePoint) +
-                Material.EmittedRadiance.Get_Color(hit.SurfacePoint));
-
+        var material = hit.Mt;
+        if (material.Brdf?.Pg != null)
+            return (material.Brdf.Pg.Get_Color(hit.SurfacePoint) +
+                    material.EmittedRadiance.Get_Color(hit.SurfacePoint));
+        return default;
     }
-} */
-
+}

@@ -1,16 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
+using Microsoft.Extensions.CommandLineUtils;
+using Trace;
+using _5K_JFS;
 
-namespace _5K_JFS
-{
-    using Microsoft.Extensions.CommandLineUtils;
-    using Trace;
-    
-    class Program
-    {
-
-        public static void Main(params string[] args)
-        {
 // References for CLI (Command Line Interface)
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
 // https://www.areilly.com/2017/04/21/command-line-argument-parsing-in-net-core-with-microsoft-extensions-commandlineutils/
@@ -55,8 +48,9 @@ app.Command("demo", (command) =>
     var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
     var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
     var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <FLOAT>", "Gamma parameter", CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FLOAT>", "Factor parameter", CommandOptionType.SingleValue);
     var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
-
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
 
@@ -81,11 +75,13 @@ app.Command("demo", (command) =>
         var w = width.Value();
         var h = height.Value();
         var angle = angleDeg.Value();
+        var g = gamma.Value();
+        var f = factor.Value();
         var output = outputFilename.Value();
-        
+
         try
         {
-            Parameters.Parse_Command_Line_Demo(w, h, angle, output);
+            Parameters.Parse_Command_Line_Demo(w,h,angle,g,f,output);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
                         + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
@@ -95,10 +91,12 @@ app.Command("demo", (command) =>
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
     
             var image = new HdrImage(Parameters.Width, Parameters.Height);
+            
 
             // Creating the scene
             var world = new World();
             var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
+            //var red = new Color(0.9f, 0.15f, 0.33f);
 
             var cube = new List<float> {-0.5f, 0.5f};
             foreach (var x in cube)
@@ -112,7 +110,7 @@ app.Command("demo", (command) =>
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, -0.0f, 0.0f)));
             else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.0f)));
 
             var tracer = new ImageTracer(image, camera);
@@ -120,7 +118,7 @@ app.Command("demo", (command) =>
             // Rendering
             Console.WriteLine("Using on/off renderer");
             tracer.Fire_All_Rays(new OnOffTracing(world));
-    
+
             Console.WriteLine("Rendering completed");
             
             // Save pfm file
@@ -233,11 +231,3 @@ catch (Exception ex)
 {
     Console.WriteLine("Unable to execute application: {0}", ex.Message);
 }
-
-        } //Main
-
-    } //Program class
-
-
-
-} //NM4PIG namespace
