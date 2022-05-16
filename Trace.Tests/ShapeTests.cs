@@ -102,7 +102,7 @@ public class SphereTests
         Assert.True(intersection != null);
         // We normalize "intersection.Normal" as we are not interested in its length
         Assert.True(
-            intersection != null && intersection.Normal.Normalize().Is_Close(new Normal(1.0f, 4.0f, 0.0f).Normalize()),
+            intersection != null && intersection.N.Normalize().Is_Close(new Normal(1.0f, 4.0f, 0.0f).Normalize()),
             "Test normal");
     }
 
@@ -115,7 +115,7 @@ public class SphereTests
         var intersection = sphere.Ray_Intersection(ray);
         // We normalize "intersection.Normal" as we are not interested in its length
         Assert.True(intersection != null &&
-                    intersection.Normal.Normalize().Is_Close(new Normal(0.0f, 1.0f, 0.0f).Normalize()));
+                    intersection.N.Normalize().Is_Close(new Normal(0.0f, 1.0f, 0.0f).Normalize()));
     }
 
     [Fact]

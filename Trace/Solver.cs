@@ -44,10 +44,9 @@ public class OnOffTracing : Solver
 
 
 /// <summary>
-/// A «flat» renderer.
-/// /// This renderer estimates the solution of the rendering equation
-///by neglecting any contribution of the light. It just uses the pigment of each surface
-///to determine how to compute the final radiance.
+/// A «flat» renderer. <br/>
+/// This renderer estimates the solution of the rendering equation by neglecting any contribution of the light. <br/>
+/// It just uses the pigment of each surface to determine how to compute the final radiance.
 /// </summary>
 public class FlatTracing : Solver
 {
@@ -58,9 +57,8 @@ public class FlatTracing : Solver
         var hit = Wd.Ray_Intersection(ray);
         if (hit == null) return BackgroundColor;
         var material = hit.Mt;
-        if (material.Brdf?.Pg != null)
-            return (material.Brdf.Pg.Get_Color(hit.SurfacePoint) +
-                    material.EmittedRadiance.Get_Color(hit.SurfacePoint));
-        return default;
+        
+        return (material.Brdf.Pg.Get_Color(hit.SurfacePoint) +
+                material.EmittedRadiance.Get_Color(hit.SurfacePoint));
     }
 }
