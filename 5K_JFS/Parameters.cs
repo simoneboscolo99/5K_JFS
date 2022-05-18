@@ -42,7 +42,7 @@ public class Parameters
         var i = inputFilename ?? "Input_Pfm/memorial.pfm";
         var o = outputFilename ?? "Images/output.png";
         var g = gamma ?? "1";
-        var f = factor ?? "0.2";
+        var f = factor ?? "0,2";
 
         try
         {
