@@ -117,17 +117,13 @@ public class NormalTest
             normal.Normalize();
             var (e1, e2, e3) = Normal.Create_ONB_From_Z(normal); 
             Assert.True(e3.Is_Close(normal.To_Vec()));
-            Assert.True(e1.Squared_Norm().CompareTo(1.0f)); 
-            Assert.True(e2.Squared_Norm().CompareTo(1.0f)); 
-            Assert.True(e3.Squared_Norm().CompareTo(1.0f)); 
-            assert expected_one == e2.squared_norm()
-            assert expected_one == e3.squared_norm()
+            Assert.True(Functions.Are_Close(1.0f, e1.Squared_Norm())); 
+            Assert.True(Functions.Are_Close(1.0f, e2.Squared_Norm())); 
+            Assert.True(Functions.Are_Close(1.0f, e3.Squared_Norm())); 
 
-            assert expected_zero == e1.dot(e2)
-            assert expected_zero == e2.dot(e3)
-            assert expected_zero == e3.dot(e1)
-
-
+            Assert.True(Functions.Are_Close(0.0f, e1.Squared_Norm())); 
+            Assert.True(Functions.Are_Close(0.0f, e2.Squared_Norm())); 
+            Assert.True(Functions.Are_Close(0.0f, e3.Squared_Norm())); 
         }
         
     }
