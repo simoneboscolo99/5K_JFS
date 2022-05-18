@@ -22,10 +22,7 @@ public class World
             var intersection = v.Ray_Intersection(ray);
             if (intersection == null) continue;
 
-            if (closest == null || intersection.T < closest.T)
-            {
-                closest = intersection;
-            }
+            if (closest == null || intersection.T < closest.T) closest = intersection;
         }
 
         return closest;

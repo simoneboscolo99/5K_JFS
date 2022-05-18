@@ -1,11 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
-
-using System.Drawing;
-using _5K_JFS;
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
-using Color = Trace.Color;
+using _5K_JFS;
 
 // References for CLI (Command Line Interface)
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
@@ -48,15 +45,17 @@ app.Command("demo", (command) =>
     // Option: it starts with a pipe-delimited list of option flags/names to use
     // Optionally, It is then followed by a space and a short description of the value to specify.
     // e.g. here we could also just use "-o|--option"
-    var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
-    var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
-    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
-    var gamma = command.Option("-g|--gamma <FLOAT>", "Gamma parameter", CommandOptionType.SingleValue);
-    var factor = command.Option("-f|--factor <FLOAT>", "Factor parameter", CommandOptionType.SingleValue);
-    var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
+    var width = command.Option("--width <INTEGER>", "Width of the image. \t\t Default: 480", CommandOptionType.SingleValue);
+    var height = command.Option("--height <INTEGER>", "Height of the image. \t\t Default: 480", CommandOptionType.SingleValue);
+    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view. \t\t\t Default: 0", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output ldr file. \t Default: Demo.png", CommandOptionType.SingleValue);
+    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t Default: flat", CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1", CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2", CommandOptionType.SingleValue);
+    
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
-    var algorithm = command.Option("-alg|--algorithm", "Use a specific solver to create the image", CommandOptionType.NoValue);
+    
     command.HelpOption("-?|-h|--help");
     
     command.OnExecute(() =>
@@ -69,7 +68,6 @@ app.Command("demo", (command) =>
 
         // The NoValue type has no Value property, just the HasValue() method.
         Parameters.Orthogonal = orthogonal.HasValue();
-        Parameters.Algorithm = algorithm.HasValue();
         
         // Check if the various options have values and display them.
         // Here we're checking HasValue() to see if there is a value before displaying the output.
@@ -87,8 +85,8 @@ app.Command("demo", (command) =>
         {
             Parameters.Parse_Command_Line_Demo(w,h,angle,g,f,output);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
-                        + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
-                        + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n" + $"On/Off Algorithm : {Parameters.Algorithm} \n");
+                              + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
+                              + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
             
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
@@ -100,17 +98,24 @@ app.Command("demo", (command) =>
             // Creating the scene
             var world = new World();
             var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
-            var red = new Color(0.9f, 0.15f, 0.33f);
+            
+            // Colors of the image
+            var c = new Color(0.2f, 0.5f, 0.2f);
+            var c1 = new Color(0.5f, 0.1f, 0.1f);
+            var c2 = new Color(0.1f, 0.1f, 0.5f);
 
             var cube = new List<float> {-0.5f, 0.5f};
             foreach (var x in cube)
                 foreach (var y in cube)
                     foreach (var z in cube)
-                        world.Add(new Sphere(Transformation.Translation(new Vec(x, y, z)) * scale));
+                        world.Add(new Sphere(Transformation.Translation(new Vec(x, y, z)) * scale, 
+                            new Material( new DiffuseBrdf(new UniformPigment(c)))));
 
             // Asymmetrical spheres
-            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale));
-            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.5f, 0.0f)) * scale));
+            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale, 
+                new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 2)))));
+            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.5f, 0.0f)) * scale, 
+                new Material(new DiffuseBrdf(new CheckeredPigment(c2, c1, 2)))));
             
             // Creating the camera
             ICamera camera;
@@ -120,18 +125,27 @@ app.Command("demo", (command) =>
             var tracer = new ImageTracer(image, camera);
             
             // Rendering
-            if (Parameters.Algorithm)
-            {
-                Console.WriteLine("Using on/off renderer");
-                tracer.Fire_All_Rays(new OnOffTracing(world, Color.Black));
-            }
 
-            else if (!Parameters.Algorithm)
+            var alg = algorithm.Value() ?? "flat";
+            var upperAlg = alg.ToUpper();
+            Solver renderer;
+            switch (upperAlg)
             {
-                Console.WriteLine("Using Flat renderer");
-                tracer.Fire_All_Rays(new FlatTracing(world, Color.Black));
+                case "ONOFF":
+                    renderer = new OnOffTracing(world);
+                    Console.WriteLine("Using on/off renderer");
+                    break;
+                case "FLAT":
+                    renderer = new FlatTracing(world);
+                    Console.WriteLine("Using flat renderer");
+                    break;
+                // case "PATHTRACING":
+                default:
+                    throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
+                                                   "\n - onoff \n flat \n");
             }
-           
+            
+            tracer.Fire_All_Rays(renderer);
 
             Console.WriteLine("Rendering completed");
             
@@ -143,7 +157,7 @@ app.Command("demo", (command) =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor);
+            image.Luminosity_Norm(Parameters.Factor, 0.5f);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
@@ -181,7 +195,7 @@ app.Command("convert", (command) =>
 
 
     var inputFilename = command.Option("-i|--inputFilename <INPUT_FILENAME>", "Path of the input file", CommandOptionType.SingleValue);
-    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Path of the output ldr file", CommandOptionType.SingleValue);
     var gamma = command.Option("-g|--gamma <GAMMA>", "Exponent for gamma-correction", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FACTOR>", "Multiplicative factor", CommandOptionType.SingleValue);
     
@@ -230,7 +244,6 @@ app.OnExecute(() =>
 try
 {
     // This begins the actual execution of the application
-    Console.WriteLine("Executing... \n\n\n");
     app.Execute(args);
 }
 catch (CommandParsingException ex)

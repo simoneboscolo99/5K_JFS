@@ -55,8 +55,8 @@ public struct Transformation
     }
 
     /// <summary>
-    /// 
-    /// </summary> Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// </summary> 
     /// <param name="v">Vec(X,Y,Z)</param>
     /// <returns></returns>
     public static Transformation Translation(Vec v)
@@ -66,7 +66,7 @@ public struct Transformation
     /// Inverse
     /// </summary>: returns a new Transformation with each Matrix4x4 inverted
     public Transformation Inverse
-        => new Transformation(InvM, M);
+        => new(InvM, M);
 
     public static Transformation operator *(Transformation a, Transformation b)
         => new(Matrix4x4.Multiply(a.M, b.M), Matrix4x4.Multiply(b.InvM, a.InvM));

@@ -2,12 +2,30 @@ using Trace;
 
 namespace _5K_JFS;
 
+/// <summary>
+/// 
+/// </summary>
 public class Parameters
 {
+    /// <summary>
+    /// Path of the input pfm file
+    /// </summary>
     public static string InputPfmFileName = "";
+    /// <summary>
+    /// Multiplicative factor
+    /// </summary>
     public static float Factor;
+    /// <summary>
+    /// Exponent for gamma-correction
+    /// </summary>
     public static float Gamma;
+    /// <summary>
+    /// Path of the output ldr file
+    /// </summary>
     public static string OutputFileName = "";
+    /// <summary>
+    /// Format of the output ldr file
+    /// </summary>
     public static string Format = "";
 
     /// <summary>
@@ -24,7 +42,7 @@ public class Parameters
         var i = inputFilename ?? "Input_Pfm/memorial.pfm";
         var o = outputFilename ?? "Images/output.png";
         var g = gamma ?? "1";
-        var f = factor ?? "0.2";
+        var f = factor ?? "0,2";
 
         try
         {
@@ -66,21 +84,33 @@ public class Parameters
     }
 
     // DEMO
+    
+    /// <summary>
+    /// Width of the image
+    /// </summary>
     public static int Width;
+    /// <summary>
+    /// Height of the image
+    /// </summary>
     public static int Height;
+    /// <summary>
+    /// Angle of view
+    /// </summary>
     public static float AngleDeg;
+    /// <summary>
+    /// Use an orthogonal camera instead of a perspective camera
+    /// </summary>
     public static bool Orthogonal;
-    public static bool Algorithm;
 
     /// <summary>
     /// Control over the Demo's parameters
     /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="angle"></param>
-    /// <param name="gamma"></param>
-    /// <param name="factor"></param>
-    /// <param name="outputFilename"></param>
+    /// <param name="width"> width of the image </param>
+    /// <param name="height"> height of the image </param>
+    /// <param name="angle"> angle of view </param>
+    /// <param name="gamma"> exponent for gamma-correction </param>
+    /// <param name="factor"> multiplicative factor </param>
+    /// <param name="outputFilename"> path of the output ldr file </param>
     /// <exception cref="RuntimeException"></exception>
     public static void Parse_Command_Line_Demo(string? width, string? height, string? angle, string? gamma,
         string? factor, string? outputFilename)
@@ -89,9 +119,8 @@ public class Parameters
         var h = height ?? "480";
         var a = angle ?? "0";
         var g = gamma ?? "1";
-        var f = factor ?? "0.2";
-        var output = outputFilename ?? "demo.png";
-
+        var f = factor ?? "0,2";
+        var output = outputFilename ?? "Demo.png";
 
         try
         {

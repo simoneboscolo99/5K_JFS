@@ -1,20 +1,35 @@
 ﻿namespace Trace;
 
+/// <summary>
+/// A RGB color <br/>
+/// The struct has three floating-point members: <see cref="R"/> (red), <see cref="G"/> (green), and <see cref="B"/> (blue)
+/// </summary>
 public struct Color
 {
-    public float R { get; set; }
-    public float G { get; set; }
-    public float B { get; set; }
+    /// <summary>
+    /// Floating-point number: red component of the color
+    /// </summary>
+    public float R { get; }
     
-    public static Color Black = new Color();
-    public static Color White = new Color(1.0f, 1.0f, 1.0f);
+    /// <summary>
+    /// Floating-point number: green component of the color
+    /// </summary>
+    public float G { get; }
+    
+    /// <summary>
+    /// Floating-point number: blue component of the color
+    /// </summary>
+    public float B { get; }
+    
+    public static Color Black = new();
+    public static Color White = new(1.0f, 1.0f, 1.0f);
 
     /// <summary>
     /// Color Constructor
     /// </summary>
-    /// <param name="r"> red color </param>
-    /// <param name="g"> green color </param>
-    /// <param name="b"> blue color </param>
+    /// <param name="r"> Red color </param>
+    /// <param name="g"> Green color </param>
+    /// <param name="b"> Blue color </param>
     public Color(float r, float g, float b)
     {
         R = r;
@@ -73,6 +88,7 @@ public struct Color
     /// <returns></returns>
     public override string ToString() => $"({R}, {G}, {B})";
 
+    // Return True if the three RGB components of two colors are close by less than `epsilon`
     /// <summary>
     /// Is_Close
     /// </summary>: Returns true if the color variable is close to the current color class
@@ -81,6 +97,7 @@ public struct Color
     public bool Is_Close(Color b)
         => Functions.Are_Close(R, b.R) && Functions.Are_Close(G, b.G) && Functions.Are_Close(B, b.B);
 
+    // Return a rough measure of the luminosity associated with the color
     /// <summary>
     /// Luminosity
     /// </summary>: Returns the average luminosity of a pixel (just numerical, not already normalized)
@@ -89,6 +106,4 @@ public struct Color
     {
         return (Math.Max(R, Math.Max(G, B)) + Math.Min(R, Math.Min(G, B))) / 2.0f;
     }
-    
 }
-
