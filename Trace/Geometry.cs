@@ -1,3 +1,5 @@
+using System.Runtime.Intrinsics.X86;
+
 namespace Trace;
 
 /// <summary>
@@ -239,18 +241,32 @@ public struct Normal
     //vector product
     public Normal Cross(Vec v)
         => new(Y * v.Z - Z * v.Y, Z * v.X - X * v.Z, X * v.Y - Y * v.X);
+
     public Normal Cross(Normal m)
         => new(Y * m.Z - Z * m.Y, Z * m.X - X * m.Z, X * m.Y - Y * m.X);
 
     public float SquaredNorm()
-        => (float)(Math.Pow(X, 2f) + Math.Pow(Y, 2f) + Math.Pow(Z, 2f));
+        => (float) (Math.Pow(X, 2f) + Math.Pow(Y, 2f) + Math.Pow(Z, 2f));
 
     public float Norm()
-        => (float)Math.Sqrt(SquaredNorm());
+        => (float) Math.Sqrt(SquaredNorm());
 
     public Normal Normalize()
         => new(X / Norm(), Y / Norm(), Z / Norm());
+    
+    public Vec To_Vec()
+        => new Vec(X, Y, Z);
 
+    public static (Vec, Vec, Vec) Create_ONB_From_Z(Normal normal)
+    {
+        float sign = (float) Math.CopySign(1.0f, normal.Z);
+        float a = -1.0f / (sign + normal.Z);
+        float b = normal.X * normal.Y * a;
+        var e1 = new Vec(1.0f + sign * normal.X * normal.Y * a, sign * b, -sign * normal.X);
+        var e2 = new Vec(b, sign + normal.Y * normal.Y * a, -normal.Y);
+        var onb = (E1: e1, E2: e2, E3: new Vec(normal.X, normal.Y, normal.Z));
+        return onb;
+    }
 }
 
 /// <summary>

@@ -127,7 +127,6 @@ public abstract class Brdf
 /// </summary>
 public class DiffuseBrdf : Brdf
 {
-
   public DiffuseBrdf(Pigment? p = null) : base(p) { }
 
   public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
@@ -136,18 +135,58 @@ public class DiffuseBrdf : Brdf
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {
     // Cosine-weighted distribution around the z (local) axis
-    (e1, e2, e3) = Create_ONB_From_Z(normal);
+    Vec e1, e2, e3;
+    (e1, e2, e3) = Normal.Create_ONB_From_Z(normal);
     var phi = (float) 2.0 * Math.PI * pcg.Random_Float();
-    var cos_theta_sq = pcg.Random_Float();
-    var cos_theta = (float) Math.Sqrt(cos_theta_sq);
-    var sin_theta = (float) Math.Sqrt(1.0f - cos_theta_sq);
+    var cosThetaSq = pcg.Random_Float();
+    var cosTheta = (float) Math.Sqrt(cosThetaSq);
+    var sinTheta = (float) Math.Sqrt(1.0f - cosThetaSq);
 
     return new Ray(
       interactionPoint,
-      e1 * Math.Cos(phi) * cos_theta + e2 * Math.Sin(phi) * cos_theta + e3 * sin_theta,
-      1.0e-3,
+      e1 * (float) Math.Cos(phi) * cosTheta + e2 * (float) Math.Sin(phi) * cosTheta + e3 * sinTheta,
+      (float?) 1.0e-3,
       float.PositiveInfinity,
       depth);
+  }
+}
+
+/// <summary>
+/// A class representing an ideal mirror BRDF
+/// </summary>
+public class SpecularBrdf : Brdf
+{
+  public float ThresholdAngleRad;
+
+  public SpecularBrdf(Pigment? p = null, float? thresholdAngleRad = null) : base(p)
+  {
+    ThresholdAngleRad = (float) (thresholdAngleRad ??  Math.PI / 1800.0f);
+  }
+
+  public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
+  {
+    // We provide this implementation for reference, but we are not going to use it (neither in the path tracer nor in the point-light tracer)
+    var thetaIn = (float) Math.Acos(normal.Normalize().Dot(inDir.Normalize()));
+    var thetaOut = (float) Math.Acos(normal.Normalize().Dot(outDir.Normalize()));
+    // if (Math.Abs(thetaIn - thetaOut) < ThresholdAngleRad) return Pg.Get_Color(uv) \n else return Color.Black
+    return Math.Abs(thetaIn - thetaOut) < ThresholdAngleRad ? Pg.Get_Color(uv) : Color.Black;
+  }
+  
+  public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
+  {
+// There is no need to use the PCG here, as the reflected direction is always completely deterministic for a perfect mirror
+
+    var rayDir = new Vec(incomingDir.X, incomingDir.Y, incomingDir.Z).Normalize();
+    var norm = normal.To_Vec().Normalize();
+    var dotProd = norm.Dot(rayDir);
+
+    return new Ray(
+      interactionPoint,
+      rayDir - norm * 2 * dotProd,
+      (float) 1e-5,
+      float.PositiveInfinity,
+      depth
+    );
   }
 }
 

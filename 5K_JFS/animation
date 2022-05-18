@@ -3,7 +3,7 @@
 for angle in $(seq 0 359); do
 	# Angle with three digits, e. g. angle=“1” -> angleNNN=“001”
 	angleNNN=$(printf "%03d" $angle)
-	dotnet run -- demo --width 640 --height 480 --algorithm Flat -a $angle --output img$angleNNN.png
+	dotnet run -- demo --width 640 --height 480 -a $angle --output img$angleNNN.png --algorithm flat
 done
 
 # -r 25: Number of frames per second
