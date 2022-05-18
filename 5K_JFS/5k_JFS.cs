@@ -102,7 +102,9 @@ app.Command("demo", (command) =>
             foreach (var x in cube)
                 foreach (var y in cube)
                     foreach (var z in cube)
-                        world.Add(new Sphere(Transformation.Translation(new Vec(x, y, z)) * scale));
+                        world.Add(new Sphere(Transformation.Translation(new Vec( x, y, z))
+                                             * scale, new Material
+                            (new DiffuseBrdf(new CheckeredPigment(Color.Black, Color.White)))));
 
             // Asymmetrical spheres
             world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale));
