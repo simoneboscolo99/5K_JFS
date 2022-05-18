@@ -70,6 +70,7 @@ public class Parameters
     public static int Height;
     public static float AngleDeg;
     public static bool Orthogonal;
+    public static bool Algorithm;
 
     /// <summary>
     /// Control over the Demo's parameters
@@ -89,7 +90,6 @@ public class Parameters
         var a = angle ?? "0";
         var g = gamma ?? "1";
         var f = factor ?? "0.2";
-
         var output = outputFilename ?? "demo.png";
 
 

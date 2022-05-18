@@ -56,7 +56,7 @@ app.Command("demo", (command) =>
     var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
-
+    var algorithm = command.Option("-alg|--algorithm", "Use a specific solver to create the image", CommandOptionType.NoValue);
     command.HelpOption("-?|-h|--help");
     
     command.OnExecute(() =>
@@ -69,6 +69,7 @@ app.Command("demo", (command) =>
 
         // The NoValue type has no Value property, just the HasValue() method.
         Parameters.Orthogonal = orthogonal.HasValue();
+        Parameters.Algorithm = algorithm.HasValue();
         
         // Check if the various options have values and display them.
         // Here we're checking HasValue() to see if there is a value before displaying the output.
@@ -87,7 +88,7 @@ app.Command("demo", (command) =>
             Parameters.Parse_Command_Line_Demo(w,h,angle,g,f,output);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
                         + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
-                        + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
+                        + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n" + $"On/Off Algorithm : {Parameters.Algorithm} \n");
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
             
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
@@ -119,8 +120,18 @@ app.Command("demo", (command) =>
             var tracer = new ImageTracer(image, camera);
             
             // Rendering
-            Console.WriteLine("Using on/off renderer");
-            tracer.Fire_All_Rays(new OnOffTracing(world));
+            if (Parameters.Algorithm)
+            {
+                Console.WriteLine("Using on/off renderer");
+                tracer.Fire_All_Rays(new OnOffTracing(world, Color.Black));
+            }
+
+            else if (!Parameters.Algorithm)
+            {
+                Console.WriteLine("Using Flat renderer");
+                tracer.Fire_All_Rays(new FlatTracing(world, Color.Black));
+            }
+           
 
             Console.WriteLine("Rendering completed");
             

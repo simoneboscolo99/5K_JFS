@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/bin/bash 
+#Sha-Bang
 for angle in $(seq 0 359); do
 	# Angle with three digits, e. g. angle=“1” -> angleNNN=“001”
 	angleNNN=$(printf "%03d" $angle)
