@@ -53,10 +53,9 @@ app.Command("demo", (command) =>
     var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2", CommandOptionType.SingleValue);
     
-
     // NoValue are basically booleans: true if supplied, false otherwise
-    var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera   \n\t\t\t      instead of a perspective camera \n", CommandOptionType.NoValue);
-
+    var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
+    
     command.HelpOption("-?|-h|--help");
     
     command.OnExecute(() =>
@@ -86,8 +85,8 @@ app.Command("demo", (command) =>
         {
             Parameters.Parse_Command_Line_Demo(w,h,angle,g,f,output);
             Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
-                        + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
-                        + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
+                              + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
+                              + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
             
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
@@ -137,6 +136,7 @@ app.Command("demo", (command) =>
             var tracer = new ImageTracer(image, camera);
             
             // Rendering
+
             var alg = algorithm.Value() ?? "flat";
             var upperAlg = alg.ToUpper();
             Solver renderer;
@@ -168,7 +168,7 @@ app.Command("demo", (command) =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor, 0.15f);
+            image.Luminosity_Norm(Parameters.Factor, 0.5f);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);

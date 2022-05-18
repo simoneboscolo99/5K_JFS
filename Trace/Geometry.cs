@@ -253,6 +253,9 @@ public struct Normal
 
     public Normal Normalize()
         => new(X / Norm(), Y / Norm(), Z / Norm());
+    
+    public Vec To_Vec()
+        => new Vec(X, Y, Z);
 
     public Vec To_Vec()
         => new Vec(X, Y, Z);

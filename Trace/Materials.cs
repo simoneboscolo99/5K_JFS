@@ -134,7 +134,20 @@ public class DiffuseBrdf : Brdf
   
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {
-    throw new NotImplementedException();
+    // Cosine-weighted distribution around the z (local) axis
+    Vec e1, e2, e3;
+    (e1, e2, e3) = Normal.Create_ONB_From_Z(normal);
+    var phi = (float) 2.0 * Math.PI * pcg.Random_Float();
+    var cosThetaSq = pcg.Random_Float();
+    var cosTheta = (float) Math.Sqrt(cosThetaSq);
+    var sinTheta = (float) Math.Sqrt(1.0f - cosThetaSq);
+
+    return new Ray(
+      interactionPoint,
+      e1 * (float) Math.Cos(phi) * cosTheta + e2 * (float) Math.Sin(phi) * cosTheta + e3 * sinTheta,
+      (float?) 1.0e-3,
+      float.PositiveInfinity,
+      depth);
   }
 }
 
@@ -161,7 +174,19 @@ public class SpecularBrdf : Brdf
   
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {
-    throw new NotImplementedException();
+// There is no need to use the PCG here, as the reflected direction is always completely deterministic for a perfect mirror
+
+    var rayDir = new Vec(incomingDir.X, incomingDir.Y, incomingDir.Z).Normalize();
+    var norm = normal.To_Vec().Normalize();
+    var dotProd = norm.Dot(rayDir);
+
+    return new Ray(
+      interactionPoint,
+      rayDir - norm * 2 * dotProd,
+      (float) 1e-5,
+      float.PositiveInfinity,
+      depth
+    );
   }
 }
 
@@ -179,5 +204,3 @@ public class Material
     EmittedRadiance = emittedRadiance ?? new UniformPigment(Color.Black);
   }
 }
-
-
