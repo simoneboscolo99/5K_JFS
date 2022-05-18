@@ -127,11 +127,37 @@ public abstract class Brdf
 /// </summary>
 public class DiffuseBrdf : Brdf
 {
-
   public DiffuseBrdf(Pigment? p = null) : base(p) { }
 
   public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
     => Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
+  
+  public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
+  {
+    throw new NotImplementedException();
+  }
+}
+
+/// <summary>
+/// A class representing an ideal mirror BRDF
+/// </summary>
+public class SpecularBrdf : Brdf
+{
+  public float ThresholdAngleRad;
+
+  public SpecularBrdf(Pigment? p = null, float? thresholdAngleRad = null) : base(p)
+  {
+    ThresholdAngleRad = (float) (thresholdAngleRad ??  Math.PI / 1800.0f);
+  }
+
+  public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
+  {
+    // We provide this implementation for reference, but we are not going to use it (neither in the path tracer nor in the point-light tracer)
+    var thetaIn = (float) Math.Acos(normal.Normalize().Dot(inDir.Normalize()));
+    var thetaOut = (float) Math.Acos(normal.Normalize().Dot(outDir.Normalize()));
+    // if (Math.Abs(thetaIn - thetaOut) < ThresholdAngleRad) return Pg.Get_Color(uv) \n else return Color.Black
+    return Math.Abs(thetaIn - thetaOut) < ThresholdAngleRad ? Pg.Get_Color(uv) : Color.Black;
+  }
   
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {
