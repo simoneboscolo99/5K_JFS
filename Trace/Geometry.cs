@@ -254,6 +254,9 @@ public struct Normal
     public Normal Normalize()
         => new(X / Norm(), Y / Norm(), Z / Norm());
 
+    public Vec To_Vec()
+        => new Vec(X, Y, Z);
+
     public static (Vec, Vec, Vec) Create_ONB_From_Z(Normal normal)
     {
         float sign = (float) Math.CopySign(1.0f, normal.Z);

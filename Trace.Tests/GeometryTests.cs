@@ -105,4 +105,35 @@ public class NormalTest
         Assert.True(Functions.Are_Close(_a.Norm(), (float)Math.Sqrt(14.0f)), "Norm doesnt work");
         Assert.True(_aNorm.Is_Close(_a.Normalize()), "Normalization problem(Normal class)");
     }
+
+    [Fact]
+    public void TestOnbCreation()
+    {
+        var pcg = new Pcg();
+
+        for (int i = 0; i < 100; i++)
+        {
+            var normal = new Normal(pcg.Random_Float(), pcg.Random_Float(), pcg.Random_Float());
+            normal.Normalize();
+            var (e1, e2, e3) = Normal.Create_ONB_From_Z(normal); 
+            Assert.True(e3.Is_Close(normal.To_Vec()));
+            Assert.True(e1.Squared_Norm().CompareTo(1.0f)); 
+            Assert.True(e2.Squared_Norm().CompareTo(1.0f)); 
+            Assert.True(e3.Squared_Norm().CompareTo(1.0f)); 
+            assert expected_one == e2.squared_norm()
+            assert expected_one == e3.squared_norm()
+
+            assert expected_zero == e1.dot(e2)
+            assert expected_zero == e2.dot(e3)
+            assert expected_zero == e3.dot(e1)
+
+
+        }
+        
+    }
+        
+        
+
+    
+
 }
