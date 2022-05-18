@@ -49,7 +49,7 @@ app.Command("demo", (command) =>
     var height = command.Option("--height <INTEGER>", "Height of the image. \t\t Default: 480", CommandOptionType.SingleValue);
     var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view. \t\t\t Default: 0", CommandOptionType.SingleValue);
     var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output ldr file. \t Default: Demo.png", CommandOptionType.SingleValue);
-    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t Default: flat", CommandOptionType.SingleValue);
+    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: flat", CommandOptionType.SingleValue);
     var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2", CommandOptionType.SingleValue);
     
