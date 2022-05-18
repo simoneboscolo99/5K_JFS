@@ -276,11 +276,11 @@ public class HdrImage
 
     public void Luminosity_Norm(float a, float? luminosity = null)
     {
-        //if luminosity == Null => lum = Lum_Ave, else lum = luminosity
-        //var lum = luminosity ?? Luminosity_Ave();
+        // if luminosity == Null => lum = Lum_Ave, else lum = luminosity
+        var lum = luminosity ?? Luminosity_Ave();
         for (int i = 0; i < Image.Count; i++)
-            // Image[i] = (a / lum) * Image[i];
-            Image[i] = (a / 0.15f) * Image[i];
+            Image[i] = (a / lum) * Image[i];
+            //Image[i] = (a / 0.15f) * Image[i];
     }
 
     public void Clamp_Image()
