@@ -135,8 +135,7 @@ public class DiffuseBrdf : Brdf
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {
     // Cosine-weighted distribution around the z (local) axis
-    Vec e1, e2, e3;
-    (e1, e2, e3) = Normal.Create_ONB_From_Z(normal);
+    var (e1, e2, e3) = Normal.Create_ONB_From_Z(normal);
     var phi = (float) 2.0 * Math.PI * pcg.Random_Float();
     var cosThetaSq = pcg.Random_Float();
     var cosTheta = (float) Math.Sqrt(cosThetaSq);
@@ -174,8 +173,7 @@ public class SpecularBrdf : Brdf
   
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {
-// There is no need to use the PCG here, as the reflected direction is always completely deterministic for a perfect mirror
-
+    // There is no need to use the PCG here, as the reflected direction is always completely deterministic for a perfect mirror
     var rayDir = new Vec(incomingDir.X, incomingDir.Y, incomingDir.Z).Normalize();
     var norm = normal.To_Vec().Normalize();
     var dotProd = norm.Dot(rayDir);

@@ -198,7 +198,7 @@ public struct Point
     /// </summary>: Converts to a Vec the Point's components
     /// <returns></returns>
     public Vec To_Vec()
-        => new(X, Y, Z);
+        => new (X, Y, Z);
 }
 
 public struct Normal
@@ -259,10 +259,10 @@ public struct Normal
 
     public static (Vec, Vec, Vec) Create_ONB_From_Z(Normal normal)
     {
-        float sign = (float) Math.CopySign(1.0f, normal.Z);
-        float a = -1.0f / (sign + normal.Z);
-        float b = normal.X * normal.Y * a;
-        var e1 = new Vec(1.0f + sign * normal.X * normal.Y * a, sign * b, -sign * normal.X);
+        var sign = (float) Math.CopySign(1.0f, normal.Z);
+        var a = -1.0f / (sign + normal.Z);
+        var b = normal.X * normal.Y * a;
+        var e1 = new Vec(1.0f + sign * normal.X * normal.X * a, sign * b, -sign * normal.X);
         var e2 = new Vec(b, sign + normal.Y * normal.Y * a, -normal.Y);
         var onb = (E1: e1, E2: e2, E3: new Vec(normal.X, normal.Y, normal.Z));
         return onb;
