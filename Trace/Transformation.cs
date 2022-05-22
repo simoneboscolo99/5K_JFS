@@ -51,7 +51,7 @@ public struct Transformation
     public bool Is_Consistent()
     {
         var I = Matrix4x4.Multiply(M, InvM);
-        return Functions.Are_Matr_close(I, Matrix4x4.Identity);
+        return Functions.Are_Matrices_close(I, Matrix4x4.Identity);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public struct Transformation
         => new Ray(a * ray.Origin, a * ray.Dir);
 
     public bool Is_Close(Transformation T)
-        => Functions.Are_Matr_close(M, T.M) && Functions.Are_Matr_close(InvM, T.InvM);
+        => Functions.Are_Matrices_close(M, T.M) && Functions.Are_Matrices_close(InvM, T.InvM);
 
     public Transformation Clone()
     {

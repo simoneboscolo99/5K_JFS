@@ -27,6 +27,10 @@ public class Parameters
     /// Format of the output ldr file
     /// </summary>
     public static string Format = "";
+    
+    // ===========================================================================
+    // === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === 
+    // ===========================================================================
 
     /// <summary>
     /// Control of parameters given by user to convert 
@@ -44,24 +48,9 @@ public class Parameters
         var g = gamma ?? "1";
         var f = factor ?? "0,2";
 
-        try
-        {
-            InputPfmFileName = Convert.ToString(i);
-        }
-        catch
-        {
-            throw new RuntimeException($"Invalid factor {i}, it must be a string");
-        }
-
-        try
-        {
-            OutputFileName = Convert.ToString(o);
-        }
-        catch
-        {
-            throw new RuntimeException($"Invalid factor {o}, it must be a string");
-        }
-
+        InputPfmFileName = Convert.ToString(i);
+        OutputFileName = Convert.ToString(o);
+        
         try
         {
             Gamma = Convert.ToSingle(g);
@@ -83,7 +72,9 @@ public class Parameters
         Format = Path.GetExtension(OutputFileName);
     }
 
-    // DEMO
+    // ===========================================================================
+    // === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO ===
+    // ===========================================================================
     
     /// <summary>
     /// Width of the image
@@ -111,7 +102,7 @@ public class Parameters
     /// <param name="gamma"> exponent for gamma-correction </param>
     /// <param name="factor"> multiplicative factor </param>
     /// <param name="outputFilename"> path of the output ldr file </param>
-    /// <exception cref="RuntimeException"></exception>
+    /// <exception cref="RuntimeException"> invalid format of the parameters </exception>
     public static void Parse_Command_Line_Demo(string? width, string? height, string? angle, string? gamma,
         string? factor, string? outputFilename)
     {
@@ -166,16 +157,8 @@ public class Parameters
         {
             throw new RuntimeException($"Invalid factor {f}, it must be a float");
         }
-
-        try
-        {
-            OutputFileName = Convert.ToString(output);
-        }
-        catch
-        {
-            throw new RuntimeException($"Invalid factor {output}, it must be a string");
-        }
-
+        
+        OutputFileName = Convert.ToString(output);
         Format = Path.GetExtension(OutputFileName);
     }
 }

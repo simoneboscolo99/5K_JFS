@@ -10,19 +10,34 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Trace;
 
+/// <summary>
+/// A High-Dynamic-Range 2D image
+/// </summary>
 public class HdrImage
 {
+    
+    /// <summary>
+    /// Number of rows in the 2D matrix of colors
+    /// </summary>
     public int Height { get; set; }
+    
+    /// <summary>
+    /// Number of columns in the 2D matrix of colors
+    /// </summary>
     public int Width { get; set; }
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public List<Color> Image { get; set; }
 
     // ======== CONSTRUCTORS ========
     
     /// <summary>
-    /// HdrImage constructor
-    /// </summary> Matrix of elements Color
-    /// <param name="width"> image width </param>
-    /// <param name="height"> image height </param>
+    /// HdrImage constructor. Initialize a new instance of the <see cref="HdrImage"/> class creating a black image that has the specified resolution
+    /// </summary> 
+    /// <param name="width"> width of the image </param>
+    /// <param name="height"> height of the image </param>
     public HdrImage(int width, int height)
     {
         Height = height;
@@ -32,8 +47,8 @@ public class HdrImage
     }
 
     /// <summary>
-    /// HdrImage Constructor
-    /// </summary>: Creates an image reading dates from a stream
+    /// HdrImage Constructor. Initialize a new instance of the <see cref="HdrImage"/> class reading dates from a stream
+    /// </summary>
     /// <param name="inputStream"></param>
     public HdrImage(Stream inputStream)
     {
@@ -43,10 +58,9 @@ public class HdrImage
 
 
     /// <summary>
-    /// HdrImage Constructor
-    /// </summary>: Creates an HdrImage from an input file-name 
+    /// HdrImage Constructor. Initialize a new instance of the <see cref="HdrImage"/> from an input file
+    /// </summary>
     /// <param name="fileName"></param>
-
     public HdrImage(string fileName)
     {
         Image = new List<Color>();
@@ -157,7 +171,7 @@ public class HdrImage
     /// <param name="inputStream"></param>
     /// <param name="le"> "little endian?" </param>
     /// <returns></returns>
-    /// <exception cref="InvalidPfmFileFormat"></exception>
+    /// <exception cref="InvalidPfmFileFormatException"></exception>
     private static float Read_Float(Stream inputStream, bool le)
     {
         var reader = new BinaryReader(inputStream);
@@ -170,7 +184,7 @@ public class HdrImage
         }
         catch
         {
-            throw new InvalidPfmFileFormat("Impossible to read binary data from the file");
+            throw new InvalidPfmFileFormatException("Impossible to read binary data from the file");
         }
     }
 
@@ -179,7 +193,7 @@ public class HdrImage
     /// </summary>: Converts a string to its "IsLittleEndian?"-value
     /// <param name="str"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidPfmFileFormat"></exception>
+    /// <exception cref="InvalidPfmFileFormatException"></exception>
     public static bool Parse_Endianness(string str)
     {
         try
@@ -189,12 +203,12 @@ public class HdrImage
             {
                 < 0 => true,
                 > 0 => false,
-                _ => throw new InvalidPfmFileFormat("Invalid endianness specification: it cannot be zero")
+                _ => throw new InvalidPfmFileFormatException("Invalid endianness specification: it cannot be zero")
             };
         }
         catch (FormatException)
         {
-            throw new InvalidPfmFileFormat("Invalid endianness specification: expected number");
+            throw new InvalidPfmFileFormatException("Invalid endianness specification: expected number");
         }
     }
 
@@ -204,34 +218,34 @@ public class HdrImage
     /// </summary>: returns image size (width,height)
     /// <param name="str"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidPfmFileFormat"></exception>
+    /// <exception cref="InvalidPfmFileFormatException"></exception>
     public static (int, int) Parse_Img_Size(string str) //returns a tuple made of 2 ints
     {
         //elements is an array containing decomposed line
         var elements = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (elements.Length != 2)
-            throw new InvalidPfmFileFormat("Invalid Image Size Specification");
+            throw new InvalidPfmFileFormatException("Invalid Image Size Specification");
 
         try
         {
             var size = Array.ConvertAll(elements, int.Parse);
             if (size[0] < 0 || size[1] < 0)
-                throw new InvalidPfmFileFormat("Only positive numbers are allowed for width and height");
+                throw new InvalidPfmFileFormatException("Only positive numbers are allowed for width and height");
 
             var sizes = (width: size[0], height: size[1]);
             return sizes;
         }
         catch (FormatException)
         {
-            throw new InvalidPfmFileFormat("Only integer numbers are allowed for width and height");
+            throw new InvalidPfmFileFormatException("Only integer numbers are allowed for width and height");
         }
         catch (OverflowException)
         {
-            throw new InvalidPfmFileFormat("Only integer numbers are allowed for width and height");
+            throw new InvalidPfmFileFormatException("Only integer numbers are allowed for width and height");
         }
         catch (ArgumentNullException)
         {
-            throw new InvalidPfmFileFormat("Only integer numbers are allowed for width and height");
+            throw new InvalidPfmFileFormatException("Only integer numbers are allowed for width and height");
         }
     }
 
@@ -240,7 +254,7 @@ public class HdrImage
         //first row
         var magic = Read_Line(inputStream);
         if (magic != "PF")
-            throw new InvalidPfmFileFormat("Invalid magic in PFM file");
+            throw new InvalidPfmFileFormatException("Invalid magic in PFM file");
 
         //second row
         var imgSize = Read_Line(inputStream);
@@ -266,6 +280,11 @@ public class HdrImage
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="delta"></param>
+    /// <returns></returns>
     public float Luminosity_Ave(float delta = 1e-10f)
     {
         var sum = 0.0d;
@@ -274,15 +293,22 @@ public class HdrImage
         return (float)Math.Pow(10, sum / Image.Count);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="luminosity"></param>
     public void Luminosity_Norm(float a, float? luminosity = null)
     {
         // if luminosity == Null => lum = Lum_Ave, else lum = luminosity
         var lum = luminosity ?? Luminosity_Ave();
         for (int i = 0; i < Image.Count; i++)
             Image[i] = (a / lum) * Image[i];
-            //Image[i] = (a / 0.15f) * Image[i];
     }
 
+    /// <summary>
+    /// Adjust the color levels of the brightest pixels in the image.
+    /// </summary>
     public void Clamp_Image()
     {
         for (int i = 0; i < Image.Count; i++)
@@ -349,7 +375,7 @@ public class HdrImage
                         
             // statements to execute when a match expression doesn't match any other case pattern
             default:
-                throw new InvalidPfmFileFormat($"\nInvalid output Ldr file format {f}. Possible formats are:" +
+                throw new RuntimeException($"\nInvalid output Ldr file format {f}. Possible formats are:" +
                                                "\n -.PNG\n -.JPG or .JPEG\n -.GIF\n -.BMP\n -.PBM\n");
         }
     }

@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
+
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
 using _5K_JFS;
@@ -136,8 +137,7 @@ app.Command("demo", (command) =>
             var tracer = new ImageTracer(image, camera);
             
             // Rendering
-
-            var alg = algorithm.Value() ?? "flat";
+            var alg = algorithm.Value() ?? "FLAT";
             var upperAlg = alg.ToUpper();
             Solver renderer;
             switch (upperAlg)
