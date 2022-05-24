@@ -101,6 +101,11 @@ public class Parameters
     public static bool Orthogonal;
 
     /// <summary>
+    /// 
+    /// </summary>
+    public static int SamplesPerSide;
+
+    /// <summary>
     /// Parses command line parameters in demo mode.
     /// </summary>
     /// <param name="width"> a string that contains the number corresponding to the width of the image. If <paramref name="width"/> is null, the default value of 480 is used. </param>
@@ -109,9 +114,10 @@ public class Parameters
     /// <param name="gamma"> a string that contains the number corresponding to the exponent for gamma-correction. If <paramref name="gamma"/> is null, the default value of 1 is used. </param>
     /// <param name="factor"> a string that contains the number corresponding to the multiplicative factor. If <paramref name="factor"/> is null, the default value of 0,2 is used. </param>
     /// <param name="outputFilename"> a string that contains the path of the output ldr file. If <paramref name="outputFilename"/> is null, the default path 'Demo.png' is used. </param>
+    /// <param name="samplesPerPixel"></param>
     /// <exception cref="RuntimeException"> invalid format of the parameters. </exception>
     public static void Parse_Command_Line_Demo(string? width = null, string? height = null, string? angle = null, string? gamma = null,
-        string? factor = null, string? outputFilename = null)
+        string? factor = null, string? outputFilename = null, string? samplesPerPixel = null)
     {
         var w = width ?? "480";
         var h = height ?? "480";
@@ -119,6 +125,7 @@ public class Parameters
         var g = gamma ?? "1";
         var f = factor ?? "0,2";
         var output = outputFilename ?? "Demo.png";
+        var ssp = samplesPerPixel ?? "0";
 
         try
         {
@@ -126,7 +133,7 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {w}, it must be an integer");
+            throw new RuntimeException($"Invalid factor {w}, it must be an integer.");
         }
 
         try
@@ -135,7 +142,7 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {h}, it must be an integer");
+            throw new RuntimeException($"Invalid factor {h}, it must be an integer.");
         }
 
         try
@@ -144,7 +151,7 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {a}, it must be a floating-point number");
+            throw new RuntimeException($"Invalid factor {a}, it must be a floating-point number.");
         }
 
         try
@@ -153,7 +160,7 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {g}, it must be a float");
+            throw new RuntimeException($"Invalid factor {g}, it must be a floating-point number.");
         }
 
         try
@@ -162,7 +169,18 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {f}, it must be a float");
+            throw new RuntimeException($"Invalid factor {f}, it must be a floating-point number.");
+        }
+        
+        try
+        {
+            var samples = Convert.ToInt32(ssp);
+            SamplesPerSide = (int) Math.Sqrt(samples);
+            if (SamplesPerSide * SamplesPerSide != samples) throw new RankException($"Error, the number of samples per pixel ({samplesPerPixel}) must be a perfect square");
+        }
+        catch
+        {
+            throw new RuntimeException($"Invalid factor {samplesPerPixel}, it must be an integer.");
         }
         
         OutputFileName = Convert.ToString(output);

@@ -53,6 +53,11 @@ app.Command("demo", (command) =>
     var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: pathtracing", CommandOptionType.SingleValue);
     var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2", CommandOptionType.SingleValue);
+    var samplesPerPixel = command.Option("-spp|--samples-per-pixel <SAMPLES_PER_PIXEL>", "Number of samples per pixel (must be a perfect square, e.g., 16).. \t\t Default: 0", CommandOptionType.SingleValue);
+
+    // Opzioni che si possono aggiungere:
+    // init_state, init_seq, (pcg)
+    // num_of_rays, max_depth, russian_roulette_limit? (path tracing)
     
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
@@ -81,13 +86,20 @@ app.Command("demo", (command) =>
         var g = gamma.Value();
         var f = factor.Value();
         var output = outputFilename.Value();
+        var ssp = samplesPerPixel.Value();
 
         try
         {
-            Parameters.Parse_Command_Line_Demo(w,h,angle,g,f,output);
-            Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
-                              + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
-                              + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
+            Parameters.Parse_Command_Line_Demo(w, h, angle, g, f, output, ssp);
+            Console.WriteLine("Parameters: \n" 
+                              + $"Width: {Parameters.Width} \n" 
+                              + $"Height: {Parameters.Height} \n"
+                              + $"Angle_Deg: {Parameters.AngleDeg} \n" 
+                              + $"Gamma: {Parameters.Gamma} \n"
+                              + $"A: {Parameters.Factor} \n" 
+                              + $"Orthogonal: {Parameters.Orthogonal} \n" 
+                              + $"Samples per side: {Parameters.SamplesPerSide} \n");
+            
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
             
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
@@ -170,9 +182,9 @@ app.Command("demo", (command) =>
             // Creating the camera
             ICamera camera;
             if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 1.0f)));
 
-            var tracer = new ImageTracer(image, camera);
+            var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
             // Rendering
             var alg = algorithm.Value() ?? "PATHTRACING";

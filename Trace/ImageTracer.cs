@@ -1,16 +1,43 @@
 namespace Trace;
 
+/// <summary>
+/// Trace an image by shooting light rays through each of its pixels.
+/// </summary>
 public class ImageTracer
 {
-
-    public HdrImage Image { get; set; }
-    public ICamera Cam { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public HdrImage Image { get; }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    public ICamera Cam { get; }
 
-    public ImageTracer(HdrImage image, ICamera camera)
+    /// <summary>
+    /// 
+    /// </summary>
+    public int SamplesPerSide;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Pcg Pcg;
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="camera"></param>
+    /// <param name="samplesPerSide"></param>
+    /// <param name="pcg"></param>
+    public ImageTracer(HdrImage image, ICamera camera, int samplesPerSide = 0, Pcg? pcg = null)
     {
         Image = image;
         Cam = camera;
+        SamplesPerSide = samplesPerSide;
+        Pcg = pcg ?? new Pcg();
     }
 
     public Ray Fire_Ray(int col, int row, float uPixels = 0.5f, float vPixels = 0.5f)
@@ -34,9 +61,32 @@ public class ImageTracer
         {
             for (int col = 0; col < Image.Width; col++)
             {
-                var ray = Fire_Ray(col, row, 0.5f, 0.5f);
+                //var ray = Fire_Ray(col, row, 0.5f, 0.5f);
                 //var color = new DerivedClass();
-                Image.Set_Pixel(col, row, solver.Tracing(ray));
+                //Image.Set_Pixel(col, row, solver.Tracing(ray));
+
+                var cumColor = new Color();
+                if (SamplesPerSide > 0)
+                {
+                    // Run stratified sampling over the pixel's surface
+                    for (int interpixelrow = 0; interpixelrow < SamplesPerSide; interpixelrow++)
+                    {
+                        for (int interpixelcol = 0; interpixelcol < SamplesPerSide; interpixelcol++)
+                        {
+                            var uPixel = (interpixelcol + Pcg.Random_Float()) / SamplesPerSide;
+                            var vPixel = (interpixelrow + Pcg.Random_Float()) / SamplesPerSide;
+                            var ray = Fire_Ray(col, row, uPixel, vPixel);
+                            cumColor += solver.Tracing(ray);
+                        }
+                    }
+                    Image.Set_Pixel(col, row, cumColor * (1.0f/ SamplesPerSide * SamplesPerSide));
+                }
+
+                else
+                {
+                    var ray = Fire_Ray(col, row);
+                    Image.Set_Pixel(col, row, solver.Tracing(ray));
+                }
             }
         }
     }
