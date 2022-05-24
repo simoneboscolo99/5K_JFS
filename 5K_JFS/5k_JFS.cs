@@ -50,7 +50,7 @@ app.Command("demo", (command) =>
     var height = command.Option("--height <INTEGER>", "Height of the image. \t\t Default: 480", CommandOptionType.SingleValue);
     var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view. \t\t\t Default: 0", CommandOptionType.SingleValue);
     var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output ldr file. \t Default: Demo.png", CommandOptionType.SingleValue);
-    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: flat", CommandOptionType.SingleValue);
+    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: pathtracing", CommandOptionType.SingleValue);
     var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2", CommandOptionType.SingleValue);
     
@@ -175,7 +175,7 @@ app.Command("demo", (command) =>
             var tracer = new ImageTracer(image, camera);
             
             // Rendering
-            var alg = algorithm.Value() ?? "FLAT";
+            var alg = algorithm.Value() ?? "PATHTRACING";
             var upperAlg = alg.ToUpper();
             Solver renderer;
             switch (upperAlg)
@@ -188,10 +188,13 @@ app.Command("demo", (command) =>
                     renderer = new FlatTracing(world);
                     Console.WriteLine("Using flat renderer");
                     break;
-                // case "PATHTRACING":
+                case "PATHTRACING":
+                    renderer = new FlatTracing(world);
+                    Console.WriteLine("Using path tracing");
+                    break;
                 default:
                     throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
-                                                   "\n - onoff \n flat \n");
+                                                   "\n - onoff \n - flat \n - pathtracing \n");
             }
             
             tracer.Fire_All_Rays(renderer);
