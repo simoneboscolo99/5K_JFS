@@ -189,7 +189,7 @@ app.Command("demo", (command) =>
                     Console.WriteLine("Using flat renderer");
                     break;
                 case "PATHTRACING":
-                    renderer = new FlatTracing(world);
+                    renderer = new PathTracing(world);
                     Console.WriteLine("Using path tracing");
                     break;
                 default:
