@@ -11,18 +11,18 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Trace;
 
 /// <summary>
-/// A High-Dynamic-Range 2D image
+/// A High-Dynamic-Range 2D image.
 /// </summary>
 public class HdrImage
 {
     
     /// <summary>
-    /// Number of rows in the 2D matrix of colors
+    /// Number of rows in the 2D matrix of colors.
     /// </summary>
     public int Height { get; set; }
     
     /// <summary>
-    /// Number of columns in the 2D matrix of colors
+    /// Number of columns in the 2D matrix of colors.
     /// </summary>
     public int Width { get; set; }
     

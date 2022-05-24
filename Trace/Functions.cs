@@ -2,6 +2,9 @@ using System.Numerics;
 
 namespace Trace;
 
+/// <summary>
+/// 
+/// </summary>
 public class Functions
 {
 

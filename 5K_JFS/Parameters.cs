@@ -3,45 +3,49 @@ using Trace;
 namespace _5K_JFS;
 
 /// <summary>
-/// 
+/// A class that parses the command line parameters
 /// </summary>
 public class Parameters
 {
     /// <summary>
-    /// Path of the input pfm file
+    /// Path of the input pfm file.
     /// </summary>
     public static string InputPfmFileName = "";
+    
     /// <summary>
-    /// Multiplicative factor
+    /// Multiplicative factor.
     /// </summary>
     public static float Factor;
+    
     /// <summary>
-    /// Exponent for gamma-correction
+    /// Exponent for gamma-correction.
     /// </summary>
     public static float Gamma;
+    
     /// <summary>
-    /// Path of the output ldr file
+    /// Path of the output ldr file.
     /// </summary>
     public static string OutputFileName = "";
+    
     /// <summary>
-    /// Format of the output ldr file
+    /// Format of the output ldr file.
     /// </summary>
     public static string Format = "";
     
-    // ===========================================================================
-    // === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === 
-    // ===========================================================================
+    // =======================================================================================
+    // === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === 
+    // =======================================================================================
 
     /// <summary>
-    /// Control of parameters given by user to convert 
+    /// Parses command line parameters in convert mode.
     /// </summary>
-    /// <param name="inputFilename"></param>
-    /// <param name="outputFilename"></param>
-    /// <param name="gamma"></param>
-    /// <param name="factor"></param>
-    /// <exception cref="RuntimeException"></exception>
-    public static void Parse_Command_Line_Convert(string? inputFilename, string? outputFilename, string? gamma,
-        string? factor)
+    /// <param name="inputFilename"> a string that contains the path of the input pfm file. If  <paramref name="inputFilename"/> is null, the default path 'Input_Pfm/memorial.pfm' is used. </param>
+    /// <param name="outputFilename"> a string that contains the path of the output ldr file. If <paramref name="outputFilename"/> is null, the default path 'Images/output.png' is used. </param>
+    /// <param name="gamma"> a string that contains the number corresponding to the exponent for gamma-correction. If <paramref name="gamma"/> is null, the default value of 1 is used. </param>
+    /// <param name="factor"> a string that contains the number corresponding to the multiplicative factor. If <paramref name="factor"/> is null, the default value of 0,2 is used. </param>
+    /// <exception cref="RuntimeException"> invalid format of the parameters. </exception>
+    public static void Parse_Command_Line_Convert(string? inputFilename = null, string? outputFilename = null, string? gamma = null,
+        string? factor = null)
     {
         var i = inputFilename ?? "Input_Pfm/memorial.pfm";
         var o = outputFilename ?? "Images/output.png";
@@ -72,39 +76,42 @@ public class Parameters
         Format = Path.GetExtension(OutputFileName);
     }
 
-    // ===========================================================================
-    // === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO ===
-    // ===========================================================================
+    // ====================================================================================
+    // === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO ===
+    // ====================================================================================
     
     /// <summary>
-    /// Width of the image
+    /// Width of the image.
     /// </summary>
     public static int Width;
+    
     /// <summary>
-    /// Height of the image
+    /// Height of the image.
     /// </summary>
     public static int Height;
+    
     /// <summary>
-    /// Angle of view
+    /// Angle of view.
     /// </summary>
     public static float AngleDeg;
+    
     /// <summary>
-    /// Use an orthogonal camera instead of a perspective camera
+    /// Use an orthogonal camera instead of a perspective camera.
     /// </summary>
     public static bool Orthogonal;
 
     /// <summary>
-    /// Control over the Demo's parameters
+    /// Parses command line parameters in demo mode.
     /// </summary>
-    /// <param name="width"> width of the image </param>
-    /// <param name="height"> height of the image </param>
-    /// <param name="angle"> angle of view </param>
-    /// <param name="gamma"> exponent for gamma-correction </param>
-    /// <param name="factor"> multiplicative factor </param>
-    /// <param name="outputFilename"> path of the output ldr file </param>
-    /// <exception cref="RuntimeException"> invalid format of the parameters </exception>
-    public static void Parse_Command_Line_Demo(string? width, string? height, string? angle, string? gamma,
-        string? factor, string? outputFilename)
+    /// <param name="width"> a string that contains the number corresponding to the width of the image. If <paramref name="width"/> is null, the default value of 480 is used. </param>
+    /// <param name="height"> a string that contains the number corresponding to the height of the image. If <paramref name="height"/> is null, the default value of 480 is used. </param>
+    /// <param name="angle"> a string that contains the number corresponding to the angle of view. If <paramref name="angle"/> is null, the default value of 0 is used. </param>
+    /// <param name="gamma"> a string that contains the number corresponding to the exponent for gamma-correction. If <paramref name="gamma"/> is null, the default value of 1 is used. </param>
+    /// <param name="factor"> a string that contains the number corresponding to the multiplicative factor. If <paramref name="factor"/> is null, the default value of 0,2 is used. </param>
+    /// <param name="outputFilename"> a string that contains the path of the output ldr file. If <paramref name="outputFilename"/> is null, the default path 'Demo.png' is used. </param>
+    /// <exception cref="RuntimeException"> invalid format of the parameters. </exception>
+    public static void Parse_Command_Line_Demo(string? width = null, string? height = null, string? angle = null, string? gamma = null,
+        string? factor = null, string? outputFilename = null)
     {
         var w = width ?? "480";
         var h = height ?? "480";
