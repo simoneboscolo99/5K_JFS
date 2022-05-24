@@ -97,8 +97,46 @@ app.Command("demo", (command) =>
             
 
             // Creating the scene
+            
             var world = new World();
-            var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
+
+            var skyMaterial = new Material(
+                new DiffuseBrdf(new UniformPigment(new Color())), 
+                new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
+                );
+            
+            var groundMaterial = new Material(
+                new DiffuseBrdf(
+                    new CheckeredPigment(
+                        new Color(0.3f, 0.5f, 0.1f), 
+                        new Color(0.1f, 0.2f, 0.5f)
+                        )
+                    )
+            );
+
+            var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
+
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
+            
+            world.Add(new Sphere(
+                Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                skyMaterial
+                )
+            );
+            world.Add(new Plane(m: groundMaterial));
+            world.Add(new Sphere(
+                    Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
+                    sphereMaterial
+                )
+            );
+            world.Add(new Sphere(
+                    Transformation.Translation(new Vec(1.0f, 2.5f, 0.0f)),
+                    mirrorMaterial
+                )
+            );
+
+            // Spheres at the vertices of the cube
+            /*var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
             
             // Colors of the image
             var c = new Color(0.2f, 0.5f, 0.2f);
@@ -127,7 +165,7 @@ app.Command("demo", (command) =>
             world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale, 
                 new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 2)))));
             world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.5f, 0.0f)) * scale, 
-                new Material(new DiffuseBrdf(new CheckeredPigment(c2, c1, 2)))));
+                new Material(new DiffuseBrdf(new CheckeredPigment(c2, c1, 2))))); */
             
             // Creating the camera
             ICamera camera;
