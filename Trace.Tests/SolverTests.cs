@@ -72,7 +72,7 @@ public class SolverTests
             var emittedRadiance = pcg.Random_Float();
             var reflectance = pcg.Random_Float() * 0.9f; //Be sure to pick a reflectance not too close to 1
 
-            var sphere = new Sphere(null,new Material(new DiffuseBrdf(new UniformPigment(Color.White * reflectance)),
+            var sphere = new Sphere(m: new Material(new DiffuseBrdf(new UniformPigment(Color.White * reflectance)),
                 new UniformPigment(Color.White * emittedRadiance)));
             world.Add(sphere);
             var pathTracer = new PathTracing(world, null, pcg,1, 100, 101);
