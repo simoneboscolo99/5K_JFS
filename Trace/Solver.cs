@@ -190,6 +190,7 @@ public class PathTracing : Solver
         var hitColorLum = Math.Max(hitColor.R, Math.Max(hitColor.G, hitColor.B));
         
         // Russian roulette
+        
     }
     
 }
