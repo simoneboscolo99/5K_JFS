@@ -109,7 +109,7 @@ public abstract class Brdf
 {
   public Pigment Pg;
 
-  protected Brdf(Pigment? pigment = null)
+  public Brdf(Pigment? pigment = null)
   {
     Pg = pigment ?? new UniformPigment(Color.White);
     //if (pigment == new UniformPigment(Color.White))
@@ -118,7 +118,7 @@ public abstract class Brdf
     //Pg = pigment;
   }
 
-  public virtual Color Eval(Normal n, Vec vIn, Vec vOut, Vec2D uv) => Color.Black;
+  public abstract Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv);
   public abstract Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth);
 }
 
@@ -129,8 +129,8 @@ public class DiffuseBrdf : Brdf
 {
   public DiffuseBrdf(Pigment? p = null) : base(p) { }
 
-  public override Color Eval(Normal normal, Vec inDir, Vec outDir, Vec2D uv)
-    => Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
+  public override Color Eval (Normal normal, Vec inDir, Vec outDir, Vec2D uv) 
+      => Pg.Get_Color(uv) * (float) (1.0f / Math.PI);
   
   public override Ray Scatter_Ray(Pcg pcg, Vec incomingDir, Point interactionPoint, Normal normal, int depth)
   {

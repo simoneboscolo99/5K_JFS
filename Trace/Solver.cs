@@ -190,7 +190,31 @@ public class PathTracing : Solver
         var hitColorLum = Math.Max(hitColor.R, Math.Max(hitColor.G, hitColor.B));
         
         // Russian roulette
-        
+        if (ray.Depth >= RussianRouletteLimit)
+        {
+            var q = Math.Max(0.05f, 1 - hitColorLum);
+            if (Pcg.Random_Float() > q) hitColor *= (1.0f / (1.0f - q));
+            else return emittedRadiance;
+        }
+
+        Color cumRadiance = new Color();
+        if (hitColorLum > 0.0f) // if it is a perfect absorber it will not scatter anything and it is useless to do the integral
+        {
+            for (int rayIndex = 0; rayIndex < NumOfRays; rayIndex++)
+            {
+                var newRay = hitMaterial.Brdf.Scatter_Ray(
+                    Pcg,
+                    hitRecord.Ray.Dir,
+                    hitRecord.WorldPoint,
+                    hitRecord.N,
+                    ray.Depth + 1);
+                // Recursive call
+                var newRadiance = Tracing(newRay);
+                cumRadiance += hitColor * newRadiance;
+            }
+        }
+
+        return emittedRadiance + cumRadiance * (1.0f / NumOfRays);
     }
     
 }
