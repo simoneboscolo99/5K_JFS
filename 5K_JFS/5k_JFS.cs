@@ -25,7 +25,7 @@ app.HelpOption("-?|-h|--help");
 // ===========================================================================
 
 // This is a command with no arguments - it just does default action.
-app.Command("demo", (command) =>
+app.Command("demo", command =>
 {
     // This is a command that has it's own options
     // description and help text of the command
@@ -201,7 +201,7 @@ app.Command("demo", (command) =>
                     Console.WriteLine("Using flat renderer");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world);
+                    renderer = new PathTracing(world, maxDepth: 4);
                     Console.WriteLine("Using path tracing");
                     break;
                 default:
@@ -221,7 +221,7 @@ app.Command("demo", (command) =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor, 0.5f);
+            image.Luminosity_Norm(Parameters.Factor);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
@@ -240,7 +240,7 @@ app.Command("demo", (command) =>
     });
 });
 // ===========================================================================
-// === END === END === END === END === END === END === END === END === END ==
+// === END === END === END === END === END === END === END === END === END ===
 // ===========================================================================
 
 
@@ -252,7 +252,7 @@ app.Command("demo", (command) =>
 // e.g ConsoleArgs "first value" "second value"
 // This is OK for really simple tasks, but generally you're better off using Options
 // since they avoid confusion
-app.Command("convert", (command) =>
+app.Command("convert", command =>
 {
     command.Description = "This is the description for convert.";
     command.ExtendedHelpText = "\nThis is the extended help text for convert.\n";
