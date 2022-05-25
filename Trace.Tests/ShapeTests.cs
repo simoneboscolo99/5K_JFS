@@ -19,7 +19,7 @@ public class SphereTests
             new Normal(0.0f, 0.0f, 1.0f), 
             1.0f, 
             ray1, 
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f), new Material()
             ).Is_Close(intersection1), "Test hit 1");
         
         var ray2 = new Ray(new Point(3.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
@@ -32,7 +32,7 @@ public class SphereTests
             new Normal(1.0f, 0.0f, 0.0f), 
             2.0f, 
             ray2, 
-            new Vec2D(0.0f, 0.5f)
+            new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection2), "Test hit 2");
         
         Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 10.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null, "Test no intersection");
@@ -51,47 +51,46 @@ public class SphereTests
             new Normal(-1.0f, 0.0f, 0.0f),
             1.0f,
             ray,
-            new Vec2D(0.0f, 0.5f)
+            new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection), "Test hit");
     }
-
-    [Fact]
-    public void TestTransformation()
-    {
-        var sphere = new Sphere(Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f)));
-        var ray1 = new Ray(new Point(10.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
-        var intersection1 = sphere.Ray_Intersection(ray1);
-        var hit1 = sphere.Quick_Ray_Intersection(ray1);
-        Assert.True(hit1, "Test quick intersection 1");
-        Assert.True(intersection1 != null, "Test intersection 1");
-        Assert.True(new HitRecord(
-            new Point(10.0f, 0.0f, 1.0f),
-            new Normal(0.0f, 0.0f, 1.0f),
-            1.0f,
-            ray1,
-            new Vec2D(0.0f, 0.0f)
-        ).Is_Close(intersection1), "Test hit 1");
-
-        var ray2 = new Ray(new Point(13.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
-        var intersection2 = sphere.Ray_Intersection(ray2);
-        Assert.True(intersection2 != null, "Test intersection 2");
-        Assert.True(new HitRecord(
-            new Point(11.0f, 0.0f, 0.0f),
-            new Normal(1.0f, 0.0f, 0.0f),
-            2.0f,
-            ray2,
-            new Vec2D(0.0f, 0.5f)
-        ).Is_Close(intersection2), "Test hit 2");
-
-        // Check if the sphere failed to move by trying to hit the untransformed shape
-        Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
-            "Test no intersection 1");
-
-        // Check if the *inverse* transformation was wrongly applied
-        Assert.False(
-            sphere.Ray_Intersection(new Ray(new Point(-10.0f, 0.0f, 0.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
-            "Test no intersection 2");
-    }
+     [Fact]
+     public void TestTransformation()
+     {
+         var sphere = new Sphere(Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f)));
+         var ray1 = new Ray(new Point(10.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
+         var intersection1 = sphere.Ray_Intersection(ray1);
+         var hit1 = sphere.Quick_Ray_Intersection(ray1);
+         Assert.True(hit1, "Test quick intersection 1");
+         Assert.True(intersection1 != null, "Test intersection 1");
+         Assert.True(new HitRecord(
+             new Point(10.0f, 0.0f, 1.0f),
+             new Normal(0.0f, 0.0f, 1.0f),
+             1.0f,
+             ray1,
+             new Vec2D(0.0f, 0.0f), new Material()
+         ).Is_Close(intersection1), "Test hit 1");
+ 
+         var ray2 = new Ray(new Point(13.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
+         var intersection2 = sphere.Ray_Intersection(ray2);
+         Assert.True(intersection2 != null, "Test intersection 2");
+         Assert.True(new HitRecord(
+             new Point(11.0f, 0.0f, 0.0f),
+             new Normal(1.0f, 0.0f, 0.0f),
+             2.0f,
+             ray2,
+             new Vec2D(0.0f, 0.5f), new Material()
+         ).Is_Close(intersection2), "Test hit 2");
+ 
+         // Check if the sphere failed to move by trying to hit the untransformed shape
+         Assert.False(sphere.Ray_Intersection(new Ray(new Point(0.0f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
+             "Test no intersection 1");
+ 
+         // Check if the *inverse* transformation was wrongly applied
+         Assert.False(
+             sphere.Ray_Intersection(new Ray(new Point(-10.0f, 0.0f, 0.0f), new Vec(0.0f, 0.0f, -1.0f))) != null,
+             "Test no intersection 2");
+     }
 
     [Fact]
     public void TestNormals()
@@ -103,7 +102,7 @@ public class SphereTests
         Assert.True(intersection != null);
         // We normalize "intersection.Normal" as we are not interested in its length
         Assert.True(
-            intersection != null && intersection.Normal.Normalize().Is_Close(new Normal(1.0f, 4.0f, 0.0f).Normalize()),
+            intersection != null && intersection.N.Normalize().Is_Close(new Normal(1.0f, 4.0f, 0.0f).Normalize()),
             "Test normal");
     }
 
@@ -116,7 +115,7 @@ public class SphereTests
         var intersection = sphere.Ray_Intersection(ray);
         // We normalize "intersection.Normal" as we are not interested in its length
         Assert.True(intersection != null &&
-                    intersection.Normal.Normalize().Is_Close(new Normal(0.0f, 1.0f, 0.0f).Normalize()));
+                    intersection.N.Normalize().Is_Close(new Normal(0.0f, 1.0f, 0.0f).Normalize()));
     }
 
     [Fact]
@@ -225,7 +224,7 @@ public class PlaneTests
         Assert.True(new HitRecord(
             new Point(0.0f, 0.0f, 0.0f), 
             new Normal(0.0f, 0.0f, 1.0f), 1.0f, ray1, 
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f), new Material()
             ).Is_Close(intersection1), "Test hit plane 1"); 
 
 
@@ -259,7 +258,7 @@ public class PlaneTests
             new Normal(1.0f, 0.0f, 0.0f),
             1.0f,
             ray1,
-            new Vec2D(0.0f, 0.0f)
+            new Vec2D(0.0f, 0.0f), new Material()
         ).Is_Close(intersection1), "Test hTplane 1");
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
@@ -298,7 +297,3 @@ public class PlaneTests
             "test UV coord planes 3");
     }
 }
-        
-
-
-

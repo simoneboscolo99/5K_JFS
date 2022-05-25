@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
 
-using _5K_JFS;
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
+using _5K_JFS;
 
 // References for CLI (Command Line Interface)
 // https://github.com/anthonyreilly/ConsoleArgs/blob/master/Program.cs
@@ -46,14 +46,22 @@ app.Command("demo", (command) =>
     // Option: it starts with a pipe-delimited list of option flags/names to use
     // Optionally, It is then followed by a space and a short description of the value to specify.
     // e.g. here we could also just use "-o|--option"
-    var width = command.Option("--width <INTEGER>", "Width of the image", CommandOptionType.SingleValue);
-    var height = command.Option("--height <INTEGER>", "Height of the image", CommandOptionType.SingleValue);
-    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view", CommandOptionType.SingleValue);
-    var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
+    var width = command.Option("--width <INTEGER>", "Width of the image. \t\t Default: 480", CommandOptionType.SingleValue);
+    var height = command.Option("--height <INTEGER>", "Height of the image. \t\t Default: 480", CommandOptionType.SingleValue);
+    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view. \t\t\t Default: 0", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("--output <OUTPUT_FILENAME>", "Path of the output ldr file. \t Default: Demo.png", CommandOptionType.SingleValue);
+    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: pathtracing", CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1", CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2", CommandOptionType.SingleValue);
+    var samplesPerPixel = command.Option("-spp|--samples-per-pixel <SAMPLES_PER_PIXEL>", "Number of samples per pixel (must be a perfect square, e.g., 16).. \t\t Default: 0", CommandOptionType.SingleValue);
 
+    // Opzioni che si possono aggiungere:
+    // init_state, init_seq, (pcg)
+    // num_of_rays, max_depth, russian_roulette_limit? (path tracing)
+    
     // NoValue are basically booleans: true if supplied, false otherwise
     var orthogonal = command.Option("-o|--orthogonal", "Use an orthogonal camera instead of a perspective camera", CommandOptionType.NoValue);
-
+    
     command.HelpOption("-?|-h|--help");
     
     command.OnExecute(() =>
@@ -75,46 +83,134 @@ app.Command("demo", (command) =>
         var w = width.Value();
         var h = height.Value();
         var angle = angleDeg.Value();
+        var g = gamma.Value();
+        var f = factor.Value();
         var output = outputFilename.Value();
-        
+        var ssp = samplesPerPixel.Value();
+
         try
         {
-            Parameters.Parse_Command_Line_Demo(w, h, angle, output);
-            Console.WriteLine("Parameters: \n" + $"Width: {Parameters.Width} \n" + $"Height: {Parameters.Height} \n"
-                        + $"Angle_Deg: {Parameters.AngleDeg} \n" + $"Gamma: {Parameters.Gamma} \n"
-                        + $"A: {Parameters.Factor} \n" + $"Orthogonal: {Parameters.Orthogonal} \n");
+            Parameters.Parse_Command_Line_Demo(w, h, angle, g, f, output, ssp);
+            Console.WriteLine("Parameters: \n" 
+                              + $"Width: {Parameters.Width} \n" 
+                              + $"Height: {Parameters.Height} \n"
+                              + $"Angle_Deg: {Parameters.AngleDeg} \n" 
+                              + $"Gamma: {Parameters.Gamma} \n"
+                              + $"A: {Parameters.Factor} \n" 
+                              + $"Orthogonal: {Parameters.Orthogonal} \n" 
+                              + $"Samples per side: {Parameters.SamplesPerSide} \n");
+            
             Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
             
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
     
             var image = new HdrImage(Parameters.Width, Parameters.Height);
+            
 
             // Creating the scene
+            
             var world = new World();
-            var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
+
+            var skyMaterial = new Material(
+                new DiffuseBrdf(new UniformPigment(new Color())), 
+                new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
+                );
+            
+            var groundMaterial = new Material(
+                new DiffuseBrdf(
+                    new CheckeredPigment(
+                        new Color(0.3f, 0.5f, 0.1f), 
+                        new Color(0.1f, 0.2f, 0.5f)
+                        )
+                    )
+            );
+
+            var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
+
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
+            
+            world.Add(new Sphere(
+                Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                skyMaterial
+                )
+            );
+            world.Add(new Plane(m: groundMaterial));
+            world.Add(new Sphere(
+                    Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
+                    sphereMaterial
+                )
+            );
+            world.Add(new Sphere(
+                    Transformation.Translation(new Vec(1.0f, 2.5f, 0.0f)),
+                    mirrorMaterial
+                )
+            );
+
+            // Spheres at the vertices of the cube
+            /*var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
+            
+            // Colors of the image
+            var c = new Color(0.2f, 0.5f, 0.2f);
+            var c1 = new Color(0.5f, 0.1f, 0.1f);
+            var c2 = new Color(0.1f, 0.1f, 0.5f);
 
             var cube = new List<float> {-0.5f, 0.5f};
             foreach (var x in cube)
+            {
                 foreach (var y in cube)
+                {
                     foreach (var z in cube)
-                        world.Add(new Sphere(Transformation.Translation(new Vec(x, y, z)) * scale));
+                    {
+
+                        world.Add(new Sphere(Transformation.Translation(new Vec(x, y, z))
+                                             * scale, new Material
+                            (new DiffuseBrdf(new CheckeredPigment(Color.Black, Color.White)))));
+
+                        world.Add(new Sphere(Transformation.Translation(new Vec(x, y, z)) * scale,
+                            new Material(new DiffuseBrdf(new UniformPigment(c)))));
+                    }
+                }
+            }
 
             // Asymmetrical spheres
-            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale));
-            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.5f, 0.0f)) * scale));
+            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale, 
+                new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 2)))));
+            world.Add(new Sphere(Transformation.Translation(new Vec(0.0f, 0.5f, 0.0f)) * scale, 
+                new Material(new DiffuseBrdf(new CheckeredPigment(c2, c1, 2))))); */
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.0f)));
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, -0.0f, 0.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 1.0f)));
 
-            var tracer = new ImageTracer(image, camera);
+            var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
             // Rendering
-            Console.WriteLine("Using on/off renderer");
-            tracer.Fire_All_Rays(new OnOffTracing(world));
-    
+            var alg = algorithm.Value() ?? "PATHTRACING";
+            var upperAlg = alg.ToUpper();
+            Solver renderer;
+            switch (upperAlg)
+            {
+                case "ONOFF":
+                    renderer = new OnOffTracing(world);
+                    Console.WriteLine("Using on/off renderer");
+                    break;
+                case "FLAT":
+                    renderer = new FlatTracing(world);
+                    Console.WriteLine("Using flat renderer");
+                    break;
+                case "PATHTRACING":
+                    renderer = new PathTracing(world);
+                    Console.WriteLine("Using path tracing");
+                    break;
+                default:
+                    throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
+                                                   "\n - onoff \n - flat \n - pathtracing \n");
+            }
+            
+            tracer.Fire_All_Rays(renderer);
+
             Console.WriteLine("Rendering completed");
             
             // Save pfm file
@@ -125,7 +221,7 @@ app.Command("demo", (command) =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor);
+            image.Luminosity_Norm(Parameters.Factor, 0.5f);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
@@ -163,7 +259,7 @@ app.Command("convert", (command) =>
 
 
     var inputFilename = command.Option("-i|--inputFilename <INPUT_FILENAME>", "Path of the input file", CommandOptionType.SingleValue);
-    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Path of the output file", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("-o|--outputFilename <OUTPUT_FILENAME>", "Path of the output ldr file", CommandOptionType.SingleValue);
     var gamma = command.Option("-g|--gamma <GAMMA>", "Exponent for gamma-correction", CommandOptionType.SingleValue);
     var factor = command.Option("-f|--factor <FACTOR>", "Multiplicative factor", CommandOptionType.SingleValue);
     
@@ -212,7 +308,6 @@ app.OnExecute(() =>
 try
 {
     // This begins the actual execution of the application
-    Console.WriteLine("Executing... \n\n\n");
     app.Execute(args);
 }
 catch (CommandParsingException ex)

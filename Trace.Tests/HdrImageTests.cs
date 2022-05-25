@@ -54,9 +54,9 @@ public class HdrImageTests
         Assert.False(HdrImage.Parse_Endianness("1.0"), "Test BE 1");
         Assert.False(HdrImage.Parse_Endianness("4.2"), "Test BE 2");
         Assert.True(HdrImage.Parse_Endianness("-1.0"), "Test LE");
-        var ex1 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Endianness("0.0"));
+        var ex1 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Endianness("0.0"));
         Assert.Contains("Invalid endianness specification: it cannot be zero", ex1.Message);
-        var ex2 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Endianness("a"));
+        var ex2 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Endianness("a"));
         Assert.Contains("Invalid endianness specification: expected number", ex2.Message);
     }
 
@@ -65,19 +65,19 @@ public class HdrImageTests
     {
         Assert.True(HdrImage.Parse_Img_Size("  3   2  ") == (3, 2));
         Assert.True(HdrImage.Parse_Img_Size("  33   22  ") == (33, 22));
-        var ex1 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size(" -1 3 "));
+        var ex1 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size(" -1 3 "));
         Assert.Contains("Only positive numbers are allowed for width and height", ex1.Message);
-        var ex2 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size(" 1 -3 "));
+        var ex2 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size(" 1 -3 "));
         Assert.Contains("Only positive numbers are allowed for width and height", ex2.Message);
-        var ex3 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size("3 2 1"));
+        var ex3 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size("3 2 1"));
         Assert.Contains("Invalid Image Size Specification", ex3.Message);
-        var ex4 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size(" 3 "));
+        var ex4 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size(" 3 "));
         Assert.Contains("Invalid Image Size Specification", ex4.Message);
-        var ex5 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size("a b"));
+        var ex5 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size("a b"));
         Assert.Contains("Only integer numbers are allowed for width and height", ex5.Message);
-        var ex6 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size("3.1 4"));
+        var ex6 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size("3.1 4"));
         Assert.Contains("Only integer numbers are allowed for width and height", ex6.Message);
-        var ex7 = Assert.Throws<InvalidPfmFileFormat>(() => HdrImage.Parse_Img_Size("3 a"));
+        var ex7 = Assert.Throws<InvalidPfmFileFormatException>(() => HdrImage.Parse_Img_Size("3 a"));
         Assert.Contains("Only integer numbers are allowed for width and height", ex7.Message);
     }
 
@@ -137,7 +137,7 @@ public class HdrImageTests
         var line = Encoding.ASCII.GetBytes($"PF\n3 2\n-1.0\nstop");
         Stream stream = new MemoryStream(line);
 
-        var ex1 = Assert.Throws<InvalidPfmFileFormat>(() => new HdrImage(stream));
+        var ex1 = Assert.Throws<InvalidPfmFileFormatException>(() => new HdrImage(stream));
         Assert.Contains("Impossible to read binary data from the file", ex1.Message);
 
         // one missing byte 
@@ -154,7 +154,7 @@ public class HdrImageTests
 
         Stream streamLe = new MemoryStream(leReferenceBytes);
 
-        var ex2 = Assert.Throws<InvalidPfmFileFormat>(() => new HdrImage(streamLe));
+        var ex2 = Assert.Throws<InvalidPfmFileFormatException>(() => new HdrImage(streamLe));
         Assert.Contains("Impossible to read binary data from the file", ex2.Message);
     }
 
