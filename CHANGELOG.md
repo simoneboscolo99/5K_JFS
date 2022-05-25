@@ -1,3 +1,7 @@
+# HEAD
+
+-   Implement a path tracer [#6](https://github.com/simoneboscolo99/5K_JFS/pull/6)
+
 # Version 0.2.0
 
 -   **Breaking change**: Implement the `demo` and `convert` commands and enable a nicer CLI interface [#5](https://github.com/simoneboscolo99/5K_JFS/pull/5)
