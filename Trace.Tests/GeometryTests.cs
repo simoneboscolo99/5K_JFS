@@ -105,4 +105,30 @@ public class NormalTest
         Assert.True(Functions.Are_Close(_a.Norm(), (float)Math.Sqrt(14.0f)), "Norm doesnt work");
         Assert.True(_aNorm.Is_Close(_a.Normalize()), "Normalization problem(Normal class)");
     }
+
+    [Fact]
+    public void TestOnbCreation()
+    {
+        var pcg = new Pcg();
+
+        for (int i = 0; i < 100; i++)
+        {
+            var normal = new Normal(pcg.Random_Float(), pcg.Random_Float(), pcg.Random_Float());
+            normal = normal.Normalize();
+            var (e1, e2, e3) = Normal.Create_ONB_From_Z(normal); 
+            
+            // Verify that the z axis is aligned with the normal
+            Assert.True(e3.Is_Close(normal.To_Vec()), "Test aligned");
+            
+            // Verify that each component is normalized
+            Assert.True(Functions.Are_Close(1.0f, e1.Squared_Norm()), "Test normalized 1"); 
+            Assert.True(Functions.Are_Close(1.0f, e2.Squared_Norm()), "Test normalized 2"); 
+            Assert.True(Functions.Are_Close(1.0f, e3.Squared_Norm()), "Test normalized 3"); 
+
+            // Verify that the base is orthogonal
+            Assert.True(Functions.Are_Close(0.0f, e1.Dot(e2)), "Test orthogonal 1"); 
+            Assert.True(Functions.Are_Close(0.0f, e2.Dot(e3)), "Test orthogonal 2");
+            Assert.True(Functions.Are_Close(0.0f, e3.Dot(e1)), "Test orthogonal 3");
+        }
+    }
 }

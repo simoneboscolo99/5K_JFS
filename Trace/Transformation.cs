@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Xml;
 
 namespace Trace;
 
@@ -52,12 +51,12 @@ public struct Transformation
     public bool Is_Consistent()
     {
         var I = Matrix4x4.Multiply(M, InvM);
-        return Functions.Are_Matr_close(I, Matrix4x4.Identity);
+        return Functions.Are_Matrices_close(I, Matrix4x4.Identity);
     }
 
     /// <summary>
-    /// 
-    /// </summary> Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// Translation of v.X along x, of v.Y along y and of v.Z along z.
+    /// </summary> 
     /// <param name="v">Vec(X,Y,Z)</param>
     /// <returns></returns>
     public static Transformation Translation(Vec v)
@@ -67,7 +66,7 @@ public struct Transformation
     /// Inverse
     /// </summary>: returns a new Transformation with each Matrix4x4 inverted
     public Transformation Inverse
-        => new Transformation(InvM, M);
+        => new(InvM, M);
 
     public static Transformation operator *(Transformation a, Transformation b)
         => new(Matrix4x4.Multiply(a.M, b.M), Matrix4x4.Multiply(b.InvM, a.InvM));
@@ -107,7 +106,7 @@ public struct Transformation
         => new Ray(a * ray.Origin, a * ray.Dir);
 
     public bool Is_Close(Transformation T)
-        => Functions.Are_Matr_close(M, T.M) && Functions.Are_Matr_close(InvM, T.InvM);
+        => Functions.Are_Matrices_close(M, T.M) && Functions.Are_Matrices_close(InvM, T.InvM);
 
     public Transformation Clone()
     {
