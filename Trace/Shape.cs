@@ -7,7 +7,7 @@ namespace Trace;
 /// </summary>
 public abstract class Shape
 {
-    public Transformation Tr { get; set; }
+    public Transformation Tr { get; }
 
     /// <summary>
     /// Create a shape, potentially associating a transformation to it
@@ -193,4 +193,14 @@ public class Plane : Shape
             var t = -invRay.Origin.Z / invRay.Dir.Z;
             return (invRay.TMin < t && t < invRay.TMax);
         }
+}
+
+public class Cylinder : Shape
+{
+    /// <summary>
+    /// Create a cylinder, potentially associating a transformation to it
+    /// </summary>
+    /// <param name="T"></param>
+    public Cylinder(Transformation? T = null)
+        : base(T) { }
 }
