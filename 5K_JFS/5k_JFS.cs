@@ -221,7 +221,7 @@ app.Command("demo", (command) =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor, 0.5f);
+            image.Luminosity_Norm(Parameters.Factor);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
