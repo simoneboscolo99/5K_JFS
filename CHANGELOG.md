@@ -1,4 +1,4 @@
-# HEAD
+# Version 0.3.0
 
 -   Implement a path tracer [#6](https://github.com/simoneboscolo99/5K_JFS/pull/6)
 
