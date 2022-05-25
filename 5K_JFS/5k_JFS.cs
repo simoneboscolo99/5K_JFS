@@ -201,7 +201,7 @@ app.Command("demo", command =>
                     Console.WriteLine("Using flat renderer");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world, maxDepth: 4);
+                    renderer = new PathTracing(world, maxDepth: 6, numOfRays: 8, russianRouletteLimit: 2);
                     Console.WriteLine("Using path tracing");
                     break;
                 default:

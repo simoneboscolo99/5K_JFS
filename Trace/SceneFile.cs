@@ -22,3 +22,64 @@ public class SourceLocation
     /// </summary>
     public int ColumnNum = 0;
 }
+
+/// <summary>
+/// A lexical token, used when parsing a scene file.
+/// </summary>
+public abstract class Token
+{
+    public SourceLocation Location;
+
+    protected Token(SourceLocation location)
+    {
+        Location = location;
+    }
+}
+
+/// <summary>
+/// A token signalling the end of a file.
+/// </summary>
+public class StopToken : Token
+{
+    public StopToken(SourceLocation location) : base(location) { }
+}
+
+/// <summary>
+/// Enumeration for all the possible keywords recognized by the lexer.
+/// </summary>
+// Enumeration type: more efficient
+public enum KeywordEnum 
+{
+    New = 1, 
+    Material, 
+    Plane, 
+    Sphere, 
+    Diffuse, 
+    Specular, 
+    Uniform, 
+    Checkered, 
+    Image,
+    Identity, 
+    Translation, 
+    RotationX, 
+    RotationY, 
+    RotationZ, 
+    Scaling, 
+    Camera, 
+    Orthogonal,
+    Perspective, 
+    Float
+}
+
+/// <summary>
+/// A token containing a keyword.
+/// </summary>
+public class KeywordToken : Token
+{
+    public KeywordEnum Keyword;
+    
+    public KeywordToken(SourceLocation location, KeywordEnum keyword) : base(location)
+    {
+        Keyword = keyword;
+    }
+}
