@@ -116,7 +116,8 @@ app.Command("demo", command =>
             world.Add(
                 new Cylinder(
                     Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale,
-                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 8)))
+                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 8))),
+                    5.8f
                     )
                 );
 

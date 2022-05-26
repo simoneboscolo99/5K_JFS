@@ -200,14 +200,18 @@ public class Plane : Shape
 
 public class Cylinder : Shape
 {
-    //public float PhiMax;
-    
+    public float PhiMax;
+
     /// <summary>
     /// Create a cylinder, potentially associating a transformation to it
     /// </summary>
     /// <param name="T"></param>
     /// <param name="m"></param>
-    public Cylinder(Transformation? T = null, Material? m = null) : base(T, m) { }
+    /// <param name="phiMax"></param>
+    public Cylinder(Transformation? T = null, Material? m = null, float phiMax = 0.0f) : base(T, m)
+    {
+        PhiMax = phiMax;
+    }
 
     public override HitRecord? Ray_Intersection(Ray r)
     {
@@ -226,8 +230,12 @@ public class Cylinder : Shape
         var tmax = (-b + sqrtDelta) / (2.0f * a);
         float firstHitT;
 
-        if (tmin < invRay.TMax && tmin > invRay.TMin && invRay.At(tmin).Z is > 0.0f and < 1.0f) firstHitT = tmin;
-        else if (tmax < invRay.TMax && tmax > invRay.TMin && invRay.At(tmax).Z is > 0.0f and < 1.0f) firstHitT = tmax;
+        var phi1 = (float) Math.Atan2(invRay.At(tmin).Y, invRay.At(tmin).X);
+        if (phi1 < 0) phi1 += 2.0f * (float) Math.PI;
+        var phi2 = (float) Math.Atan2(invRay.At(tmax).Y, invRay.At(tmax).X);
+        if (phi2 < 0) phi2 += 2.0f * (float) Math.PI;
+        if (tmin < invRay.TMax && tmin > invRay.TMin && invRay.At(tmin).Z is > 0.0f and < 1.0f && phi1 < PhiMax) firstHitT = tmin;
+        else if (tmax < invRay.TMax && tmax > invRay.TMin && invRay.At(tmax).Z is > 0.0f and < 1.0f && phi2 < PhiMax) firstHitT = tmax;
         else return null;
         
         var hitPoint = invRay.At(firstHitT);
@@ -268,12 +276,14 @@ public class Cylinder : Shape
         if (tmin > invRay.TMin && tmin < invRay.TMax)
         {
             var hitPoint1 = invRay.At(tmin);
-            if (hitPoint1.Z is > 0.0f and < 1.0f) return true;
+            var phi1 = (float) Math.Atan2(hitPoint1.Y, hitPoint1.X);
+            if (hitPoint1.Z is > 0.0f and < 1.0f && phi1 < PhiMax) return true;
         }
         if (tmax > invRay.TMin && tmax < invRay.TMax)
         {
             var hitPoint2 = invRay.At(tmax);
-            if (hitPoint2.Z is > 0.0f and < 1.0f) return true;
+            var phi2 = (float) Math.Atan2(hitPoint2.Y, hitPoint2.X);
+            if (hitPoint2.Z is > 0.0f and < 1.0f && phi2 < PhiMax) return true;
         }
         return false;
     }
