@@ -208,7 +208,7 @@ public class Cylinder : Shape
     /// <param name="T"></param>
     /// <param name="m"></param>
     /// <param name="phiMax"></param>
-    public Cylinder(Transformation? T = null, Material? m = null, float phiMax = 0.0f) : base(T, m)
+    public Cylinder(Transformation? T = null, Material? m = null, float phiMax = 2.0f * (float) Math.PI) : base(T, m)
     {
         PhiMax = phiMax;
     }
@@ -243,7 +243,7 @@ public class Cylinder : Shape
 
         var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
         if (phi < 0) phi += 2.0f * (float) Math.PI;
-        var u = phi / (2.0f * (float) Math.PI);
+        var u = phi / PhiMax;
         var v = hitPoint.Z;
         var normal = new Normal(hitPoint.X, hitPoint.Y, 0.0f);
         if (normal.To_Vec().Dot(invRay.Dir) > 0.0f) normal = -normal;
@@ -288,3 +288,63 @@ public class Cylinder : Shape
         return false;
     }
 }
+
+public class Disk : Shape
+{
+    public float PhiMax;
+
+    // Careful: innerR must be less than 1 (altrimenti è tutto nero)
+    public float InnerR;
+
+    public Disk(Transformation? T = null, Material? m = null, float phiMax = 2.0f * (float) Math.PI, float innerR = 0.0f) : base(T, m)
+    {
+        PhiMax = phiMax;
+        InnerR = innerR;
+    }
+
+    public override HitRecord? Ray_Intersection(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        // Direction of the ray must not be parallel to the plane: z-component of dir different from zero (10^-5)
+        if (Math.Abs(invRay.Dir.Z) < 1e-5f) return null;
+        
+        var t = -invRay.Origin.Z / invRay.Dir.Z;
+        // rRturn null if the ray run out of range
+        if (t < invRay.TMin || t >= invRay.TMax) return null;
+        
+        var hitPoint = invRay.At(t);
+        // See if hit point is inside disk radii and phimax
+        var dist = hitPoint.X * hitPoint.X + hitPoint.Y * hitPoint.Y;
+        var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
+        if (phi < 0) phi += 2.0f * (float) Math.PI;
+        if (dist > 1.0f || dist < InnerR * InnerR || phi > PhiMax) return null;
+
+        var u = phi / PhiMax;
+        var v = (1.0f - (float) Math.Sqrt(dist)) / (1.0f - InnerR);
+
+        float dZ;
+        if (invRay.Dir.Z < 0.0f) dZ = 1.0f;
+        else dZ = -1.0f;
+
+        return new HitRecord(
+            Tr * hitPoint,
+            Tr * new Normal(0.0f, 0.0f, dZ),
+            t,
+            r,
+            new Vec2D(u, v),
+            Mt
+        );
+    }
+
+    public override bool Quick_Ray_Intersection(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        if (Math.Abs(invRay.Dir.Z) < 1e-5) return false;
+        var t = -invRay.Origin.Z / invRay.Dir.Z;
+        var hitPoint = invRay.At(t);
+        var dist = hitPoint.X * hitPoint.X + hitPoint.Y * hitPoint.Y;
+        var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
+        if (phi < 0) phi += 2.0f * (float) Math.PI;
+        return !(dist > 1.0f) && !(dist < InnerR * InnerR) && !(phi > PhiMax);
+    }
+} 

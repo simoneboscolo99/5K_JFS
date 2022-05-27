@@ -111,15 +111,40 @@ app.Command("demo", command =>
             // Creating the scene
             var c1 = new Color(0.5f, 0.1f, 0.1f);
             var c2 = new Color(0.1f, 0.1f, 0.5f);
+            var brown = new Color(1.0f, 0.67f, 0.33f);
             var world = new World();
-            var scale = Transformation.Scale(new Vec(0.5f, 0.5f, 1.0f));
+            world.Add( new Disk(
+                    Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f - 0.33f)),
+                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 3)))
+                )
+            );
+            //var scaleC = Transformation.Scale(new Vec(0.18f, 0.18f, 0.8f));
+            //var scaleS = Transformation.Scale(new Vec(0.2f, 0.2f, 0.2f));
+            //var scaleSup = Transformation.Scale(new Vec(0.18f, 0.18f, 0.18f));
             world.Add(
                 new Cylinder(
-                    Transformation.Translation(new Vec(0.0f, 0.0f, -0.5f)) * scale,
-                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 8))),
-                    5.8f
+                    Transformation.Translation(new Vec(0.0f, 0.0f, -0.33f)),
+                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 3)))
                     )
                 );
+            /*world.Add(
+                new Sphere(
+                    Transformation.Translation(new Vec(0.0f, -0.18f, -0.4f)) * scaleS, 
+                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
+                )
+            );
+            world.Add(
+                new Sphere(
+                    Transformation.Translation(new Vec(0.0f, 0.18f, -0.4f)) * scaleS, 
+                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
+                )
+            );
+            world.Add(
+                new Sphere(
+                    Transformation.Translation(new Vec(0.0f, 0.0f, 0.44f)) * scaleSup, 
+                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
+                )
+            ); */
 
             /*var skyMaterial = new Material(
                 new DiffuseBrdf(new UniformPigment(new Color())), 
@@ -190,7 +215,7 @@ app.Command("demo", command =>
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-2.0f, -0.0f, 0.0f)));
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-10.5f, -0.0f, 0.0f)));
             else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
 
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
@@ -230,7 +255,7 @@ app.Command("demo", command =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor, 0.15f);
+            image.Luminosity_Norm(Parameters.Factor, 0.3f);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
