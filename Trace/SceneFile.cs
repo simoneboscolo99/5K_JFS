@@ -46,78 +46,103 @@ public struct SourceLocation
 /// </summary>
 public class InputStream
 {
-     public Stream Stream;
-     public string SavedChar;
-     public SourceLocation SavedLocation;
-     public SourceLocation Location;
-     public int Tabulations;
+    /// <summary>
+    /// 
+    /// </summary>
+    public Stream Stream; 
+    public string SavedChar;
+    public SourceLocation SavedLocation;
+    public SourceLocation Location;
+    public int Tabulations;
 
-     public InputStream(Stream stream, string filename = "", int tabulations = 8)
-     {
-         Stream = stream;
-         //Note that we start counting lines/columns from 1, not from 0
-         Location = new SourceLocation(filename, 1, 1);
-         SavedChar = "";
-         SavedLocation = Location;
-         Tabulations = tabulations;
-     }
+    public InputStream(Stream stream, string filename = "", int tabulations = 8)
+    {
+        Stream = stream;
+        //Note that we start counting lines/columns from 1, not from 0
+        Location = new SourceLocation(filename, 1, 1);
+        SavedChar = "";
+        SavedLocation = Location;
+        Tabulations = tabulations;
+    }
 
-     ///Update `location` after having read `ch` from the stream
-     public void UpdatePos(string ch)
-     {
-         if (ch == "")
-         {
-             //Nothing to do!
-             return;
-         }
+    ///Update `location` after having read `ch` from the stream
+    public void UpdatePos(string ch)
+    {
+        if (ch == "")
+        {
+            //Nothing to do!
+            return;
+        }
 
-         if (ch == "\n")
-         {
-             Location.LineNum += 1;
-             Location.ColumnNum += 1;
-         }
-         else if (ch == "\t")
-         {
-             Location.ColumnNum += Tabulations;
-         }
+        if (ch == "\n")
+        {
+            Location.LineNum += 1;
+            Location.ColumnNum = 1;
+        }
+        else if (ch == "\t")
+        {
+            Location.ColumnNum += Tabulations;
+        }
 
-         else Location.ColumnNum += 1;
-     }
+        else Location.ColumnNum += 1;
+    }
 
-     /// <summary>
-     /// Read a new character from the stream
-     /// </summary>
-     /// <returns></returns>
-     public string ReadChar()
-     {
-         string ch = "";
-         if (SavedChar != "")
-         {
-             //Recover the «unread» character and return it
-             ch += SavedChar;
-             SavedChar = "";
-         }
-         else
-         {
+    /// <summary>
+    /// Read a new character from the stream
+    /// </summary>
+    /// <returns></returns>
+    public string ReadChar()
+    {
+        string ch = "";
+        if (SavedChar != "")
+        {
+            //Recover the «unread» character and return it
+            ch += SavedChar;
+            SavedChar = "";
+        }
+        else
+        {
              //Read a new character from the stream
              var curByte = Stream.ReadByte();
              if (curByte != -1) ch += (char) curByte;
-         }
-         SavedLocation = Location;
-         UpdatePos(ch);
-         return ch;
-     }
+        }
+        SavedLocation = Location;
+        UpdatePos(ch);
+        return ch;
+    }
 
-     /// <summary>
-     /// Push a character back to the stream
-     /// </summary>
-     /// <returns></returns>
-     public void UnreadChar(string ch)
-     {
-         Debug.Assert(SavedChar == "");
-         SavedChar = ch;
-         Location = SavedLocation;
-     }
+    /// <summary>
+    /// Push a character back to the stream
+    /// </summary>
+    /// <returns></returns>
+    public void UnreadChar(string ch)
+    { 
+        Debug.Assert(SavedChar == "");
+        SavedChar = ch;
+        Location = SavedLocation;
+    }
+
+    /// <summary>
+    /// Keep reading characters until a non-whitespace/non-comment character is found.
+    /// </summary>
+    public void SkipWhitespacesAndComments()
+    {
+        var ch = ReadChar();
+        while (ch is "\t" or "\r" or "\n" or "#" or " ")
+        {
+            if (ch == "#")
+            {
+                // It's a comment! Keep reading until the end of the line (include the case "", the end-of-file)
+                while (ReadChar() is not "\r" or "\n" or "")
+                {
+                }
+            }
+            ch = ReadChar();
+            if (ch == "") return;
+        }
+        // Put the non-whitespace character back
+        UnreadChar(ch);
+    } 
 }
 
 /// <summary>
