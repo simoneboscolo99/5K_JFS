@@ -106,28 +106,51 @@ app.Command("demo", command =>
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
     
             var image = new HdrImage(Parameters.Width, Parameters.Height);
-            
+            var world = new World();
 
             // Creating the scene
-            var c1 = new Color(0.5f, 0.1f, 0.1f);
-            var c2 = new Color(0.1f, 0.1f, 0.5f);
-            var brown = new Color(1.0f, 0.67f, 0.33f);
+            /*var skyMaterial = new Material(
+                new DiffuseBrdf(new UniformPigment(new Color())), 
+                new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
+            );
+            
+            var groundMaterial = new Material(
+                new DiffuseBrdf(
+                   // new CheckeredPigment(
+                   //     new Color(0.3f, 0.5f, 0.1f), 
+                   //     new Color(0.1f, 0.2f, 0.5f)
+                   new UniformPigment(new Color(0.25f, 0.5f, 0.25f)))
+            );
+            
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
+
+            
+            //var c1 = new Color(0.5f, 0.1f, 0.1f);
+            //var c2 = new Color(0.1f, 0.1f, 0.5f);
+            var brown = new Color(0.17f, 0.05f, 0.1f);
             var world = new World();
             world.Add( new Disk(
                     Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f - 0.33f)),
                     new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 3)))
                 )
             );
-            //var scaleC = Transformation.Scale(new Vec(0.18f, 0.18f, 0.8f));
-            //var scaleS = Transformation.Scale(new Vec(0.2f, 0.2f, 0.2f));
-            //var scaleSup = Transformation.Scale(new Vec(0.18f, 0.18f, 0.18f));
+            var scaleC = Transformation.Scale(new Vec(0.18f, 0.18f, 1.2f));
+            var scaleS = Transformation.Scale(new Vec(0.26f, 0.26f, 0.26f));
+            var scaleSup = Transformation.Scale(new Vec(0.18f, 0.18f, 0.18f));
+            world.Add(new Plane(Transformation.Translation(new Vec(0.0f, 0.0f, -0.6f)), groundMaterial));
+
             world.Add(
                 new Cylinder(
-                    Transformation.Translation(new Vec(0.0f, 0.0f, -0.33f)),
-                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 3)))
+                    Transformation.Translation(new Vec(0.0f, 0.0f, -0.33f)) * scaleC,
+                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
                     )
                 );
-            /*world.Add(
+            world.Add(new Sphere(
+                    Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                    skyMaterial
+                )
+            );
+            world.Add(
                 new Sphere(
                     Transformation.Translation(new Vec(0.0f, -0.18f, -0.4f)) * scaleS, 
                     new Material(new DiffuseBrdf(new UniformPigment(brown)))
@@ -141,12 +164,17 @@ app.Command("demo", command =>
             );
             world.Add(
                 new Sphere(
-                    Transformation.Translation(new Vec(0.0f, 0.0f, 0.44f)) * scaleSup, 
+                    Transformation.Translation(new Vec(0.0f, 0.0f, 0.84f)) * scaleSup, 
                     new Material(new DiffuseBrdf(new UniformPigment(brown)))
+                )
+            ); 
+            world.Add(new Sphere(
+                    Transformation.Translation(new Vec(1.0f, 2.5f, -0.4f)),
+                    mirrorMaterial
                 )
             ); */
 
-            /*var skyMaterial = new Material(
+            var skyMaterial = new Material(
                 new DiffuseBrdf(new UniformPigment(new Color())), 
                 new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
                 );
@@ -179,7 +207,7 @@ app.Command("demo", command =>
                     Transformation.Translation(new Vec(1.0f, 2.5f, 0.0f)),
                     mirrorMaterial
                 )
-            );*/
+            );
 
             // Spheres at the vertices of the cube
             /*var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
@@ -215,8 +243,8 @@ app.Command("demo", command =>
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-10.5f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-2.0f, 0.0f, 0.0f)));
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, -0.0f, 0.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 1.0f)));
 
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
@@ -235,11 +263,11 @@ app.Command("demo", command =>
                     Console.WriteLine("Using flat renderer");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world, maxDepth: 4);
+                    renderer = new PathTracing(world, maxDepth: 5, numOfRays: 3);
                     Console.WriteLine("Using path tracing");
                     break;
                 default:
-                    throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
+                    throw new RuntimeException($"\nInvalid renderer {alg}. Possible renderers are:" +
                                                    "\n - onoff \n - flat \n - pathtracing \n");
             }
             
@@ -255,7 +283,7 @@ app.Command("demo", command =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor, 0.3f);
+            image.Luminosity_Norm(Parameters.Factor);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
