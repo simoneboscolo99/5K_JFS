@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Trace;
 
@@ -176,6 +177,8 @@ public enum KeywordEnum
     Material, 
     Plane, 
     Sphere, 
+    Cylinder,
+    Disk,
     Diffuse, 
     Specular, 
     Uniform, 
@@ -199,9 +202,97 @@ public enum KeywordEnum
 public class KeywordToken : Token
 {
     public KeywordEnum Keyword;
+
+    public IDictionary<string, KeywordEnum> Dict = new Dictionary<string, KeywordEnum>
+    {
+        {"new", KeywordEnum.New},
+        {"material", KeywordEnum.Material},
+        {"plane", KeywordEnum.Plane},
+        {"sphere", KeywordEnum.Sphere},
+        {"cylinder", KeywordEnum.Cylinder},
+        {"disk", KeywordEnum.Disk},
+        {"diffuse", KeywordEnum.Diffuse},
+        {"specular", KeywordEnum.Specular},
+        {"uniform", KeywordEnum.Uniform},
+        {"checkered", KeywordEnum.Checkered},
+        {"image", KeywordEnum.Image},
+        {"identity", KeywordEnum.Identity},
+        {"translation", KeywordEnum.Translation},
+        {"rotation_x", KeywordEnum.RotationX},
+        {"rotation_y", KeywordEnum.RotationY},
+        {"rotation_z", KeywordEnum.RotationZ},
+        {"scaling", KeywordEnum.Scaling},
+        {"camera", KeywordEnum.Camera},
+        {"orthogonal", KeywordEnum.Orthogonal},
+        {"perspective", KeywordEnum.Perspective},
+        {"float", KeywordEnum.Float}
+    };
+        
     
     public KeywordToken(SourceLocation location, KeywordEnum keyword) : base(location)
     {
         Keyword = keyword;
     }
+    
+    public override string ToString() => Keyword.ToString();
+}
+
+/// <summary>
+/// A token containing an identifier.
+/// </summary>
+public class IdentifierToken : Token
+{
+    public string Identifier;
+
+    public IdentifierToken(SourceLocation location, string identifier) : base(location)
+    {
+        Identifier = identifier;
+    }
+    
+    public override string ToString() => Identifier;
+}
+
+/// <summary>
+/// A token containing a literal string.
+/// </summary>
+public class StringToken : Token
+{
+    public string Str;
+
+    public StringToken(SourceLocation location, string s) : base(location)
+    {
+        Str = s;
+    }
+
+    public override string ToString() => Str;
+}
+
+/// <summary>
+/// A token containing a literal number.
+/// </summary>
+public class LiteralNumberToken : Token
+{
+    public float Value;
+
+    public LiteralNumberToken(SourceLocation location, float value) : base(location)
+    {
+        Value = value;
+    }
+
+    public override string ToString() => Convert.ToString(Value, CultureInfo.InvariantCulture);
+}
+
+/// <summary>
+/// A token containing a symbol (i.e., a variable name).
+/// </summary>
+public class SymbolToken : Token
+{
+    public string Symbol;
+    
+    public SymbolToken(SourceLocation location, string symbol) : base(location)
+    {
+        Symbol = symbol;
+    }
+
+    public override string ToString() => Symbol;
 }
