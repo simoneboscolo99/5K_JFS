@@ -175,7 +175,21 @@ public class SphereTests
         Assert.True(intersection6 != null && intersection6.SurfacePoint.Is_Close(new Vec2D(0.0f, (float) 2 / 3)),
             "Test UV ray6");
     }
-    
+
+    [Fact]
+    public void TestIsInternal()
+    {
+        var sphere = new Sphere();
+        Assert.True(sphere.Is_Internal(new Point(0.35f, 0.22f, 0.81f)), "Test internal 1");
+        Assert.False(sphere.Is_Internal(new Point(0.51f, 1.04f, 0.74f)), "Test internal 2");
+        
+        sphere.Tr = Transformation.Scale(new Vec(0.8f, 0.8f, 0.8f));
+        Assert.False(sphere.Is_Internal(new Point(0.35f, 0.22f, 0.81f)), "Test internal 3");
+        
+        sphere.Tr = Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f));
+        Assert.True(sphere.Is_Internal(new Point(10.35f, 0.22f, 0.81f)), "Test internal 4");
+        Assert.False(sphere.Is_Internal(new Point(0.51f, 1.04f, 0.74f)), "Test internal 5");
+    }
 }
 
 public class WorldTests
@@ -262,7 +276,6 @@ public class PlaneTests
         var ray4 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 1.0f, 0.0f));
         var intersection4 = plane.Ray_Intersection(ray4);
         Assert.False((intersection4 != null), "Hit 4 transformPlane");
-
     }
 
     [Fact]
@@ -283,6 +296,22 @@ public class PlaneTests
         var intersection3 = plane.Ray_Intersection(ray3);
         Assert.True(intersection3 != null && intersection3.SurfacePoint.Is_Close(new Vec2D(0.25f, 0.75f)),
             "test UV coord planes 3");
+    }
+
+    [Fact]
+    public void TestIsInternal()
+    {
+        // plane z=0
+        var plane = new Plane();
+        Assert.True(plane.Is_Internal(new Point(13.4f, -26.8f, 0.0f)), "Test internal 1");
+        
+        plane.Tr = Transformation.Translation(new Vec(0.0f, 0.0f, 0.3f));
+        Assert.False(plane.Is_Internal(new Point(13.4f, -26.8f, 0.0f)), "Test internal 2");
+        
+        // now plane x=0
+        plane.Tr = Transformation.Rotation_Y(90.0f);
+        Assert.True(plane.Is_Internal(new Point(0.0f, -50.3f, 21.4f)), "Test internal 3");
+        Assert.False(plane.Is_Internal(new Point(13.4f, -26.8f, 0.0f)), "Test internal 4");
     }
 }
 
