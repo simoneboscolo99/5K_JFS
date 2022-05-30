@@ -163,7 +163,7 @@ public class Sphere : Shape
             intersections.Add(new HitRecord(
                 Tr * hitPoint2,
                 Tr * Sphere_Normal(hitPoint2, invRay.Dir), 
-                tmin, 
+                tmax, 
                 r, 
                 Sphere_Point_to_uv(hitPoint2), 
                 Mt

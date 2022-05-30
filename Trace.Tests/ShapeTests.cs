@@ -21,6 +21,15 @@ public class SphereTests
             ray1, 
             new Vec2D(0.0f, 0.0f), new Material()
             ).Is_Close(intersection1), "Test hit 1");
+        var intersections1 = sphere.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 2}, "Test list hits");
+        Assert.True(new HitRecord(
+            new Point(0.0f, 0.0f, -1.0f),
+            new Normal(0.0f, 0.0f, 1.0f),
+            3.0f,
+            ray1,
+            new Vec2D(0.0f, 1.0f), new Material()
+            ).Is_Close(intersections1?[1]), "Test second hit");
         
         var ray2 = new Ray(new Point(3.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
         var intersection2 = sphere.Ray_Intersection(ray2);
@@ -53,6 +62,10 @@ public class SphereTests
             ray,
             new Vec2D(0.0f, 0.5f), new Material()
         ).Is_Close(intersection), "Test hit");
+
+        var intersections = sphere.Ray_Intersection_List(ray);
+        Assert.True(intersections is {Count: 1}, "Test list hits");
+        
     }
      [Fact]
      public void TestTransformation()
@@ -70,6 +83,15 @@ public class SphereTests
              ray1,
              new Vec2D(0.0f, 0.0f), new Material()
          ).Is_Close(intersection1), "Test hit 1");
+         var intersections1 = sphere.Ray_Intersection_List(ray1);
+         Assert.True(intersections1 is {Count: 2}, "Test list hits");
+         Assert.True(new HitRecord(
+             new Point(10.0f, 0.0f, -1.0f),
+             new Normal(0.0f, 0.0f, 1.0f),
+             3.0f,
+             ray1,
+             new Vec2D(0.0f, 1.0f), new Material()
+         ).Is_Close(intersections1?[1]), "Test second hit");
  
          var ray2 = new Ray(new Point(13.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
          var intersection2 = sphere.Ray_Intersection(ray2);
@@ -227,9 +249,11 @@ public class PlaneTests
             new Point(0.0f, 0.0f, 0.0f), 
             new Normal(0.0f, 0.0f, 1.0f), 1.0f, ray1, 
             new Vec2D(0.0f, 0.0f), new Material()
-            ).Is_Close(intersection1), "Test hit plane 1"); 
+            ).Is_Close(intersection1), "Test hit plane 1");
 
-
+        var intersections1 = plane.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 1}, "Test list hits");
+        
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
         var intersection2 = plane.Ray_Intersection(ray2);
         var hit2 = plane.Quick_Ray_Intersection(ray2);
@@ -254,7 +278,6 @@ public class PlaneTests
         var intersection1 = plane.Ray_Intersection(ray1);
         var hit1 = plane.Quick_Ray_Intersection(ray1);
         Assert.True(hit1, "Test quick intersection 1");
-        
         Assert.True(new HitRecord(
             new Point(0.0f, 0.0f, 0.0f),
             new Normal(1.0f, 0.0f, 0.0f),
@@ -262,6 +285,15 @@ public class PlaneTests
             ray1,
             new Vec2D(0.0f, 0.0f), new Material()
         ).Is_Close(intersection1), "Test hTplane 1");
+        var intersections1 = plane.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 1}, "Test list hits");
+        Assert.True(new HitRecord(
+            new Point(0.0f, 0.0f, 0.0f),
+            new Normal(1.0f, 0.0f, 0.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.0f, 0.0f), new Material()
+        ).Is_Close(intersections1?[0]), "Test list hits");
 
         var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
         var intersection2 = plane.Ray_Intersection(ray2);

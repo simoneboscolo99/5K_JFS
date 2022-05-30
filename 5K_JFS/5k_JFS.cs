@@ -109,71 +109,6 @@ app.Command("demo", command =>
             var world = new World();
 
             // Creating the scene
-            /*var skyMaterial = new Material(
-                new DiffuseBrdf(new UniformPigment(new Color())), 
-                new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
-            );
-            
-            var groundMaterial = new Material(
-                new DiffuseBrdf(
-                   // new CheckeredPigment(
-                   //     new Color(0.3f, 0.5f, 0.1f), 
-                   //     new Color(0.1f, 0.2f, 0.5f)
-                   new UniformPigment(new Color(0.25f, 0.5f, 0.25f)))
-            );
-            
-            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
-
-            
-            //var c1 = new Color(0.5f, 0.1f, 0.1f);
-            //var c2 = new Color(0.1f, 0.1f, 0.5f);
-            var brown = new Color(0.17f, 0.05f, 0.1f);
-            var world = new World();
-            world.Add( new Disk(
-                    Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f - 0.33f)),
-                    new Material(new DiffuseBrdf(new CheckeredPigment(c1, c2, 3)))
-                )
-            );
-            var scaleC = Transformation.Scale(new Vec(0.18f, 0.18f, 1.2f));
-            var scaleS = Transformation.Scale(new Vec(0.26f, 0.26f, 0.26f));
-            var scaleSup = Transformation.Scale(new Vec(0.18f, 0.18f, 0.18f));
-            world.Add(new Plane(Transformation.Translation(new Vec(0.0f, 0.0f, -0.6f)), groundMaterial));
-
-            world.Add(
-                new Cylinder(
-                    Transformation.Translation(new Vec(0.0f, 0.0f, -0.33f)) * scaleC,
-                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
-                    )
-                );
-            world.Add(new Sphere(
-                    Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
-                    skyMaterial
-                )
-            );
-            world.Add(
-                new Sphere(
-                    Transformation.Translation(new Vec(0.0f, -0.18f, -0.4f)) * scaleS, 
-                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
-                )
-            );
-            world.Add(
-                new Sphere(
-                    Transformation.Translation(new Vec(0.0f, 0.18f, -0.4f)) * scaleS, 
-                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
-                )
-            );
-            world.Add(
-                new Sphere(
-                    Transformation.Translation(new Vec(0.0f, 0.0f, 0.84f)) * scaleSup, 
-                    new Material(new DiffuseBrdf(new UniformPigment(brown)))
-                )
-            ); 
-            world.Add(new Sphere(
-                    Transformation.Translation(new Vec(1.0f, 2.5f, -0.4f)),
-                    mirrorMaterial
-                )
-            ); */
-
             var skyMaterial = new Material(
                 new DiffuseBrdf(new UniformPigment(new Color())), 
                 new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
@@ -190,7 +125,19 @@ app.Command("demo", command =>
 
             var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
 
-            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
+            var cylinder = new Cylinder(Transformation.Scale(new Vec(1.2f, 1.2f, 0.7f)), groundMaterial);
+            var sphere = new Sphere(Transformation.Translation(new Vec(0.8f, 0.8f, 0.7f)), sphereMaterial);
+            var prova = new CsgDiff(cylinder, sphere, Transformation.Translation(new Vec(1.0f, 0.5f, 0.0f)), groundMaterial);
+            
+            world.Add(prova);
+            
+            world.Add(new Sphere(
+                    Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                    skyMaterial
+                )
+            );
+
+            /*var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
             
             world.Add(new Sphere(
                 Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
@@ -207,7 +154,7 @@ app.Command("demo", command =>
                     Transformation.Translation(new Vec(1.0f, 2.5f, 0.0f)),
                     mirrorMaterial
                 )
-            );
+            ); */
 
             // Spheres at the vertices of the cube
             /*var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
