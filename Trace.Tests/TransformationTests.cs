@@ -27,7 +27,7 @@ public class TransformationTests
     }
 
     [Fact]
-    public void Test_Multiplication()
+    public void TestMultiplication()
     {
         var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f,
             1.0f);
@@ -52,7 +52,7 @@ public class TransformationTests
     }
 
     [Fact]
-    public void Test_Vec_Point_Multiplication()
+    public void TestVecPointMultiplication()
     {
         var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 0.0f, 0.0f, 0.0f,
             1.0f);
@@ -69,7 +69,7 @@ public class TransformationTests
     }
 
     [Fact]
-    public void Test_Inverse()
+    public void TestInverse()
     {
         var m = new Matrix4x4(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 9.0f, 8.0f, 7.0f, 6.0f, 5.0f, 4.0f,
             1.0f);
@@ -84,7 +84,7 @@ public class TransformationTests
     }
 
     [Fact]
-    public void Test_Translations()
+    public void TestTranslations()
     {
         var tr1 = Transformation.Translation(new Vec(1.0f, 2.0f, 3.0f));
         Assert.True(tr1.Is_Consistent(), "Test consistent");
@@ -98,7 +98,7 @@ public class TransformationTests
 
     [Fact]
 
-    public void Test_Rotations()
+    public void TestRotations()
     {
         Assert.True(Transformation.Rotation_X(0.1f).Is_Consistent(), "Test consistent");
         Assert.True(Transformation.Rotation_Y(0.1f).Is_Consistent(), "Test consistent");
@@ -115,7 +115,7 @@ public class TransformationTests
     }
 
     [Fact]
-    public void Test_Scale()
+    public void TestScale()
     {
         var tr1 = Transformation.Scale(new Vec(2.0f, 5.0f, 10.0f));
         Assert.True(tr1.Is_Consistent(), "Test consistent");

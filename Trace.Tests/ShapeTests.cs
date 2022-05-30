@@ -182,7 +182,7 @@ public class WorldTests
 {
 
     [Fact]
-    public void Test_Ray_Intersection()
+    public void TestRayIntersection()
     {
         var world = new World();
         var sphere1 = new Sphere(Transformation.Translation(new Vec(2.0f, 0.0f, 0.0f)));
@@ -194,24 +194,12 @@ public class WorldTests
         var intersection2 = world.Ray_Intersection(new Ray(new Point(10.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f)));
         Assert.True(intersection2 != null && intersection2.WorldPoint.Is_Close(new Point(9.0f, 0.0f, 0.0f)));
     }
-/*
-    [Fact]
-    public void Test_Quick_Ray_Intersection()
-    {
-        var world = new World();
-        var sphere1 = new Sphere(Transformation.Translation(new Vec(2.0f, 0.0f, 0.0f)));
-        var sphere2 = new Sphere(Transformation.Translation(new Vec(8.0f, 0.0f, 0.0f)));        world.add_shape(sphere1)
-        world.Add(sphere1);
-        world.Add(sphere2);
-        Assert.False(world.is);
-    }
-*/
 }
 
 public class PlaneTests
 {
     [Fact]
-    public void TestPlane()
+    public void TestHit()
     {
         var plane = new Plane();
 
@@ -245,7 +233,7 @@ public class PlaneTests
 
     [Fact]
     //test after transformation
-    public void TestTransformationPlane()
+    public void TestTransformation()
     {
         var plane = new Plane(Transformation.Rotation_Y(90.0f));
         var ray1 = new Ray(new Point(1.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
@@ -278,7 +266,7 @@ public class PlaneTests
     }
 
     [Fact]
-    public void TestUvCoordinatesPlane()
+    public void TestUvCoordinates()
     {
         var plane = new Plane();
         var ray1 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, -1.0f));
@@ -295,5 +283,14 @@ public class PlaneTests
         var intersection3 = plane.Ray_Intersection(ray3);
         Assert.True(intersection3 != null && intersection3.SurfacePoint.Is_Close(new Vec2D(0.25f, 0.75f)),
             "test UV coord planes 3");
+    }
+}
+
+public class CylinderTests
+{
+    [Fact]
+    public void TestCylinder()
+    {
+        var cylinder = new Cylinder();
     }
 }

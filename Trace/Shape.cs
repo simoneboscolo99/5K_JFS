@@ -27,13 +27,22 @@ public abstract class Shape
     /// <param name="r"></param>
     /// <returns></returns>
     public abstract HitRecord? Ray_Intersection(Ray r);
-    
+
+    public abstract List<HitRecord>? Ray_Intersection_List(Ray r);
+
     /// <summary>
     /// Determine whether a ray hits the shape or not
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
     public abstract bool Quick_Ray_Intersection(Ray r);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public abstract bool Is_Internal(Point p);
 
     /// <summary>
     /// Convert a 3D point on the surface of the unit sphere into a (u, v) 2D point
@@ -63,6 +72,10 @@ public abstract class Shape
         return result;
     }
 }
+
+// ===========================================================================
+// === SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ====
+// ===========================================================================
 
 /// <summary>
 /// A 3D unit sphere centered on the origin of the axes
@@ -116,7 +129,50 @@ public class Sphere : Shape
             Mt
             );
     }
+
+    public override List<HitRecord>? Ray_Intersection_List(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        var originVec = invRay.Origin.To_Vec();
+        var a = invRay.Dir.Squared_Norm();
+        var b = 2.0f * originVec.Dot(invRay.Dir);
+        var c = originVec.Squared_Norm() - 1.0f;
+
+        var delta = b * b - 4.0f * a * c;
         
+        if (delta <= 0.0f) return null;
+        
+        var sqrtDelta = (float)Math.Sqrt(delta);
+        var tmin = (-b - sqrtDelta) / (2.0f * a);
+        var tmax = (-b + sqrtDelta) / (2.0f * a);
+        var intersections = new List<HitRecord>();
+        var hitPoint1 = invRay.At(tmin);
+        var hitPoint2 = invRay.At(tmax);
+        if (tmin < invRay.TMax && tmin > invRay.TMin) {
+            intersections.Add(new HitRecord(
+                Tr * hitPoint1,
+                Tr * Sphere_Normal(hitPoint1, invRay.Dir),
+                tmin,
+                r,
+                Sphere_Point_to_uv(hitPoint1),
+                Mt
+            ));
+        }
+
+        if (tmax < invRay.TMax && tmax > invRay.TMin) {
+            intersections.Add(new HitRecord(
+                Tr * hitPoint2,
+                Tr * Sphere_Normal(hitPoint2, invRay.Dir), 
+                tmin, 
+                r, 
+                Sphere_Point_to_uv(hitPoint2), 
+                Mt
+                ));
+        }
+
+        return intersections.Count == 0 ? null : intersections;
+    }
+
     /// <summary>
     /// Quickly checks if a ray intersects the sphere
     /// </summary>
@@ -138,7 +194,17 @@ public class Sphere : Shape
         
         return (tmin > invRay.TMin && tmin < invRay.TMax) || (tmax > invRay.TMin  && tmax < invRay.TMax);
     }
+
+    public override bool Is_Internal(Point p)
+    {
+        p = Tr.Inverse * p;
+        return p.To_Vec().Squared_Norm() < 1.0f;
+    }
 }
+
+// ===========================================================================
+// ==== PLANE === PLANE === PLANE === PLANE === PLANE === PLANE === PLANE ====
+// ===========================================================================
 
 /// <summary>
 /// A 3D infinite plane parallel to the x and y axis and passing through the origin.
@@ -183,7 +249,15 @@ public class Plane : Shape
             Mt
         );
     }
-    
+
+    public override List<HitRecord>? Ray_Intersection_List(Ray r)
+    {
+        var hit = Ray_Intersection(r);
+        if (hit == null) return null;
+        var intersections = new List<HitRecord> {hit};
+        return intersections;
+    }
+
     /// <summary>
     /// Quickly checks if a ray intersects the plane
     /// </summary>
@@ -196,8 +270,21 @@ public class Plane : Shape
         var t = -invRay.Origin.Z / invRay.Dir.Z;
         return (invRay.TMin < t && t < invRay.TMax);
     }
+    
+    public override bool Is_Internal(Point p)
+    {
+        p = Tr.Inverse * p;
+        return Functions.Are_Close(p.Z, 0.0f);
+    }
 }
 
+// ===========================================================================
+// ==== CYLINDER ==== CYLINDER ==== CYLINDER ==== CYLINDER ==== CYLINDER =====
+// ===========================================================================
+
+/// <summary>
+/// 
+/// </summary>
 public class Cylinder : Shape
 {
     public float PhiMax;
@@ -257,6 +344,59 @@ public class Cylinder : Shape
         );
     }
 
+    public override List<HitRecord>? Ray_Intersection_List(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        var a = invRay.Dir.X * invRay.Dir.X + invRay.Dir.Y * invRay.Dir.Y;
+        var b = 2.0f * (invRay.Dir.X * invRay.Origin.X + invRay.Dir.Y * invRay.Origin.Y);
+        var c = invRay.Origin.X * invRay.Origin.X + invRay.Origin.Y * invRay.Origin.Y - 1.0f;
+        var delta = b * b - 4.0f * a * c;
+        if (delta <= 0.0f) return null;
+        var sqrtDelta = (float)Math.Sqrt(delta);
+        var tmin = (-b - sqrtDelta) / (2.0f * a);
+        var tmax = (-b + sqrtDelta) / (2.0f * a);
+        
+        var intersections = new List<HitRecord>();
+        
+        var hitPoint1 = invRay.At(tmin);
+        var phi1 = (float) Math.Atan2(hitPoint1.Y, hitPoint1.X);
+        if (phi1 < 0) phi1 += 2.0f * (float) Math.PI;
+        if (tmin < invRay.TMax && tmin > invRay.TMin && hitPoint1.Z is > 0.0f and < 1.0f && phi1 < PhiMax)
+        {
+            var u = phi1 / PhiMax;
+            var v = hitPoint1.Z;
+            var normal = new Normal(hitPoint1.X, hitPoint1.Y, 0.0f);
+            if (normal.To_Vec().Dot(invRay.Dir) > 0.0f) normal = -normal;
+            intersections.Add(new HitRecord(
+                Tr * hitPoint1,
+                Tr * normal,
+                tmin,
+                r,
+                new Vec2D(u ,v),
+                Mt));
+        }
+        
+        var hitPoint2 = invRay.At(tmax);
+        var phi2 = (float) Math.Atan2(hitPoint2.Y, hitPoint2.X);
+        if (phi2 < 0) phi2 += 2.0f * (float) Math.PI;
+        if (tmax < invRay.TMax && tmax > invRay.TMin && hitPoint2.Z is > 0.0f and < 1.0f && phi2 < PhiMax)
+        {
+            var u = phi2 / PhiMax;
+            var v = hitPoint2.Z;
+            var normal = new Normal(hitPoint2.X, hitPoint2.Y, 0.0f);
+            if (normal.To_Vec().Dot(invRay.Dir) > 0.0f) normal = -normal;
+            intersections.Add(new HitRecord(
+                Tr * hitPoint2,
+                Tr * normal,
+                tmax,
+                r,
+                new Vec2D(u ,v),
+                Mt));
+        }
+
+        return intersections.Count == 0 ? null : intersections;
+    }
+
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -287,8 +427,24 @@ public class Cylinder : Shape
         }
         return false;
     }
+    
+    public override bool Is_Internal(Point p)
+    {
+        p = Tr.Inverse * p;
+        var dist = p.X * p.X + p.Y * p.Y;
+        var phi = (float) Math.Atan2(p.Y, p.X);
+        if (phi < 0) phi += 2.0f * (float) Math.PI;
+        return dist < 1.0f && p.Z is > 0.0f and < 1.0f && phi < PhiMax;
+    }
 }
 
+// ===========================================================================
+// === DISK === DISK === DISK === DISK === DISK === DISK === DISK === DISK ===
+// ===========================================================================
+
+/// <summary>
+/// 
+/// </summary>
 public class Disk : Shape
 {
     public float PhiMax;
@@ -336,6 +492,14 @@ public class Disk : Shape
         );
     }
 
+    public override List<HitRecord>? Ray_Intersection_List(Ray r)
+    {
+        var hit = Ray_Intersection(r);
+        if (hit == null) return null;
+        var intersections = new List<HitRecord> {hit};
+        return intersections;
+    }
+
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -346,5 +510,14 @@ public class Disk : Shape
         var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
         if (phi < 0) phi += 2.0f * (float) Math.PI;
         return !(dist > 1.0f) && !(dist < InnerR * InnerR) && !(phi > PhiMax);
+    }
+    
+    public override bool Is_Internal(Point p)
+    {
+        p = Tr.Inverse * p;
+        var dist = p.X * p.X + p.Y * p.Y;
+        var phi = (float) Math.Atan2(p.Y, p.X);
+        if (phi < 0) phi += 2.0f * (float) Math.PI;
+        return dist < 1.0f && dist > InnerR * InnerR && phi > PhiMax && Functions.Are_Close(p.Z, 0.0f);
     }
 } 

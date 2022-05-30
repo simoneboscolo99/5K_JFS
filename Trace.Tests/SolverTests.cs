@@ -60,11 +60,11 @@ public class SolverTests
     }
 
     [Fact]
-    public void Furnace_Test()
+    public void FurnaceTest()
     {
         var pcg = new Pcg();
+        
         //Run the furnace_test several times using random values for the emitted radiance and reflectance
-
         for (int i = 0; i < 7; i++)
         {
             var world = new World();
@@ -86,5 +86,4 @@ public class SolverTests
 
         }
     }
-    
 }
