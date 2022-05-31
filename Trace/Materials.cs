@@ -201,3 +201,4 @@ public class Material
     EmittedRadiance = emittedRadiance ?? new UniformPigment(Color.Black);
   }
 }
+
