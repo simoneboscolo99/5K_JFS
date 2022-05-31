@@ -107,7 +107,6 @@ app.Command("demo", command =>
     
             var image = new HdrImage(Parameters.Width, Parameters.Height);
             
-
             // Creating the scene
             
             var world = new World();
