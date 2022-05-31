@@ -109,43 +109,40 @@ app.Command("demo", command =>
             var world = new World();
 
             // Creating the scene
+            var sphere1 = new Sphere(m: new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f)))));
+            var sphere2 = new Sphere(
+                Transformation.Translation(new Vec(0.0f, 0.0f, 0.5f)),
+                new Material(new DiffuseBrdf(new UniformPigment(new Color(0.8f, 0.4f, 0.3f))))
+                );
+            var csg = new CsgDiff(sphere1, sphere2, Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
+                new Material(new DiffuseBrdf(new UniformPigment(new Color(0.9f, 0.9f, 0.8f)))));
+            
+            world.Add(csg);
+
             var skyMaterial = new Material(
                 new DiffuseBrdf(new UniformPigment(new Color())), 
                 new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
-                );
+            );
             
             var groundMaterial = new Material(
                 new DiffuseBrdf(
                     new CheckeredPigment(
                         new Color(0.3f, 0.5f, 0.1f), 
                         new Color(0.1f, 0.2f, 0.5f)
-                        )
                     )
-            );
-
-            var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
-
-            var cylinder = new Cylinder(Transformation.Scale(new Vec(1.2f, 1.2f, 0.7f)), groundMaterial);
-            var sphere = new Sphere(Transformation.Translation(new Vec(0.8f, 0.8f, 0.7f)), sphereMaterial);
-            var prova = new CsgDiff(cylinder, sphere, Transformation.Translation(new Vec(1.0f, 0.5f, 0.0f)), groundMaterial);
-            
-            world.Add(prova);
-            
-            world.Add(new Sphere(
-                    Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
-                    skyMaterial
                 )
             );
 
-            /*var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
-            
+            //var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
+
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));            
             world.Add(new Sphere(
                 Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
                 skyMaterial
                 )
-            );
+            ); 
             world.Add(new Plane(m: groundMaterial));
-            world.Add(new Sphere(
+            /*world.Add(new Sphere(
                     Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
                     sphereMaterial
                 )
@@ -154,7 +151,7 @@ app.Command("demo", command =>
                     Transformation.Translation(new Vec(1.0f, 2.5f, 0.0f)),
                     mirrorMaterial
                 )
-            ); */
+            );*/
 
             // Spheres at the vertices of the cube
             /*var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
@@ -191,12 +188,12 @@ app.Command("demo", command =>
             // Creating the camera
             ICamera camera;
             if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 1.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, 0.0f, 1.0f)));
 
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
             // Rendering
-            var alg = algorithm.Value() ?? "FLAT";
+            var alg = algorithm.Value() ?? "PATHTRACING";
             var upperAlg = alg.ToUpper();
             Solver renderer;
             switch (upperAlg)
@@ -210,7 +207,7 @@ app.Command("demo", command =>
                     Console.WriteLine("Using flat renderer");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world, maxDepth: 5, numOfRays: 3);
+                    renderer = new PathTracing(world, maxDepth: 2, numOfRays: 10);
                     Console.WriteLine("Using path tracing");
                     break;
                 default:

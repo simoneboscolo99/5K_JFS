@@ -1,7 +1,7 @@
 namespace Trace;
 
 /// <summary>
-/// 
+/// s1 - s2
 /// </summary>
 // S1 - S2
 public class CsgDiff : Shape
@@ -50,25 +50,32 @@ public class CsgDiff : Shape
     {
         var invRay = Tr.Inverse * r;
         var intersections1 = S1.Ray_Intersection_List(invRay);
+        //if (intersections1 == null) return null;
         if (intersections1 != null)
         {
-            for (int i = 0; i < intersections1.Count; i++)
+            var dim1 = intersections1.Count;
+            for (int i = dim1 - 1; i >= 0; i--)
             {
+                //if (i == intersections1.Count) i -= 1; 
                 if (S2.Is_Internal(intersections1[i].WorldPoint)) intersections1.RemoveAt(i);
             }
         }
+
         var intersections2 = S2.Ray_Intersection_List(invRay);
+        //if (intersections2 == null) return intersections1.OrderBy(o => o.T).ToList();
         if (intersections2 != null)
         {
-            for (int i = 0; i < intersections2.Count; i++)
+            var dim2 = intersections2.Count;
+            for (int i = dim2 - 1; i >= 0; i--)
             {
+                //if (i == intersections2.Count) i -= 1;
                 if (!S1.Is_Internal(intersections2[i].WorldPoint)) intersections2.RemoveAt(i);
             }
         }
 
         var intersections = new List<HitRecord>();
-        if(intersections1 != null) intersections.AddRange(intersections1);
-        if(intersections2 != null) intersections.AddRange(intersections2);
+        if (intersections1 != null) intersections.AddRange(intersections1);
+        if (intersections2 != null) intersections.AddRange(intersections2);
         return intersections.Count != 0 ? intersections.OrderBy(o => o.T).ToList() : null;
     }
 
