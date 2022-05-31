@@ -295,4 +295,5 @@ public class SymbolToken : Token
     }
 
     public override string ToString() => Symbol;
+       
 }
