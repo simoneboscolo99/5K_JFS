@@ -52,4 +52,22 @@ public class SceneFileTests
         
         Assert.True(stream.ReadChar() == "", "Test end of file");
     }
+
+    [Fact]
+    public void TestLexer()
+    {
+        var line = Encoding.ASCII.GetBytes(@"
+# This is a comment
+# This is another comment
+        new material sky_material(
+                diffuse(image(""my file.pfm"")),
+            <5.0, 500.0, 300.0 >
+            ) # Comment at the end of the line");
+        //To enable C # keywords to be used as identifiers.
+        // The @ character precedes a code element that the compiler
+        // must be an identifier rather than a C # keyword 
+        Stream streamline = new MemoryStream(line);
+        var stream = new InputStream(streamline);
+        
+    }
 }
