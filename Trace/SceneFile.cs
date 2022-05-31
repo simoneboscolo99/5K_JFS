@@ -150,14 +150,65 @@ public class InputStream
         while (true)
         {
             var ch = ReadChar();
-            if (ch == "''") break;
+            if (ch == "\"") break;
 
-            if (ch == "");
-
+            if (ch == "\"\"") throw new GrammarErrorException("unterminated string", location);
             token += ch;
         }
+        return new StringToken(location, token);
+    }
 
-        return StringToken(token_location, token);
+    public LiteralNumberToken ParseFloatToken(string firstChar, SourceLocation tokenLocation)
+    {
+        var tkn = firstChar;
+        float val = 0;
+        while (true)
+        {
+            var ch = ReadChar();
+            bool all = Char.IsDigit(Convert.ToChar(ch)) | ch == "." | ch == "e" | ch == "E";
+            if (all != true)
+            {
+                UnreadChar(ch);
+                break;
+            }
+
+            tkn += ch;
+            
+            try
+            {
+                var value = float.Parse(tkn);
+                val = value;
+            }
+
+            catch (ArgumentException)
+            {
+                throw new GrammarErrorException("'{token}' is an invalid floating-point number", tokenLocation);
+            }
+        }
+        return new LiteralNumberToken(tokenLocation, val);
+    }
+
+    public Token ParseKeywordOrIdentifierToken(string firstChar, SourceLocation location)
+    {
+        var tkn = firstChar;
+        while (true)
+        {
+            var ch = ReadChar();
+            // Note that here we do not call "isalpha" but "isalnum": digits are ok after the first character
+            if ((ch.isalnum() | ch == "_") != true)
+            {
+                UnreadChar(ch);
+                break;
+            }
+
+            token += ch
+
+        try:
+# If it is a keyword, it must be listed in the KEYWORDS dictionary
+        return KeywordToken(token_location, KEYWORDS[token])
+        except KeyError:
+# If we got KeyError, it is not a keyword and thus it must be an identifier
+        return IdentifierToken(token_location, token)
     }
 }
 
@@ -311,45 +362,3 @@ public class SymbolToken : Token
 
     public override string ToString() => Symbol;
 }
-
-
-/*
-def _parse_float_token(self, first_char: str, token_location: SourceLocation) -> LiteralNumberToken:
-token = first_char
-while True:
-ch = self.read_char()
-
-if not (ch.isdigit() or ch == "." or ch in ["e", "E"]):
-self.unread_char(ch)
-break
-
-token += ch
-
-try:
-value = float(token)
-except ValueError:
-raise GrammarError(token_location, f"'{token}' is an invalid floating-point number")
-
-return LiteralNumberToken(token_location, value)
-
-def _parse_keyword_or_identifier_token(
-    self,
-    first_char: str,
-token_location: SourceLocation,
-    ) -> Union[KeywordToken, IdentifierToken]:
-token = first_char
-while True:
-ch = self.read_char()
-# Note that here we do not call "isalpha" but "isalnum": digits are ok after the first character
-if not (ch.isalnum() or ch == "_"):
-self.unread_char(ch)
-break
-
-token += ch
-
-try:
-# If it is a keyword, it must be listed in the KEYWORDS dictionary
-return KeywordToken(token_location, KEYWORDS[token])
-except KeyError:
-# If we got KeyError, it is not a keyword and thus it must be an identifier
-return IdentifierToken(token_location, token)
