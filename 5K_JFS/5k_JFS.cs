@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
-
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
 using _5K_JFS;
@@ -111,9 +110,9 @@ app.Command("demo", (command) =>
             // Creating the scene
             
             var world = new World();
-
+            var im = new HdrImage("memorial.pfm");
             var skyMaterial = new Material(
-                new DiffuseBrdf(new UniformPigment(new Color())), 
+                new DiffuseBrdf(new ImagePigment(im)), 
                 new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
                 );
             
@@ -131,7 +130,7 @@ app.Command("demo", (command) =>
             var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
             
             world.Add(new Sphere(
-                Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                Transformation.Scale(new Vec(5f, 5f, 5f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
                 skyMaterial
                 )
             );
@@ -322,3 +321,5 @@ catch (Exception ex)
 {
     Console.WriteLine("Unable to execute application: {0}", ex.Message);
 }
+
+

@@ -23,7 +23,7 @@ public class PigmentsTests
         image.Set_Pixel(1, 0, new Color(2.0f, 3.0f, 1.0f));
         image.Set_Pixel(0, 1, new Color(2.0f, 1.0f, 3.0f));
         image.Set_Pixel(1, 1, new Color(3.0f, 2.0f, 1.0f));
-        var pigment = new CheckeredPigment.ImagePigment(image);
+        var pigment = new ImagePigment(image);
         Assert.True(pigment.Get_Color(new Vec2D(0.0f, 0.0f))
             .Is_Close(new Color(1.0f, 2.0f, 3.0f))); 
         Assert.True(pigment.Get_Color(new Vec2D(1.0f, 0.0f))
