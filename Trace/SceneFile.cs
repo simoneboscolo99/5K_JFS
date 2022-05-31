@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 
 //using static Microsoft.VisualBasic.CompilerServices.CharType;
 namespace Trace;
@@ -428,4 +427,3 @@ public class InputStream
         public override string ToString() => Symbol;
     }
 }
-
