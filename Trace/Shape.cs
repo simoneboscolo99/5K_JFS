@@ -268,7 +268,7 @@ public class Plane : Shape
         var invRay = Tr.Inverse * r;
         if (Math.Abs(invRay.Dir.Z) < 1e-5) return false;
         var t = -invRay.Origin.Z / invRay.Dir.Z;
-        return (invRay.TMin < t && t < invRay.TMax);
+        return invRay.TMin < t && t < invRay.TMax;
     }
     
     public override bool Is_Internal(Point p)
@@ -509,7 +509,7 @@ public class Disk : Shape
         var dist = hitPoint.X * hitPoint.X + hitPoint.Y * hitPoint.Y;
         var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
         if (phi < 0) phi += 2.0f * (float) Math.PI;
-        return !(dist > 1.0f) && !(dist < InnerR * InnerR) && !(phi > PhiMax);
+        return !(dist > 1.0f) && !(dist < InnerR * InnerR) && !(phi > PhiMax) && invRay.TMin < t && t < invRay.TMax;
     }
     
     public override bool Is_Internal(Point p)
@@ -518,6 +518,6 @@ public class Disk : Shape
         var dist = p.X * p.X + p.Y * p.Y;
         var phi = (float) Math.Atan2(p.Y, p.X);
         if (phi < 0) phi += 2.0f * (float) Math.PI;
-        return dist < 1.0f && dist > InnerR * InnerR && phi > PhiMax && Functions.Are_Close(p.Z, 0.0f);
+        return dist < 1.0f && dist > InnerR * InnerR && phi < PhiMax && Functions.Are_Close(p.Z, 0.0f);
     }
 } 

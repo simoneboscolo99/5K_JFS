@@ -350,8 +350,195 @@ public class PlaneTests
 public class CylinderTests
 {
     [Fact]
-    public void TestCylinder()
+    public void TestHit()
     {
         var cylinder = new Cylinder();
+        var ray1 = new Ray(new Point(2.0f, 0.0f, 0.5f), new Vec(-1.0f, 0.0f, 0.0f));
+        var intersection1 = cylinder.Ray_Intersection(ray1);
+        var hit1 = cylinder.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+        Assert.True(intersection1 != null, "Test intersection 1");
+        Assert.True(new HitRecord(
+            new Point(1.0f, 0.0f, 0.5f),
+            new Normal(1.0f, 0.0f, 0.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.0f, 0.5f), new Material()
+            ).Is_Close(intersection1), "Test hit 1");
+        var intersections1 = cylinder.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 2}, "Test list hits");
+        Assert.True(new HitRecord(
+            new Point(-1.0f, 0.0f, 0.5f),
+            new Normal(1.0f, 0.0f, 0.0f),
+            3.0f,
+            ray1,
+            new Vec2D(0.5f, 0.5f), new Material()
+        ).Is_Close(intersections1?[1]), "Test second hit");
+        
+        var ray2 = new Ray(new Point(2.0f, 0.0f, 1.1f), new Vec(-1.0f, 0.0f, 0.0f));
+        var hit2 = cylinder.Quick_Ray_Intersection(ray2);
+        Assert.False(hit2, "Test quick intersection 2");
+        
+        var ray3 = new Ray(new Point(0.0f, 0.0f, -2.0f), new Vec(0.0f, 0.0f, 1.0f));
+        var hit3 = cylinder.Quick_Ray_Intersection(ray3);
+        Assert.False(hit3, "Test quick intersection 2");
+    }
+
+    [Fact]
+    public void TestInnerHit()
+    {
+        var cylinder = new Cylinder();
+        var ray1 = new Ray(new Point(0.0f, 0.0f, 0.5f), new Vec(1.0f, 0.0f, 0.0f));
+        var intersection1 = cylinder.Ray_Intersection(ray1);
+        var hit1 = cylinder.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+        Assert.True(intersection1 != null, "Test intersection 1");
+        Assert.True(new HitRecord(
+            new Point(1.0f, 0.0f, 0.5f),
+            new Normal(-1.0f, 0.0f, 0.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.0f, 0.5f), new Material()
+        ).Is_Close(intersection1), "Test hit 1");
+        var intersections1 = cylinder.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 1}, "Test list hits");
+    }
+
+    [Fact]
+    public void TestTransformation()
+    {
+        var cylinder = new Cylinder(Transformation.Rotation_Y(90.0f));
+        var ray1 = new Ray(new Point(0.5f, 0.0f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
+        var intersection1 = cylinder.Ray_Intersection(ray1);
+        var hit1 = cylinder.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+        Assert.True(intersection1 != null, "Test intersection 1");
+        Assert.True(new HitRecord(
+            new Point(0.5f, 0.0f, 1.0f),
+            new Normal(0.0f, 0.0f, 1.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.5f, 0.5f), new Material()
+        ).Is_Close(intersection1), "Test hit 1");
+        var intersections1 = cylinder.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 2}, "Test list hits");
+        Assert.True(new HitRecord(
+            new Point(0.5f, 0.0f, -1.0f),
+            new Normal(0.0f, 0.0f, 1.0f),
+            3.0f,
+            ray1,
+            new Vec2D(0.0f, 0.5f), new Material()
+        ).Is_Close(intersections1?[1]), "Test second hit");
+    }
+
+    [Fact]
+    public void TestIsInternal()
+    {
+        var cylinder = new Cylinder();
+        Assert.True(cylinder.Is_Internal(new Point(-0.8f, 0.4f, 0.5f)), "Test internal 1");
+        Assert.False(cylinder.Is_Internal(new Point(-1.1f, 0.0f, 0.5f)), "Test internal 2");
+        Assert.False(cylinder.Is_Internal(new Point(-0.8f, 0.0f, 1.2f)), "Test internal 3");
+
+        cylinder.Tr = Transformation.Rotation_Y(90.0f);
+        Assert.True(cylinder.Is_Internal(new Point(0.5f, 0.0f, 0.0f)), "Test internal 4");
+        Assert.False(cylinder.Is_Internal(new Point(-0.5f, 0.0f, 0.0f)), "Test internal 5");
+
+        
+        cylinder.Tr = Transformation.Translation(new Vec(0.5f, 0.0f, 12.0f));
+        Assert.False(cylinder.Is_Internal(new Point(-0.8f, 0.4f, 0.5f)), "Test internal 6");
+        Assert.True(cylinder.Is_Internal(new Point(0.7f, 0.0f, 12.5f)), "Test internal 7");
+    }
+}
+
+public class DiskTests
+{
+    [Fact]
+    public void TestHit()
+    {
+        var disk = new Disk();
+        var ray1 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, -1.0f));
+        var intersection1 = disk.Ray_Intersection(ray1);
+        var hit1 = disk.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+
+        Assert.True(intersection1 != null, "Check intersection 1");
+        Assert.True(new HitRecord(
+            new Point(0.0f, 0.0f, 0.0f), 
+            new Normal(0.0f, 0.0f, 1.0f), 
+            1.0f, 
+            ray1, 
+            new Vec2D(0.0f, 1.0f), new Material()
+        ).Is_Close(intersection1), "Test hit disk 1");
+
+        var intersections1 = disk.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 1}, "Test list hits");
+        
+        var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
+        var intersection2 = disk.Ray_Intersection(ray2);
+        var hit2 = disk.Quick_Ray_Intersection(ray2);
+        Assert.False(hit2, "Test quick intersection 2");
+        Assert.False((intersection2 != null), "Hit 2 disk");
+
+        var ray3 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.1f, 0.0f, 0.0f));
+        var intersection3 = disk.Ray_Intersection(ray3);
+        Assert.False((intersection3 != null), "Hit 3 disk");
+
+        var ray4 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 1.0f, 0.0f));
+        var intersection4 = disk.Ray_Intersection(ray4);
+        Assert.False((intersection4 != null), "Hit 4 disk");
+    }
+
+    [Fact]
+    public void TestTransformation()
+    {
+        var disk = new Disk(Transformation.Rotation_Y(90.0f));
+        var ray1 = new Ray(new Point(1.0f, 0.0f, 0.0f), new Vec(-1.0f, 0.0f, 0.0f));
+        var intersection1 = disk.Ray_Intersection(ray1);
+        var hit1 = disk.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+        Assert.True(new HitRecord(
+            new Point(0.0f, 0.0f, 0.0f),
+            new Normal(1.0f, 0.0f, 0.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.0f, 1.0f), new Material()
+        ).Is_Close(intersection1), "Test hit disk 1");
+        var intersections1 = disk.Ray_Intersection_List(ray1);
+        Assert.True(intersections1 is {Count: 1}, "Test list hits");
+        Assert.True(new HitRecord(
+            new Point(0.0f, 0.0f, 0.0f),
+            new Normal(1.0f, 0.0f, 0.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.0f, 1.0f), new Material()
+        ).Is_Close(intersections1?[0]), "Second test hit disk 1");
+
+        var ray2 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 0.0f, 1.0f));
+        var intersection2 = disk.Ray_Intersection(ray2);
+        var hit2 = disk.Quick_Ray_Intersection(ray2);
+        Assert.False(hit2, "Test quick intersection 2");
+        Assert.False(intersection2 != null, "Test hit 2");
+
+        var ray3 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(1.0f, 0.0f, 0.0f));
+        var intersection3 = disk.Ray_Intersection(ray3);
+        Assert.False((intersection3 != null), "Hit 3 transform disk");
+
+        var ray4 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.0f, 1.0f, 0.0f));
+        var intersection4 = disk.Ray_Intersection(ray4);
+        Assert.False((intersection4 != null), "Hit 4 transform disk");
+    }
+
+    [Fact]
+    public void TestIsInternal()
+    {
+        var disk = new Disk();
+        Assert.True(disk.Is_Internal(new Point(0.2f, -0.5f, 0.0f)), "Test internal 1");
+        
+        disk.Tr = Transformation.Translation(new Vec(0.0f, 0.0f, 0.3f));
+        Assert.False(disk.Is_Internal(new Point(0.2f, -0.5f, 0.0f)), "Test internal 2");
+        
+        disk.Tr = Transformation.Rotation_Y(90.0f);
+        Assert.True(disk.Is_Internal(new Point(0.0f, -0.5f, 0.2f)), "Test internal 3");
+        Assert.False(disk.Is_Internal(new Point(0.4f, -0.5f, 0.2f)), "Test internal 4");
     }
 }
