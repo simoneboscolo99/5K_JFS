@@ -232,6 +232,7 @@ public class InputStream
     }
 
 
+
     /// <summary>
     /// Read a token from the stream.
     /// </summary>
@@ -239,6 +240,7 @@ public class InputStream
     /// <exception cref="GrammarErrorException"> a lexical error is found.</exception>
     public Token ReadToken()
     {
+
         if (SavedToken != null)
         {
             var result = SavedToken;
@@ -255,7 +257,8 @@ public class InputStream
             case "":
                 // No more characters in the file, so return a StopToken
                 return new StopToken(Location);
-            
+
+
             // At this point we must check what kind of token begins with the "ch" character (which has been
             // put back in the stream with self.unread_char)
             case "(" or ")" or "<" or ">" or "[" or "]" or "," or "*":
@@ -284,6 +287,7 @@ public class InputStream
             }
         }
     }
+
 
     /// <summary>
     /// Make as if `token` were never read from `input_file`
@@ -456,6 +460,7 @@ public class Scene
     public World Wd;
 
 
+
     public ICamera? Camera = null;
 
     public IDictionary<string, Material> Materials;
@@ -469,8 +474,7 @@ public class Scene
         Materials = materials;
         FloatVariables = floatVariables;
     }
-
-    /// <summary>
+    
     /// Read a token from <paramref name="inputFile"/> and check that it matches <paramref name="symbol"/>`.
     /// </summary>
     /// <param name="inputFile"></param>
@@ -510,14 +514,21 @@ public class Scene
         {
             var variableName = b.Identifier;
             if (!scene.FloatVariables.ContainsKey(variableName))
-            {
                 throw new GrammarErrorException($"unknown variable '{token}'", token.Location);
-            }
-
             return scene.FloatVariables[variableName];
         }
-        
+
         throw new GrammarErrorException($"got '{token}' instead of a number", token.Location);
+    }
+
+    public string ExpectIdentifier(InputStream inputFile, Scene scene)
+    {
+        //Read a token from `input_file` and check that it is an identifier.
+        //Return the name of the identifier.
+        var token = inputFile.ReadToken();
+        if (token is not IdentifierToken a)
+            throw new GrammarErrorException($"got '{token}' instead of an identifier", token.Location);
+        return a.Identifier;
     }
 
     /// <summary>
