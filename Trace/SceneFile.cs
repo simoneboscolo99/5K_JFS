@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 //using static Microsoft.VisualBasic.CompilerServices.CharType;
@@ -57,6 +58,7 @@ public class InputStream
     public SourceLocation SavedLocation;
     public SourceLocation Location;
     public int Tabulations;
+    public Token? SavedToken;
 
     public InputStream(Stream stream, string filename = "", int tabulations = 8)
     {
@@ -66,6 +68,7 @@ public class InputStream
         SavedChar = "";
         SavedLocation = Location;
         Tabulations = tabulations;
+        SavedToken = null;
     }
 
     ///Update `location` after having read `ch` from the stream
@@ -217,35 +220,47 @@ public class InputStream
 
         try
         {
-            //If it is a keyword, it must be listed in the KEYWORDS dictionary
+            // If it is a keyword, it must be listed in the KEYWORDS dictionary
             return new KeywordToken(location, KeywordToken.Dict[tkn]);
         }
 
         catch (KeyNotFoundException)
         {
-            //If we got KeyError, it is not a keyword and thus it must be an identifier
+            // If we got KeyError, it is not a keyword and thus it must be an identifier
             return new IdentifierToken(location, tkn);
         }
     }
 
 
-    ///Read a token from the stream.
-    ///Raise :class:`.ParserError` if a lexical error is found.
+
+    /// <summary>
+    /// Read a token from the stream.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="GrammarErrorException"> a lexical error is found.</exception>
     public Token ReadToken()
     {
 
+        if (SavedToken != null)
+        {
+            var result = SavedToken;
+            SavedToken = null;
+            return result;
+        }
+
         SkipWhitespacesAndComments();
-        //At this point we're sure that ch does *not* contain a whitespace character
+        // At this point we're sure that ch does *not* contain a whitespace character
         var ch = ReadChar();
 
         switch (ch)
         {
             case "":
-                //No more characters in the file, so return a StopToken
+                // No more characters in the file, so return a StopToken
                 return new StopToken(Location);
-            //At this point we must check what kind of token begins with the "ch" character 
-            //(which has been put back in the stream with self.unread_char). First,
-            //we save the position in the stream
+
+
+            // At this point we must check what kind of token begins with the "ch" character (which has been
+            // put back in the stream with self.unread_char)
             case "(" or ")" or "<" or ">" or "[" or "]" or "," or "*":
                 //One-character symbol, like '(' or ','
                 return new SymbolToken(Location, ch);
@@ -272,157 +287,169 @@ public class InputStream
             }
         }
     }
+
+
+    /// <summary>
+    /// Make as if `token` were never read from `input_file`
+    /// </summary>
+    public void UnreadToken(Token token)
+    {
+        Assert.True(SavedToken == null);
+        SavedToken = token;
+    }
 }
 
 /// <summary>
-/// /// A lexical token, used when parsing a scene file.
+/// A lexical token, used when parsing a scene file.
 /// </summary>
 public abstract class Token
 {
     public SourceLocation Location;
+
     protected Token(SourceLocation location)
-        {
-            Location = location;
-        }
+    {
+        Location = location;
+    }
 }
 
 /// <summary>
-/// A token signalling the end of a file
+/// A token signalling the end of a file.
 /// </summary>
 public class StopToken : Token
-    {
-        public StopToken(SourceLocation location) : base(location) { }
-    }
+{
+    public StopToken(SourceLocation location) : base(location) { }
+}
 
 /// <summary>
 /// Enumeration for all the possible keywords recognized by the lexer.
 /// </summary>
-/// Enumeration type: more efficient
+// Enumeration type: more efficient
 public enum KeywordEnum 
-    {
-        New = 1, 
-        Material, 
-        Plane, 
-        Sphere, 
-        Cylinder,
-        Disk,
-        Diffuse, 
-        Specular, 
-        Uniform, 
-        Checkered, 
-        Image,
-        Identity, 
-        Translation, 
-        RotationX, 
-        RotationY, 
-        RotationZ, 
-        Scaling, 
-        Camera, 
-        Orthogonal,
-        Perspective, 
-        Float
-    }
+{
+    New = 1, 
+    Material, 
+    Plane, 
+    Sphere, 
+    Cylinder,
+    Disk,
+    Diffuse, 
+    Specular, 
+    Uniform, 
+    Checkered, 
+    Image,
+    Identity, 
+    Translation, 
+    RotationX, 
+    RotationY, 
+    RotationZ, 
+    Scaling, 
+    Camera, 
+    Orthogonal,
+    Perspective, 
+    Float
+}
 
-    /// <summary>
-    /// A token containing a keyword.
-    /// </summary>
+/// <summary>
+/// A token containing a keyword.
+/// </summary>
 public class KeywordToken : Token
-    {
-        public KeywordEnum Keyword;
+{
+    public KeywordEnum Keyword;
 
-        public static IDictionary<string, KeywordEnum> Dict = new Dictionary<string, KeywordEnum>
-        {
-            {"new", KeywordEnum.New},
-            {"material", KeywordEnum.Material},
-            {"plane", KeywordEnum.Plane},
-            {"sphere", KeywordEnum.Sphere},
-            {"cylinder", KeywordEnum.Cylinder},
-            {"disk", KeywordEnum.Disk},
-            {"diffuse", KeywordEnum.Diffuse},
-            {"specular", KeywordEnum.Specular},
-            {"uniform", KeywordEnum.Uniform},
-            {"checkered", KeywordEnum.Checkered},
-            {"image", KeywordEnum.Image},
-            {"identity", KeywordEnum.Identity},
-            {"translation", KeywordEnum.Translation},
-            {"rotation_x", KeywordEnum.RotationX},
-            {"rotation_y", KeywordEnum.RotationY},
-            {"rotation_z", KeywordEnum.RotationZ},
-            {"scaling", KeywordEnum.Scaling},
-            {"camera", KeywordEnum.Camera},
-            {"orthogonal", KeywordEnum.Orthogonal},
-            {"perspective", KeywordEnum.Perspective},
-            {"float", KeywordEnum.Float}
-        };
+    public static IDictionary<string, KeywordEnum> Dict = new Dictionary<string, KeywordEnum>
+    {
+        {"new", KeywordEnum.New},
+        {"material", KeywordEnum.Material},
+        {"plane", KeywordEnum.Plane},
+        {"sphere", KeywordEnum.Sphere},
+        {"cylinder", KeywordEnum.Cylinder},
+        {"disk", KeywordEnum.Disk},
+        {"diffuse", KeywordEnum.Diffuse},
+        {"specular", KeywordEnum.Specular},
+        {"uniform", KeywordEnum.Uniform},
+        {"checkered", KeywordEnum.Checkered},
+        {"image", KeywordEnum.Image},
+        {"identity", KeywordEnum.Identity},
+        {"translation", KeywordEnum.Translation},
+        {"rotation_x", KeywordEnum.RotationX},
+        {"rotation_y", KeywordEnum.RotationY},
+        {"rotation_z", KeywordEnum.RotationZ},
+        {"scaling", KeywordEnum.Scaling},
+        {"camera", KeywordEnum.Camera},
+        {"orthogonal", KeywordEnum.Orthogonal},
+        {"perspective", KeywordEnum.Perspective},
+        {"float", KeywordEnum.Float}
+    };
+        
     
-        public KeywordToken(SourceLocation location, KeywordEnum keyword) : base(location)
-        {
-            Keyword = keyword;
-        }
-    
-        public override string ToString() => Keyword.ToString();
+    public KeywordToken(SourceLocation location, KeywordEnum keyword) : base(location)
+    {
+        Keyword = keyword;
     }
+    
+    public override string ToString() => Keyword.ToString();
+}
 
 /// <summary>
 /// A token containing an identifier.
 /// </summary>
 public class IdentifierToken : Token
-    {
-        public string Identifier;
+{ 
+    public string Identifier;
 
-        public IdentifierToken(SourceLocation location, string identifier) : base(location)
-        {
-            Identifier = identifier;
-        }
-    
-        public override string ToString() => Identifier;
+    public IdentifierToken(SourceLocation location, string identifier) : base(location)
+    {
+        Identifier = identifier;
     }
+    
+    public override string ToString() => Identifier;
+}
 
 /// <summary>
 /// A token containing a literal string.
 /// </summary>
 public class StringToken : Token
+{
+    public string Str;
+
+    public StringToken(SourceLocation location, string s) : base(location)
     {
-        public string Str;
-
-        public StringToken(SourceLocation location, string s) : base(location)
-        {
-            Str = s;
-        }
-
-        public override string ToString() => Str;
+        Str = s;
     }
 
+    public override string ToString() => Str;
+}
 
-    /// <summary>
-    /// A token containing a literal number.
-    /// </summary>
+/// <summary>
+/// A token containing a literal number.
+/// </summary>
 public class LiteralNumberToken : Token
-    {
-        public float Value;
+{
+    public float Value;
 
-        public LiteralNumberToken(SourceLocation location, float value) : base(location)
-        {
-            Value = value;
-        }
-
-        public override string ToString() => Convert.ToString(Value, CultureInfo.InvariantCulture);
+    public LiteralNumberToken(SourceLocation location, float value) : base(location) 
+    { 
+        Value = value;
     }
 
-    /// <summary>
-    /// A token containing a symbol (i.e., a variable name).
-    /// </summary>
-    public class SymbolToken : Token
+    public override string ToString() => Convert.ToString(Value, CultureInfo.InvariantCulture);
+}
+
+/// <summary>
+/// A token containing a symbol (i.e., a variable name).
+/// </summary>
+public class SymbolToken : Token
+{
+    public string Symbol;
+
+    public SymbolToken(SourceLocation location, string symbol) : base(location)
     {
-        public string Symbol;
-
-        public SymbolToken(SourceLocation location, string symbol) : base(location)
-        {
-            Symbol = symbol;
-        }
-
-        public override string ToString() => Symbol;
+        Symbol = symbol;
     }
+
+    public override string ToString() => Symbol;
+}
+
 
 
 /// <summary>
@@ -432,26 +459,49 @@ public class Scene
 {
     public World Wd;
 
+
+
     public ICamera? Camera = null;
 
     public IDictionary<string, Material> Materials;
-
+    
     public IDictionary<string, float> FloatVariables;
 
-
-    public Scene(World wd, ICamera? camera, IDictionary<string, Material> materials,
-        IDictionary<string, float> floatVariables)
+    public Scene(World wd, ICamera? camera, IDictionary<string, Material> materials, IDictionary<string, float> floatVariables)
     {
         Wd = wd;
         Camera = camera;
         Materials = materials;
         FloatVariables = floatVariables;
     }
+    
+    /// Read a token from <paramref name="inputFile"/> and check that it matches <paramref name="symbol"/>`.
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <param name="symbol"></param>
+    public static void ExpectSymbol(InputStream inputFile, string symbol)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not LiteralNumberToken || ((SymbolToken) token).Symbol != symbol)
+            throw new GrammarErrorException($"Got {token} instead of {symbol}",token.Location);
+    }
+
+    public static KeywordEnum ExpectKeywords(InputStream inputFile, List<KeywordEnum> keyword)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not KeywordToken)
+            throw new GrammarErrorException($"Expected a keyword instead of {token}",token.Location);
+        if (!keyword.Contains(((KeywordToken) token).Keyword))
+            throw new GrammarErrorException("Expected one of the keywords:\n" + string.Join("\n", keyword) + $"\ninstead of {token}", token.Location);
+
+        return ((KeywordToken) token).Keyword;
+
+    }
 
     /// <summary>
-    /// Read a token from `input_file` and check that it
-    /// is either a literal number or a variable in `scene`.
-    /// Return the number as a ``float``
+    /// Read a token from `input_file`
+    /// and check that it is either a literal number or a variable in `scene`
+    /// Return the number as a ``float``."""
     /// </summary>
     /// <param name="inputFile"></param>
     /// <param name="scene"></param>
@@ -462,13 +512,10 @@ public class Scene
         if (token is LiteralNumberToken a) return a.Value;
         else if (token is IdentifierToken b)
         {
-            var varName = b.Identifier;
-            if (!scene.FloatVariables.ContainsKey(varName))
-            {
+            var variableName = b.Identifier;
+            if (!scene.FloatVariables.ContainsKey(variableName))
                 throw new GrammarErrorException($"unknown variable '{token}'", token.Location);
-            }
-
-            return scene.FloatVariables[varName];
+            return scene.FloatVariables[variableName];
         }
 
         throw new GrammarErrorException($"got '{token}' instead of a number", token.Location);
@@ -483,4 +530,19 @@ public class Scene
             throw new GrammarErrorException($"got '{token}' instead of an identifier", token.Location);
         return a.Identifier;
     }
+
+    /// <summary>
+    /// Read a token from `input_file` and check that it is a literal string.
+    ///Return the value of the string (a ``str``)."""
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <returns></returns>
+    public string ExpectedString(InputStream inputFile)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not StringToken a) 
+            throw new GrammarErrorException($"got '{token}' instead of a string", token.Location);
+        return a.Str;
+    }
 }
+
