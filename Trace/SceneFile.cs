@@ -57,6 +57,7 @@ public class InputStream
     public SourceLocation SavedLocation;
     public SourceLocation Location;
     public int Tabulations;
+    public Token? SavedToken;
 
     public InputStream(Stream stream, string filename = "", int tabulations = 8)
     {
@@ -66,6 +67,7 @@ public class InputStream
         SavedChar = "";
         SavedLocation = Location;
         Tabulations = tabulations;
+        SavedToken = null;
     }
 
     ///Update `location` after having read `ch` from the stream
@@ -217,35 +219,44 @@ public class InputStream
 
         try
         {
-            //If it is a keyword, it must be listed in the KEYWORDS dictionary
+            // If it is a keyword, it must be listed in the KEYWORDS dictionary
             return new KeywordToken(location, KeywordToken.Dict[tkn]);
         }
 
         catch (KeyNotFoundException)
         {
-            //If we got KeyError, it is not a keyword and thus it must be an identifier
+            // If we got KeyError, it is not a keyword and thus it must be an identifier
             return new IdentifierToken(location, tkn);
         }
     }
 
 
-    ///Read a token from the stream.
-    ///Raise :class:`.ParserError` if a lexical error is found.
+    /// <summary>
+    /// Read a token from the stream.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="GrammarErrorException"> a lexical error is found.</exception>
     public Token ReadToken()
     {
+        if (SavedToken != null)
+        {
+            var result = SavedToken;
+            SavedToken = null;
+            return result;
+        }
 
         SkipWhitespacesAndComments();
-        //At this point we're sure that ch does *not* contain a whitespace character
+        // At this point we're sure that ch does *not* contain a whitespace character
         var ch = ReadChar();
 
         switch (ch)
         {
             case "":
-                //No more characters in the file, so return a StopToken
+                // No more characters in the file, so return a StopToken
                 return new StopToken(Location);
-            //At this point we must check what kind of token begins with the "ch" character 
-            //(which has been put back in the stream with self.unread_char). First,
-            //we save the position in the stream
+            
+            // At this point we must check what kind of token begins with the "ch" character (which has been
+            // put back in the stream with self.unread_char)
             case "(" or ")" or "<" or ">" or "[" or "]" or "," or "*":
                 //One-character symbol, like '(' or ','
                 return new SymbolToken(Location, ch);
@@ -271,6 +282,15 @@ public class InputStream
                 throw new GrammarErrorException("Invalid character {ch}", Location);
             }
         }
+    }
+
+    /// <summary>
+    /// Make as if `token` were never read from `input_file`
+    /// </summary>
+    public void UnreadToken(Token token)
+    {
+        Assert.True(SavedToken == null);
+        SavedToken = token;
     }
 }
 
