@@ -77,6 +77,19 @@ diffuse(image(""my file.pfm"")),
         AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
         AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Image);
         AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
+        AssertToken.AssertIsString(stream.ReadToken(), "my file.pfm");
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ")");
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ")");
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ",");
+        AssertToken.AssertIsSymbol(stream.ReadToken(), "<");
+        AssertToken.AssertIsNumber(stream.ReadToken(), 5.0f);
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ",");
+        AssertToken.AssertIsNumber(stream.ReadToken(), 500.0f);
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ",");
+        AssertToken.AssertIsNumber(stream.ReadToken(), 300.0f);
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ">");
+        AssertToken.AssertIsSymbol(stream.ReadToken(), ")");
+        Assert.IsType<InputStream.StopToken>(stream.ReadToken());
     }
 }
 
@@ -107,5 +120,23 @@ public class AssertToken
             ((InputStream.SymbolToken) token).Symbol == symbol,
             $"Expecting symbol {symbol} instead of {token}"
             );
+    }
+
+    public static void AssertIsString(InputStream.Token token, string s)
+    {
+        Assert.IsType<InputStream.StringToken>(token);
+        Assert.True(
+            ((InputStream.StringToken) token).Str == s,
+            $"Token {token} is not equal to string {s}"
+            );
+    }
+
+    public static void AssertIsNumber(InputStream.Token token, float number)
+    {
+        Assert.IsType<InputStream.LiteralNumberToken>(token);
+        Assert.True(
+            Functions.Are_Close(((InputStream.LiteralNumberToken) token).Value, number),
+            $"Token {token} is not equal to number {number}"
+        );
     }
 }

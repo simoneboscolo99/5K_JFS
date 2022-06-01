@@ -157,9 +157,9 @@ public class InputStream
         {
             var ch = ReadChar();
 
-            if (ch == " \" ") break;
+            if (ch == "\"") break;
 
-            if (ch == "\"\"") throw new GrammarErrorException("unterminated string", location);
+            if (ch == "") throw new GrammarErrorException("unterminated string", location);
 
             token += ch;
         }
