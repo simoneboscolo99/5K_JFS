@@ -227,25 +227,25 @@ public class InputStream
             return new IdentifierToken(location, tkn);
         }
     }
-    
+
 
     ///Read a token from the stream.
     ///Raise :class:`.ParserError` if a lexical error is found.
     public Token ReadToken()
     {
-        
+
         SkipWhitespacesAndComments();
         //At this point we're sure that ch does *not* contain a whitespace character
         var ch = ReadChar();
-       
+
         switch (ch)
         {
             case "":
                 //No more characters in the file, so return a StopToken
                 return new StopToken(Location);
-                //At this point we must check what kind of token begins with the "ch" character 
-                //(which has been put back in the stream with self.unread_char). First,
-                //we save the position in the stream
+            //At this point we must check what kind of token begins with the "ch" character 
+            //(which has been put back in the stream with self.unread_char). First,
+            //we save the position in the stream
             case "(" or ")" or "<" or ">" or "[" or "]" or "," or "*":
                 //One-character symbol, like '(' or ','
                 return new SymbolToken(Location, ch);
@@ -255,7 +255,7 @@ public class InputStream
             default:
             {
                 if (Char.IsDigit(Convert.ToChar(ch)) | ch is "+" or "-" or ".")
-                { 
+                {
                     //A floating-point number
                     return ParseFloatToken(ch, Location);
                 }
@@ -264,7 +264,7 @@ public class InputStream
                 {
                     //Since it begins with an alphabetic character, it must either be a keyword 
                     // or a identifier
-                    return ParseKeywordOrIdentifierToken(ch,Location);
+                    return ParseKeywordOrIdentifierToken(ch, Location);
                 }
 
                 //We got some weird character, like '@` or `&`
@@ -272,33 +272,33 @@ public class InputStream
             }
         }
     }
+}
 
-    /// <summary>
-    /// A lexical token, used when parsing a scene file.
-    /// </summary>
-    public abstract class Token
-    {
-        public SourceLocation Location;
-
-        protected Token(SourceLocation location)
+/// <summary>
+/// /// A lexical token, used when parsing a scene file.
+/// </summary>
+public abstract class Token
+{
+    public SourceLocation Location;
+    protected Token(SourceLocation location)
         {
             Location = location;
         }
-    }
+}
 
-    /// <summary>
-    /// A token signalling the end of a file.
-    /// </summary>
-    public class StopToken : Token
+/// <summary>
+/// A token signalling the end of a file
+/// </summary>
+public class StopToken : Token
     {
         public StopToken(SourceLocation location) : base(location) { }
     }
 
-    /// <summary>
-    /// Enumeration for all the possible keywords recognized by the lexer.
-    /// </summary>
-// Enumeration type: more efficient
-    public enum KeywordEnum 
+/// <summary>
+/// Enumeration for all the possible keywords recognized by the lexer.
+/// </summary>
+/// Enumeration type: more efficient
+public enum KeywordEnum 
     {
         New = 1, 
         Material, 
@@ -326,7 +326,7 @@ public class InputStream
     /// <summary>
     /// A token containing a keyword.
     /// </summary>
-    public class KeywordToken : Token
+public class KeywordToken : Token
     {
         public KeywordEnum Keyword;
 
@@ -354,7 +354,6 @@ public class InputStream
             {"perspective", KeywordEnum.Perspective},
             {"float", KeywordEnum.Float}
         };
-        
     
         public KeywordToken(SourceLocation location, KeywordEnum keyword) : base(location)
         {
@@ -364,10 +363,10 @@ public class InputStream
         public override string ToString() => Keyword.ToString();
     }
 
-    /// <summary>
-    /// A token containing an identifier.
-    /// </summary>
-    public class IdentifierToken : Token
+/// <summary>
+/// A token containing an identifier.
+/// </summary>
+public class IdentifierToken : Token
     {
         public string Identifier;
 
@@ -379,10 +378,10 @@ public class InputStream
         public override string ToString() => Identifier;
     }
 
-    /// <summary>
-    /// A token containing a literal string.
-    /// </summary>
-    public class StringToken : Token
+/// <summary>
+/// A token containing a literal string.
+/// </summary>
+public class StringToken : Token
     {
         public string Str;
 
@@ -394,10 +393,11 @@ public class InputStream
         public override string ToString() => Str;
     }
 
+
     /// <summary>
     /// A token containing a literal number.
     /// </summary>
-    public class LiteralNumberToken : Token
+public class LiteralNumberToken : Token
     {
         public float Value;
 
@@ -423,7 +423,7 @@ public class InputStream
 
         public override string ToString() => Symbol;
     }
-}
+
 
 /// <summary>
 /// A scene read from a scene file.
@@ -432,11 +432,55 @@ public class Scene
 {
     public World Wd;
 
-    public ICamera? camera = null;
+    public ICamera? Camera = null;
 
-    public Scene(World wd, ICamera? camera)
+    public IDictionary<string, Material> Materials;
+
+    public IDictionary<string, float> FloatVariables;
+
+
+    public Scene(World wd, ICamera? camera, IDictionary<string, Material> materials,
+        IDictionary<string, float> floatVariables)
     {
         Wd = wd;
-        this.camera = camera;
+        Camera = camera;
+        Materials = materials;
+        FloatVariables = floatVariables;
+    }
+
+    /// <summary>
+    /// Read a token from `input_file` and check that it
+    /// is either a literal number or a variable in `scene`.
+    /// Return the number as a ``float``
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    public float ExpectedNumber(InputStream inputFile, Scene scene)
+    {
+        var token = inputFile.ReadToken();
+        if (token is LiteralNumberToken a) return a.Value;
+        else if (token is IdentifierToken b)
+        {
+            var varName = b.Identifier;
+            if (!scene.FloatVariables.ContainsKey(varName))
+            {
+                throw new GrammarErrorException($"unknown variable '{token}'", token.Location);
+            }
+
+            return scene.FloatVariables[varName];
+        }
+
+        throw new GrammarErrorException($"got '{token}' instead of a number", token.Location);
+    }
+
+    public string ExpectIdentifier(InputStream inputFile, Scene scene)
+    {
+        //Read a token from `input_file` and check that it is an identifier.
+        //Return the name of the identifier.
+        var token = inputFile.ReadToken();
+        if (token is not IdentifierToken a)
+            throw new GrammarErrorException($"got '{token}' instead of an identifier", token.Location);
+        return a.Identifier;
     }
 }
