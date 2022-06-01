@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using Xunit;
 
@@ -445,12 +446,15 @@ public class SymbolToken : Token
     public override string ToString() => Symbol;
 }
 
+
+
 /// <summary>
 /// A scene read from a scene file.
 /// </summary>
 public class Scene
 {
     public World Wd;
+
 
     public ICamera? Camera;
 
@@ -494,55 +498,96 @@ public class Scene
             throw new GrammarErrorException("Expected one of the keywords:\n" + string.Join("\n", keywords) + $"\ninstead of {token}", token.Location);
 
         return ((KeywordToken) token).Keyword;
+
     }
-    
-    public Vec ParseVector(InputStream inputFile)
+
+    /// <summary>
+    /// Read a token from `input_file`
+    /// and check that it is either a literal number or a variable in `scene`
+    /// Return the number as a ``float``."""
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <param name="scene"></param>
+    /// <returns></returns>
+    public static float ExpectNumber(InputStream inputFile, Scene scene)
+    {
+        var token = inputFile.ReadToken();
+        if (token is LiteralNumberToken a) return a.Value;
+        else if (token is IdentifierToken b)
+        {
+            var variableName = b.Identifier;
+            if (!scene.FloatVariables.ContainsKey(variableName))
+            {
+                throw new GrammarErrorException($"unknown variable '{token}'", token.Location);
+            }
+
+            return scene.FloatVariables[variableName];
+        }
+        
+        throw new GrammarErrorException($"got '{token}' instead of a number", token.Location);
+    }
+
+    /// <summary>
+    /// Read a token from `input_file` and check that it is a literal string.
+    ///Return the value of the string (a ``str``)."""
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <returns></returns>
+    public static string ExpectString(InputStream inputFile)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not StringToken a) 
+            throw new GrammarErrorException($"got '{token}' instead of a string", token.Location);
+        return a.Str;
+    }
+
+    public static Vec ParseVector(InputStream inputFile, Scene scene)
     {
         ExpectSymbol(inputFile, "[");
-        var x = ExpectNumber(inputFile);
+        var x = ExpectNumber(inputFile, scene);
         ExpectSymbol(inputFile, ",");
-        var y = ExpectNumber(inputFile);
+        var y = ExpectNumber(inputFile, scene);
         ExpectSymbol(inputFile, ",");
-        var z = ExpectNumber(inputFile);
+        var z = ExpectNumber(inputFile, scene);
         ExpectSymbol(inputFile, "]");
 
         return new Vec(x, y, z);
     }
     
-    public Color ParseColor(InputStream inputFile)
+    public Color ParseColor(InputStream inputFile, Scene scene)
     {
         ExpectSymbol(inputFile, "<");
-        var r = ExpectNumber(inputFile);
+        var r = ExpectNumber(inputFile, scene);
         ExpectSymbol(inputFile, ",");
-        var g = ExpectNumber(inputFile);
+        var g = ExpectNumber(inputFile, scene);
         ExpectSymbol(inputFile, ",");
-        var b = ExpectNumber(inputFile);
+        var b = ExpectNumber(inputFile, scene);
         ExpectSymbol(inputFile, ">");
 
         return new Color(r, g, b);
     }
 
-    public Pigment ParsePigment(InputStream inputFile)
+    public Pigment ParsePigment(InputStream inputFile, Scene scene)
     {
         var keyword = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Uniform, KeywordEnum.Checkered, KeywordEnum.Image});
 
-        Pigment result;
+        Pigment result = new UniformPigment();
         ExpectSymbol(inputFile, "(");
         switch (keyword)
         {
             case KeywordEnum.Uniform:
             {
-                var color = ParseColor(inputFile);
+                var color = ParseColor(inputFile, scene);
                 result = new UniformPigment(color);
                 break;
             }
             case KeywordEnum.Checkered:
             {
-                var color1 = ParseColor(inputFile);
+                var color1 = ParseColor(inputFile, scene);
                 ExpectSymbol(inputFile, ",");
-                var color2 = ParseColor(inputFile);
+                var color2 = ParseColor(inputFile, scene);
                 ExpectSymbol(inputFile, ",");
-                var numOfSteps = (int) ExpectNumber(inputFile);
+                var numOfSteps = (int) ExpectNumber(inputFile, scene);
                 result = new CheckeredPigment(color1, color2, numOfSteps);
                 break;
             }
