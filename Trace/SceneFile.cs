@@ -424,3 +424,19 @@ public class InputStream
         public override string ToString() => Symbol;
     }
 }
+
+/// <summary>
+/// A scene read from a scene file.
+/// </summary>
+public class Scene
+{
+    public World Wd;
+
+    public ICamera? camera = null;
+
+    public Scene(World wd, ICamera? camera)
+    {
+        Wd = wd;
+        this.camera = camera;
+    }
+}
