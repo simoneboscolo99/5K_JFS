@@ -69,13 +69,13 @@ diffuse(image(""my file.pfm"")),
         Stream streamline = new MemoryStream(line);
         var stream = new InputStream(streamline);
 
-        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.New);
-        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Material);
+        AssertToken.AssertIsKeyword(stream.ReadToken(), KeywordEnum.New);
+        AssertToken.AssertIsKeyword(stream.ReadToken(), KeywordEnum.Material);
         AssertToken.AssertIsIdentifier(stream.ReadToken(), "sky_material");
         AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
-        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Diffuse);
+        AssertToken.AssertIsKeyword(stream.ReadToken(), KeywordEnum.Diffuse);
         AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
-        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Image);
+        AssertToken.AssertIsKeyword(stream.ReadToken(), KeywordEnum.Image);
         AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
         AssertToken.AssertIsString(stream.ReadToken(), "my file.pfm");
         AssertToken.AssertIsSymbol(stream.ReadToken(), ")");
@@ -89,53 +89,53 @@ diffuse(image(""my file.pfm"")),
         AssertToken.AssertIsNumber(stream.ReadToken(), 300.0f);
         AssertToken.AssertIsSymbol(stream.ReadToken(), ">");
         AssertToken.AssertIsSymbol(stream.ReadToken(), ")");
-        Assert.IsType<InputStream.StopToken>(stream.ReadToken());
+        Assert.IsType<StopToken>(stream.ReadToken());
     }
 }
 
 public class AssertToken
 {
-    public static void AssertIsKeyword(InputStream.Token token, InputStream.KeywordEnum keyword)
+    public static void AssertIsKeyword(Token token, KeywordEnum keyword)
     {
-        Assert.IsType<InputStream.KeywordToken>(token);
+        Assert.IsType<KeywordToken>(token);
         Assert.True(
-            ((InputStream.KeywordToken) token).Keyword == keyword, 
+            ((KeywordToken) token).Keyword == keyword, 
             $"Token {token} is not equal to keyword {keyword}"
             );
     }
 
-    public static void AssertIsIdentifier(InputStream.Token token, string identifier)
+    public static void AssertIsIdentifier(Token token, string identifier)
     {
-        Assert.IsType<InputStream.IdentifierToken>(token);
+        Assert.IsType<IdentifierToken>(token);
         Assert.True(
-            ((InputStream.IdentifierToken) token).Identifier == identifier, 
+            ((IdentifierToken) token).Identifier == identifier, 
             $"Expecting identifier {identifier} instead of {token}" 
             );
     }
 
-    public static void AssertIsSymbol(InputStream.Token token, string symbol)
+    public static void AssertIsSymbol(Token token, string symbol)
     {
-        Assert.IsType<InputStream.SymbolToken>(token);
+        Assert.IsType<SymbolToken>(token);
         Assert.True(
-            ((InputStream.SymbolToken) token).Symbol == symbol,
+            ((SymbolToken) token).Symbol == symbol,
             $"Expecting symbol {symbol} instead of {token}"
             );
     }
 
-    public static void AssertIsString(InputStream.Token token, string s)
+    public static void AssertIsString(Token token, string s)
     {
-        Assert.IsType<InputStream.StringToken>(token);
+        Assert.IsType<StringToken>(token);
         Assert.True(
-            ((InputStream.StringToken) token).Str == s,
+            ((StringToken) token).Str == s,
             $"Token {token} is not equal to string {s}"
             );
     }
 
-    public static void AssertIsNumber(InputStream.Token token, float number)
+    public static void AssertIsNumber(Token token, float number)
     {
-        Assert.IsType<InputStream.LiteralNumberToken>(token);
+        Assert.IsType<LiteralNumberToken>(token);
         Assert.True(
-            Functions.Are_Close(((InputStream.LiteralNumberToken) token).Value, number),
+            Functions.Are_Close(((LiteralNumberToken) token).Value, number),
             $"Token {token} is not equal to number {number}"
         );
     }
