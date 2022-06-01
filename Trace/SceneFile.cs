@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using System.Globalization;
+using Xunit;
 
 //using static Microsoft.VisualBasic.CompilerServices.CharType;
 namespace Trace;
@@ -121,7 +121,8 @@ public class InputStream
     /// <returns></returns>
     public void UnreadChar(string ch)
     {
-        Debug.Assert(SavedChar == "");
+        Assert.True(SavedChar == "");
+        //Debug.Assert(SavedChar == "");
         SavedChar = ch;
         Location = SavedLocation;
     }
