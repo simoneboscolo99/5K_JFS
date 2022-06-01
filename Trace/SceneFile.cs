@@ -478,14 +478,87 @@ public class Scene
             throw new GrammarErrorException($"Got {token} instead of {symbol}",token.Location);
     }
 
-    public static KeywordEnum ExpectKeywords(InputStream inputFile, List<KeywordEnum> keyword)
+    /// <summary>
+    /// Read a token from <paramref name="inputFile"/> and check that it is one of the keywords in <paramref name="keywords"/>.
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <param name="keywords"></param>
+    /// <returns></returns>
+    /// <exception cref="GrammarErrorException"> a lexical error is found. </exception>
+    public static KeywordEnum ExpectKeywords(InputStream inputFile, List<KeywordEnum> keywords)
     {
         var token = inputFile.ReadToken();
         if (token is not KeywordToken)
             throw new GrammarErrorException($"Expected a keyword instead of {token}",token.Location);
-        if (!keyword.Contains(((KeywordToken) token).Keyword))
-            throw new GrammarErrorException("Expected one of the keywords:\n" + string.Join("\n", keyword) + $"\ninstead of {token}", token.Location);
+        if (!keywords.Contains(((KeywordToken) token).Keyword))
+            throw new GrammarErrorException("Expected one of the keywords:\n" + string.Join("\n", keywords) + $"\ninstead of {token}", token.Location);
 
         return ((KeywordToken) token).Keyword;
+    }
+    
+    public Vec ParseVector(InputStream inputFile)
+    {
+        ExpectSymbol(inputFile, "[");
+        var x = ExpectNumber(inputFile);
+        ExpectSymbol(inputFile, ",");
+        var y = ExpectNumber(inputFile);
+        ExpectSymbol(inputFile, ",");
+        var z = ExpectNumber(inputFile);
+        ExpectSymbol(inputFile, "]");
+
+        return new Vec(x, y, z);
+    }
+    
+    public Color ParseColor(InputStream inputFile)
+    {
+        ExpectSymbol(inputFile, "<");
+        var r = ExpectNumber(inputFile);
+        ExpectSymbol(inputFile, ",");
+        var g = ExpectNumber(inputFile);
+        ExpectSymbol(inputFile, ",");
+        var b = ExpectNumber(inputFile);
+        ExpectSymbol(inputFile, ">");
+
+        return new Color(r, g, b);
+    }
+
+    public Pigment ParsePigment(InputStream inputFile)
+    {
+        var keyword = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Uniform, KeywordEnum.Checkered, KeywordEnum.Image});
+
+        Pigment result;
+        ExpectSymbol(inputFile, "(");
+        switch (keyword)
+        {
+            case KeywordEnum.Uniform:
+            {
+                var color = ParseColor(inputFile);
+                result = new UniformPigment(color);
+                break;
+            }
+            case KeywordEnum.Checkered:
+            {
+                var color1 = ParseColor(inputFile);
+                ExpectSymbol(inputFile, ",");
+                var color2 = ParseColor(inputFile);
+                ExpectSymbol(inputFile, ",");
+                var numOfSteps = (int) ExpectNumber(inputFile);
+                result = new CheckeredPigment(color1, color2, numOfSteps);
+                break;
+            }
+            case KeywordEnum.Image:
+            {
+                var fileName = ExpectString(inputFile);
+                var image = new HdrImage(fileName);
+                result = new ImagePigment(image);
+                break;
+            }
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        
+        ExpectSymbol(inputFile, ")");
+        return result;
     }
 }
