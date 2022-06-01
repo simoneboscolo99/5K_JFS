@@ -137,7 +137,7 @@ public class InputStream
             if (ch == "#")
             {
                 // It's a comment! Keep reading until the end of the line (include the case "", the end-of-file)
-                while (ReadChar() is not "\r" or "\n" or "")
+                while (ReadChar() is not ("\r" or "\n" or ""))
                 {
                 }
             }
@@ -237,42 +237,38 @@ public class InputStream
         //At this point we're sure that ch does *not* contain a whitespace character
         var ch = ReadChar();
        
-        if (ch == "")
+        switch (ch)
         {
-            //No more characters in the file, so return a StopToken
-            return new StopToken(Location);
-            //At this point we must check what kind of token begins with the "ch" character 
-            //(which has been put back in the stream with self.unread_char). First,
-            //we save the position in the stream
-        }
-    
-        else if (ch is "(" or ")" or "<" or ">" or "[" or "]" or "," or "*")
+            case "":
+                //No more characters in the file, so return a StopToken
+                return new StopToken(Location);
+                //At this point we must check what kind of token begins with the "ch" character 
+                //(which has been put back in the stream with self.unread_char). First,
+                //we save the position in the stream
+            case "(" or ")" or "<" or ">" or "[" or "]" or "," or "*":
+                //One-character symbol, like '(' or ','
+                return new SymbolToken(Location, ch);
+            case "\"":
+                //A literal string (used for file names)
+                return ParseStringToken(Location);
+            default:
+            {
+                if (Char.IsDigit(Convert.ToChar(ch)) | ch is "+" or "-" or ".")
+                { 
+                    //A floating-point number
+                    return ParseFloatToken(ch, Location);
+                }
 
-        {
-            //One-character symbol, like '(' or ','
-            return new SymbolToken(Location, ch);
-        }
-       
-        else if (ch == "\"")
-        {
-            //A literal string (used for file names)
-            return ParseStringToken(Location);
-        }
-        else if (Char.IsDigit(Convert.ToChar(ch)) | ch is "+" or "-" or ".")
-        { 
-            //A floating-point number
-            return ParseFloatToken(ch, Location);
-        }
-        else if (Char.IsLetter(Convert.ToChar(ch)) | ch == "_")
-        {
-            //Since it begins with an alphabetic character, it must either be a keyword 
-            // or a identifier
-            return ParseKeywordOrIdentifierToken(ch,Location);
-        }
-        else
-        {
-            //We got some weird character, like '@` or `&`
-            throw new GrammarErrorException("Invalid character {ch}", Location);
+                if (Char.IsLetter(Convert.ToChar(ch)) | ch == "_")
+                {
+                    //Since it begins with an alphabetic character, it must either be a keyword 
+                    // or a identifier
+                    return ParseKeywordOrIdentifierToken(ch,Location);
+                }
+
+                //We got some weird character, like '@` or `&`
+                throw new GrammarErrorException("Invalid character {ch}", Location);
+            }
         }
     }
 

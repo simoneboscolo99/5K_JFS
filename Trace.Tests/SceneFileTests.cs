@@ -59,15 +59,53 @@ public class SceneFileTests
         var line = Encoding.ASCII.GetBytes(@"
 # This is a comment
 # This is another comment
-        new material sky_material(
-                diffuse(image(""my file.pfm"")),
-            <5.0, 500.0, 300.0 >
-            ) # Comment at the end of the line");
+new material sky_material(
+diffuse(image(""my file.pfm"")),
+<5.0, 500.0, 300.0 >
+) # Comment at the end of the line");
         //To enable C # keywords to be used as identifiers.
         // The @ character precedes a code element that the compiler
         // must be an identifier rather than a C # keyword 
         Stream streamline = new MemoryStream(line);
         var stream = new InputStream(streamline);
-        
+
+        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.New);
+        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Material);
+        AssertToken.AssertIsIdentifier(stream.ReadToken(), "sky_material");
+        AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
+        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Diffuse);
+        AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
+        AssertToken.AssertIsKeyword(stream.ReadToken(), InputStream.KeywordEnum.Image);
+        AssertToken.AssertIsSymbol(stream.ReadToken(), "(");
+    }
+}
+
+public class AssertToken
+{
+    public static void AssertIsKeyword(InputStream.Token token, InputStream.KeywordEnum keyword)
+    {
+        Assert.IsType<InputStream.KeywordToken>(token);
+        Assert.True(
+            ((InputStream.KeywordToken) token).Keyword == keyword, 
+            $"Token {token} is not equal to keyword {keyword}"
+            );
+    }
+
+    public static void AssertIsIdentifier(InputStream.Token token, string identifier)
+    {
+        Assert.IsType<InputStream.IdentifierToken>(token);
+        Assert.True(
+            ((InputStream.IdentifierToken) token).Identifier == identifier, 
+            $"Expecting identifier {identifier} instead of {token}" 
+            );
+    }
+
+    public static void AssertIsSymbol(InputStream.Token token, string symbol)
+    {
+        Assert.IsType<InputStream.SymbolToken>(token);
+        Assert.True(
+            ((InputStream.SymbolToken) token).Symbol == symbol,
+            $"Expecting symbol {symbol} instead of {token}"
+            );
     }
 }
