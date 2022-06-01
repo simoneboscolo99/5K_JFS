@@ -502,7 +502,7 @@ public class Scene
     /// <param name="inputFile"></param>
     /// <param name="scene"></param>
     /// <returns></returns>
-    public float ExpectedNumber(InputStream inputFile, Scene scene)
+    public float ExpectNumber(InputStream inputFile, Scene scene)
     {
         var token = inputFile.ReadToken();
         if (token is LiteralNumberToken a) return a.Value;
@@ -526,12 +526,17 @@ public class Scene
     /// </summary>
     /// <param name="inputFile"></param>
     /// <returns></returns>
-    public string ExpectedString(InputStream inputFile)
+    public string ExpectString(InputStream inputFile)
     {
         var token = inputFile.ReadToken();
         if (token is not StringToken a) 
             throw new GrammarErrorException($"got '{token}' instead of a string", token.Location);
         return a.Str;
+    }
+
+    public Brdf ParseBrdf(InputStream inputFile, Scene scene)
+    {
+        var brdfKeyword = ExpectKeywords(inputFile,  KeywordEnum.Diffuse, KeywordEnum.Specular)
     }
 }
 
