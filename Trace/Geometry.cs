@@ -419,7 +419,7 @@ public struct Normal
     /// </summary>
     /// <returns> The vector. </returns>
     public Vec To_Vec()
-        => new Vec(X, Y, Z);
+        => new(X, Y, Z);
     
     /// <summary>
     /// Creates a orthonormal basis (ONB) from a normal representing the z axis. The normal must be previously normalized when this method is invoked.

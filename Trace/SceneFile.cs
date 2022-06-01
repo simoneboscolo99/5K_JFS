@@ -356,13 +356,13 @@ public class KeywordToken : Token
         {"perspective", KeywordEnum.Perspective},
         {"float", KeywordEnum.Float}
     };
+        
     
-
     public KeywordToken(SourceLocation location, KeywordEnum keyword) : base(location)
     {
         Keyword = keyword;
     }
-
+    
     public override string ToString() => Keyword.ToString();
 }
 
@@ -370,14 +370,14 @@ public class KeywordToken : Token
 /// A token containing an identifier.
 /// </summary>
 public class IdentifierToken : Token
-{
+{ 
     public string Identifier;
 
     public IdentifierToken(SourceLocation location, string identifier) : base(location)
     {
         Identifier = identifier;
     }
-
+    
     public override string ToString() => Identifier;
 }
 
@@ -403,8 +403,8 @@ public class LiteralNumberToken : Token
 {
     public float Value;
 
-    public LiteralNumberToken(SourceLocation location, float value) : base(location)
-    {
+    public LiteralNumberToken(SourceLocation location, float value) : base(location) 
+    { 
         Value = value;
     }
 
@@ -427,6 +427,7 @@ public class SymbolToken : Token
 }
 
 
+
 /// <summary>
 /// A scene read from a scene file.
 /// </summary>
@@ -434,10 +435,11 @@ public class Scene
 {
     public World Wd;
 
+
     public ICamera? Camera = null;
 
     public IDictionary<string, Material> Materials;
-
+    
     public IDictionary<string, float> FloatVariables;
 
     public Scene(World wd, ICamera? camera, IDictionary<string, Material> materials, IDictionary<string, float> floatVariables)
@@ -446,6 +448,30 @@ public class Scene
         Camera = camera;
         Materials = materials;
         FloatVariables = floatVariables;
+    }
+
+    /// <summary>
+    /// Read a token from <paramref name="inputFile"/> and check that it matches <paramref name="symbol"/>`.
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <param name="symbol"></param>
+    public static void ExpectSymbol(InputStream inputFile, string symbol)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not LiteralNumberToken || ((SymbolToken) token).Symbol != symbol)
+            throw new GrammarErrorException($"Got {token} instead of {symbol}",token.Location);
+    }
+
+    public static KeywordEnum ExpectKeywords(InputStream inputFile, List<KeywordEnum> keyword)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not KeywordToken)
+            throw new GrammarErrorException($"Expected a keyword instead of {token}",token.Location);
+        if (!keyword.Contains(((KeywordToken) token).Keyword))
+            throw new GrammarErrorException("Expected one of the keywords:\n" + string.Join("\n", keyword) + $"\ninstead of {token}", token.Location);
+
+        return ((KeywordToken) token).Keyword;
+
     }
 
     /// <summary>
@@ -459,20 +485,33 @@ public class Scene
     public float ExpectedNumber(InputStream inputFile, Scene scene)
     {
         var token = inputFile.ReadToken();
-        var type = token.GetType();
-        var isInstanceOfType = type.IsInstanceOfType(typeof(LiteralNumberToken));
-
-        if (isInstanceOfType) return token.Value;
-        else if (isInstanceOfType == type.IsInstanceOfType(typeof(IdentifierToken)))
+        if (token is LiteralNumberToken a) return a.Value;
+        else if (token is IdentifierToken b)
         {
-            var variableName = new token.Identifier;
-            if (variableName is not in scene.FloatVariables)
+            var variableName = b.Identifier;
+            if (!scene.FloatVariables.ContainsKey(variableName))
             {
-                
+                throw new GrammarErrorException($"unknown variable '{token}'", token.Location);
             }
-        }
-            
 
-    } 
+            return scene.FloatVariables[variableName];
+        }
+        
+        throw new GrammarErrorException($"got '{token}' instead of a number", token.Location);
+    }
+
+    /// <summary>
+    /// Read a token from `input_file` and check that it is a literal string.
+    ///Return the value of the string (a ``str``)."""
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <returns></returns>
+    public string ExpectedString(InputStream inputFile)
+    {
+        var token = inputFile.ReadToken();
+        if (token is not StringToken a) 
+            throw new GrammarErrorException($"got '{token}' instead of a string", token.Location);
+        return a.Str;
+    }
 }
 
