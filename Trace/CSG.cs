@@ -6,8 +6,14 @@ namespace Trace;
 // S1 - S2
 public class CsgDiff : Shape
 {
+    /// <summary>
+    /// First shape.
+    /// </summary>
     public Shape S1;
 
+    /// <summary>
+    /// Second shape.
+    /// </summary>
     public Shape S2;
 
     public CsgDiff(Shape s1, Shape s2, Transformation? t = null, Material? material = null) : base(t, material)
@@ -50,19 +56,14 @@ public class CsgDiff : Shape
     {
         var invRay = Tr.Inverse * r;
         var intersections1 = S1.Ray_Intersection_List(invRay);
-        //if (intersections1 == null) return null;
-        if (intersections1 != null)
-        {
-            var dim1 = intersections1.Count;
+        if (intersections1 == null) return null;
+        var dim1 = intersections1.Count;
             for (int i = dim1 - 1; i >= 0; i--)
             {
-                //if (i == intersections1.Count) i -= 1; 
                 if (S2.Is_Internal(intersections1[i].WorldPoint)) intersections1.RemoveAt(i);
             }
-        }
 
         var intersections2 = S2.Ray_Intersection_List(invRay);
-        //if (intersections2 == null) return intersections1.OrderBy(o => o.T).ToList();
         if (intersections2 != null)
         {
             var dim2 = intersections2.Count;
@@ -74,7 +75,7 @@ public class CsgDiff : Shape
         }
 
         var intersections = new List<HitRecord>();
-        if (intersections1 != null) intersections.AddRange(intersections1);
+        intersections.AddRange(intersections1);
         if (intersections2 != null) intersections.AddRange(intersections2);
         return intersections.Count != 0 ? intersections.OrderBy(o => o.T).ToList() : null;
     }
@@ -84,5 +85,4 @@ public class CsgDiff : Shape
         p = Tr.Inverse * p;
         return S1.Is_Internal(p) && !S2.Is_Internal(p);
     }
-        
 }

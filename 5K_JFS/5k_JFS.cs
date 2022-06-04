@@ -111,15 +111,15 @@ app.Command("demo", command =>
             // Creating the scene
             var sphere1 = new Sphere(m: new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f)))));
             var sphere2 = new Sphere(
-                Transformation.Translation(new Vec(0.0f, 0.0f, 0.5f)),
+                Transformation.Translation(new Vec(0.0f, 0.6f, 0.6f)),
                 new Material(new DiffuseBrdf(new UniformPigment(new Color(0.8f, 0.4f, 0.3f))))
                 );
-            var csg = new CsgDiff(sphere1, sphere2, Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
+            var csg = new CsgDiff(sphere1, sphere2, Transformation.Translation(new Vec(0.0f, 0.0f, 1.2f)),
                 new Material(new DiffuseBrdf(new UniformPigment(new Color(0.9f, 0.9f, 0.8f)))));
             
             world.Add(csg);
 
-            var skyMaterial = new Material(
+            /*var skyMaterial = new Material(
                 new DiffuseBrdf(new UniformPigment(new Color())), 
                 new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
             );
@@ -141,7 +141,7 @@ app.Command("demo", command =>
                 skyMaterial
                 )
             ); 
-            world.Add(new Plane(m: groundMaterial));
+            world.Add(new Plane(m: groundMaterial));*/
             /*world.Add(new Sphere(
                     Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
                     sphereMaterial
