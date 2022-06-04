@@ -1,3 +1,6 @@
+using ShellProgressBar;
+//using System.Threading;
+
 namespace Trace;
 
 /// <summary>
@@ -57,38 +60,67 @@ public class ImageTracer
     /// <param name="solver"></param>
     public void Fire_All_Rays(Solver solver)
     {
-        for (int row = 0; row < Image.Height; row++)
+        var maxTicks = Image.Height;
+        var options = new ProgressBarOptions {
+            //ProgressCharacter = '-',
+            //ProgressBarOnBottom = true,
+            ForegroundColor = ConsoleColor.Yellow,
+            ForegroundColorDone = ConsoleColor.White,
+            BackgroundColor = ConsoleColor.DarkGray,
+            BackgroundCharacter = '\u2593'
+        };
+        using (var pbar = new ProgressBar(maxTicks, "Starting", options))
         {
-            for (int col = 0; col < Image.Width; col++)
+            DateTime mDataOraStart = DateTime.Now;
+            for (int row = 0; row < Image.Height; row++)
             {
-                //var ray = Fire_Ray(col, row, 0.5f, 0.5f);
-                //var color = new DerivedClass();
-                //Image.Set_Pixel(col, row, solver.Tracing(ray));
-
-                var cumColor = new Color();
-                if (SamplesPerSide > 0)
+                for (int col = 0; col < Image.Width; col++)
                 {
-                    // Run stratified sampling over the pixel's surface
-                    for (int interpixelrow = 0; interpixelrow < SamplesPerSide; interpixelrow++)
+                    //var ray = Fire_Ray(col, row, 0.5f, 0.5f);
+                    //var color = new DerivedClass();
+                    //Image.Set_Pixel(col, row, solver.Tracing(ray));
+
+                    var cumColor = new Color();
+                    if (SamplesPerSide > 0)
                     {
-                        for (int interpixelcol = 0; interpixelcol < SamplesPerSide; interpixelcol++)
+                        // Run stratified sampling over the pixel's surface
+                        for (int interpixelrow = 0; interpixelrow < SamplesPerSide; interpixelrow++)
                         {
-                            var uPixel = (interpixelcol + Pcg.Random_Float()) / SamplesPerSide;
-                            var vPixel = (interpixelrow + Pcg.Random_Float()) / SamplesPerSide;
-                            var ray = Fire_Ray(col, row, uPixel, vPixel);
-                            cumColor += solver.Tracing(ray);
+                            for (int interpixelcol = 0; interpixelcol < SamplesPerSide; interpixelcol++)
+                            {
+                                var uPixel = (interpixelcol + Pcg.Random_Float()) / SamplesPerSide;
+                                var vPixel = (interpixelrow + Pcg.Random_Float()) / SamplesPerSide;
+                                var ray = Fire_Ray(col, row, uPixel, vPixel);
+                                cumColor += solver.Tracing(ray);
+                            }
                         }
-                    }
-                    Image.Set_Pixel(col, row, cumColor * (1.0f/ SamplesPerSide * SamplesPerSide));
-                }
 
-                else
-                {
-                    var ray = Fire_Ray(col, row);
-                    Image.Set_Pixel(col, row, solver.Tracing(ray));
+                        Image.Set_Pixel(col, row, cumColor * (1.0f / SamplesPerSide * SamplesPerSide));
+                    }
+
+                    else
+                    {
+                        var ray = Fire_Ray(col, row);
+                        Image.Set_Pixel(col, row, solver.Tracing(ray));
+                    }
                 }
+                pbar.Tick(row == Image.Height - 1 ? "Rendering completed" : "Rendering...");
             }
         }
     }
+    
+    /*private static string CalcolaEta(DateTime dataOraInizio, int tickTot, int tickAttuale)
+    {
+        if (tickAttuale <= 0)
+            return "-- %";
 
+        TimeSpan tsDiff=DateTime.Now.Subtract(dataOraInizio);
+        int secAllaFine = (int)((tsDiff.TotalSeconds / tickAttuale) * tickTot);
+        TimeSpan t = TimeSpan.FromSeconds(secAllaFine);
+
+        return string.Format("{0:D2}h:{1:D2}m:{2:D2}s",
+            t.Hours,
+            t.Minutes,
+            t.Seconds);
+    }*/
 }
