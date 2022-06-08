@@ -185,17 +185,17 @@ public class InputStream
             }
 
             tkn += ch;
+        }
 
-            try
-            {
-                var value = float.Parse(tkn);
-                val = value;
-            }
+        try
+        {
+            var value = float.Parse(tkn);
+            val = value;
+        }
 
-            catch (ArgumentException)
-            {
-                throw new GrammarErrorException("'{token}' is an invalid floating-point number", tokenLocation);
-            }
+        catch (ArgumentException)
+        {
+            throw new GrammarErrorException("'{token}' is an invalid floating-point number", tokenLocation);
         }
 
         return new LiteralNumberToken(tokenLocation, val);
