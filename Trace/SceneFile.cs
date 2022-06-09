@@ -173,7 +173,7 @@ public class InputStream
     public LiteralNumberToken ParseFloatToken(string firstChar, SourceLocation tokenLocation)
     {
         var tkn = firstChar;
-        float val = 0;
+        float val;
         while (true)
         {
             var ch = ReadChar();
