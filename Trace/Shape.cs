@@ -287,18 +287,12 @@ public class Plane : Shape
 /// </summary>
 public class Cylinder : Shape
 {
-    public float PhiMax;
-
     /// <summary>
     /// Create a cylinder, potentially associating a transformation to it
     /// </summary>
     /// <param name="T"></param>
     /// <param name="m"></param>
-    /// <param name="phiMax"></param>
-    public Cylinder(Transformation? T = null, Material? m = null, float phiMax = 2.0f * (float) Math.PI) : base(T, m)
-    {
-        PhiMax = phiMax;
-    }
+    public Cylinder(Transformation? T = null, Material? m = null) : base(T, m) { }
 
     public override HitRecord? Ray_Intersection(Ray r)
     {
@@ -316,13 +310,9 @@ public class Cylinder : Shape
         var tmin = (-b - sqrtDelta) / (2.0f * a);
         var tmax = (-b + sqrtDelta) / (2.0f * a);
         float firstHitT;
-
-        var phi1 = (float) Math.Atan2(invRay.At(tmin).Y, invRay.At(tmin).X);
-        if (phi1 < 0) phi1 += 2.0f * (float) Math.PI;
-        var phi2 = (float) Math.Atan2(invRay.At(tmax).Y, invRay.At(tmax).X);
-        if (phi2 < 0) phi2 += 2.0f * (float) Math.PI;
-        if (tmin < invRay.TMax && tmin > invRay.TMin && invRay.At(tmin).Z is > 0.0f and < 1.0f && phi1 < PhiMax) firstHitT = tmin;
-        else if (tmax < invRay.TMax && tmax > invRay.TMin && invRay.At(tmax).Z is > 0.0f and < 1.0f && phi2 < PhiMax) firstHitT = tmax;
+        
+        if (tmin < invRay.TMax && tmin > invRay.TMin && invRay.At(tmin).Z is > 0.0f and < 1.0f) firstHitT = tmin;
+        else if (tmax < invRay.TMax && tmax > invRay.TMin && invRay.At(tmax).Z is > 0.0f and < 1.0f) firstHitT = tmax;
         else return null;
         
         var hitPoint = invRay.At(firstHitT);
@@ -330,7 +320,7 @@ public class Cylinder : Shape
 
         var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
         if (phi < 0) phi += 2.0f * (float) Math.PI;
-        var u = phi / PhiMax;
+        var u = phi / (2.0f * (float) Math.PI);
         var v = hitPoint.Z;
         var normal = new Normal(hitPoint.X, hitPoint.Y, 0.0f);
         if (normal.To_Vec().Dot(invRay.Dir) > 0.0f) normal = -normal;
@@ -361,9 +351,9 @@ public class Cylinder : Shape
         var hitPoint1 = invRay.At(tmin);
         var phi1 = (float) Math.Atan2(hitPoint1.Y, hitPoint1.X);
         if (phi1 < 0) phi1 += 2.0f * (float) Math.PI;
-        if (tmin < invRay.TMax && tmin > invRay.TMin && hitPoint1.Z is > 0.0f and < 1.0f && phi1 < PhiMax)
+        if (tmin < invRay.TMax && tmin > invRay.TMin && hitPoint1.Z is > 0.0f and < 1.0f)
         {
-            var u = phi1 / PhiMax;
+            var u = phi1 / (2.0f * (float) Math.PI);
             var v = hitPoint1.Z;
             var normal = new Normal(hitPoint1.X, hitPoint1.Y, 0.0f);
             if (normal.To_Vec().Dot(invRay.Dir) > 0.0f) normal = -normal;
@@ -379,9 +369,9 @@ public class Cylinder : Shape
         var hitPoint2 = invRay.At(tmax);
         var phi2 = (float) Math.Atan2(hitPoint2.Y, hitPoint2.X);
         if (phi2 < 0) phi2 += 2.0f * (float) Math.PI;
-        if (tmax < invRay.TMax && tmax > invRay.TMin && hitPoint2.Z is > 0.0f and < 1.0f && phi2 < PhiMax)
+        if (tmax < invRay.TMax && tmax > invRay.TMin && hitPoint2.Z is > 0.0f and < 1.0f)
         {
-            var u = phi2 / PhiMax;
+            var u = phi2 / (2.0f * (float) Math.PI);
             var v = hitPoint2.Z;
             var normal = new Normal(hitPoint2.X, hitPoint2.Y, 0.0f);
             if (normal.To_Vec().Dot(invRay.Dir) > 0.0f) normal = -normal;
@@ -416,14 +406,12 @@ public class Cylinder : Shape
         if (tmin > invRay.TMin && tmin < invRay.TMax)
         {
             var hitPoint1 = invRay.At(tmin);
-            var phi1 = (float) Math.Atan2(hitPoint1.Y, hitPoint1.X);
-            if (hitPoint1.Z is > 0.0f and < 1.0f && phi1 < PhiMax) return true;
+            if (hitPoint1.Z is > 0.0f and < 1.0f) return true;
         }
         if (tmax > invRay.TMin && tmax < invRay.TMax)
         {
             var hitPoint2 = invRay.At(tmax);
-            var phi2 = (float) Math.Atan2(hitPoint2.Y, hitPoint2.X);
-            if (hitPoint2.Z is > 0.0f and < 1.0f && phi2 < PhiMax) return true;
+            if (hitPoint2.Z is > 0.0f and < 1.0f) return true;
         }
         return false;
     }
@@ -432,9 +420,7 @@ public class Cylinder : Shape
     {
         p = Tr.Inverse * p;
         var dist = p.X * p.X + p.Y * p.Y;
-        var phi = (float) Math.Atan2(p.Y, p.X);
-        if (phi < 0) phi += 2.0f * (float) Math.PI;
-        return dist < 1.0f && p.Z is > 0.0f and < 1.0f && phi < PhiMax;
+        return dist < 1.0f && p.Z is > 0.0f and < 1.0f;
     }
 }
 
@@ -447,16 +433,8 @@ public class Cylinder : Shape
 /// </summary>
 public class Disk : Shape
 {
-    public float PhiMax;
 
-    // Careful: innerR must be less than 1 (altrimenti è tutto nero)
-    public float InnerR;
-
-    public Disk(Transformation? T = null, Material? m = null, float phiMax = 2.0f * (float) Math.PI, float innerR = 0.0f) : base(T, m)
-    {
-        PhiMax = phiMax;
-        InnerR = innerR;
-    }
+    public Disk(Transformation? T = null, Material? m = null, float phiMax = 2.0f * (float) Math.PI, float innerR = 0.0f) : base(T, m) { }
 
     public override HitRecord? Ray_Intersection(Ray r)
     {
@@ -473,10 +451,10 @@ public class Disk : Shape
         var dist = hitPoint.X * hitPoint.X + hitPoint.Y * hitPoint.Y;
         var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
         if (phi < 0) phi += 2.0f * (float) Math.PI;
-        if (dist > 1.0f || dist < InnerR * InnerR || phi > PhiMax) return null;
+        if (dist > 1.0f) return null;
 
-        var u = phi / PhiMax;
-        var v = (1.0f - (float) Math.Sqrt(dist)) / (1.0f - InnerR);
+        var u = phi / (2.0f * (float) Math.PI);
+        var v = (1.0f - (float) Math.Sqrt(dist)) / 1.0f;
 
         float dZ;
         if (invRay.Dir.Z < 0.0f) dZ = 1.0f;
@@ -507,17 +485,13 @@ public class Disk : Shape
         var t = -invRay.Origin.Z / invRay.Dir.Z;
         var hitPoint = invRay.At(t);
         var dist = hitPoint.X * hitPoint.X + hitPoint.Y * hitPoint.Y;
-        var phi = (float) Math.Atan2(hitPoint.Y, hitPoint.X);
-        if (phi < 0) phi += 2.0f * (float) Math.PI;
-        return !(dist > 1.0f) && !(dist < InnerR * InnerR) && !(phi > PhiMax) && invRay.TMin < t && t < invRay.TMax;
+        return !(dist > 1.0f) && invRay.TMin < t && t < invRay.TMax;
     }
     
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
         var dist = p.X * p.X + p.Y * p.Y;
-        var phi = (float) Math.Atan2(p.Y, p.X);
-        if (phi < 0) phi += 2.0f * (float) Math.PI;
-        return dist < 1.0f && dist > InnerR * InnerR && phi < PhiMax && Functions.Are_Close(p.Z, 0.0f);
+        return dist < 1.0f && Functions.Are_Close(p.Z, 0.0f);
     }
 } 
