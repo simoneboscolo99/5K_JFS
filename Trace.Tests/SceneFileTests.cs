@@ -61,6 +61,7 @@ public class SceneFileTests
 # This is another comment
 new material sky_material(
 diffuse(image(""my file.pfm"")),
+<5.0, 500.0, 300.0 >
 ) # Comment at the end of the line");
         //To enable C # keywords to be used as identifiers.
         // The @ character precedes a code element that the compiler
