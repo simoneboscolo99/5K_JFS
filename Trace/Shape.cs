@@ -8,7 +8,7 @@ namespace Trace;
 public abstract class Shape
 {
     public Transformation Tr { get; set; }
-    public Material Mt { get; set; }
+    public Material Mt { get; }
 
     /// <summary>
     /// Create a shape, potentially associating a transformation to it
@@ -33,7 +33,7 @@ public abstract class Shape
     /// <summary>
     /// Determine whether a ray hits the shape or not
     /// </summary>
-    /// <param name="r"></param>
+    /// <param name="r"> Ray. </param>
     /// <returns></returns>
     public abstract bool Quick_Ray_Intersection(Ray r);
 
@@ -434,7 +434,7 @@ public class Cylinder : Shape
 public class Disk : Shape
 {
 
-    public Disk(Transformation? T = null, Material? m = null, float phiMax = 2.0f * (float) Math.PI, float innerR = 0.0f) : base(T, m) { }
+    public Disk(Transformation? T = null, Material? m = null) : base(T, m) { }
 
     public override HitRecord? Ray_Intersection(Ray r)
     {
@@ -494,4 +494,92 @@ public class Disk : Shape
         var dist = p.X * p.X + p.Y * p.Y;
         return dist < 1.0f && Functions.Are_Close(p.Z, 0.0f);
     }
-} 
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class Box : Shape
+{
+    public Box(Transformation? T = null, Material? m = null) : base(T, m) { }
+
+    public override HitRecord? Ray_Intersection(Ray r)
+    {
+        /*var invRay = Tr.Inverse * r;
+        float txmin, txmax, tymin, tymax, tzmin, tzmax, tmin, tmax;
+        
+        // Resolve negative zero problem
+        var invDirX = 1 / invRay.Dir.X;
+        if (invDirX >= 0)
+        {
+            txmin = (-1.0f - invRay.Origin.X) * invDirX;
+            txmax = (1.0f - invRay.Origin.X) * invDirX;
+        }
+        else
+        {
+            txmin = (1.0f - invRay.Origin.X) * invDirX;
+            txmax = (-1.0f - invRay.Origin.X) * invDirX;
+        }
+
+        var invDirY = 1 / invRay.Dir.Y;
+        if (invDirY >= 0)
+        {
+            tymin = (-1.0f - invRay.Origin.Y) * invDirY;
+            tymax = (1.0f - invRay.Origin.Y) * invDirY;
+        }
+        else
+        {
+            tymin = (1.0f - invRay.Origin.Y) * invDirY;
+            tymax = (-1.0f - invRay.Origin.Y) * invDirY;
+        }
+
+        if (txmax < tymin || tymax < txmin) return null;
+        tmin = txmin > tymin ? txmin : tymin;
+        tmax = txmax < tymax ? txmax : tymax;
+        
+        if (invRay.Dir.Z >= 0)
+        {
+            tzmin = (-1.0f - invRay.Origin.Z) / invRay.Dir.Z;
+            tzmax = (1.0f - invRay.Origin.Z) / invRay.Dir.Z;
+        }
+        else
+        {
+            tzmin = (1.0f - invRay.Origin.Z) / invRay.Dir.Z;
+            tzmax = (-1.0f - invRay.Origin.Z) / invRay.Dir.Z;
+        }
+
+        if (tmax < tzmin || tzmax < tmin) return null;
+        if (tzmin > tmin) tmin = tzmin;
+        if (tzmax < tmax) tmax = tzmax;
+        
+        float firstHitT;
+        if (tmin < invRay.TMax && tmin > invRay.TMin) firstHitT = tmin;
+        else if (tmax < invRay.TMax && tmax > invRay.TMin) firstHitT = tmax;
+        else return null;
+        var hitPoint = invRay.At(firstHitT);
+
+        return new HitRecord(
+            Tr * hitPoint,
+            Tr * new Normal(0.0f, 0.0f, dZ),
+            tmin,
+            r,
+            new Vec2D(u, v),
+            Mt
+        ); */
+        return null;
+
+    }
+
+    public override bool Quick_Ray_Intersection(Ray r)
+    {
+        return false;
+    }
+
+    public override List<HitRecord>? Ray_Intersection_List(Ray r)
+    {
+        return null;
+    }
+    
+    public override bool Is_Internal(Point p)
+        => p.X is < 1.0f and > -1.0f && p.Y is < 1.0f and > -1.0f && p.Z is < 1.0f and > -1.0f;
+}
