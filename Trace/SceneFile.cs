@@ -328,9 +328,7 @@ public enum KeywordEnum
     New = 1, 
     Material, 
     Plane, 
-    Sphere, 
-    Cylinder,
-    Disk,
+    Sphere,
     Diffuse, 
     Specular, 
     Uniform, 
@@ -361,8 +359,6 @@ public class KeywordToken : Token
         {"material", KeywordEnum.Material},
         {"plane", KeywordEnum.Plane},
         {"sphere", KeywordEnum.Sphere},
-        {"cylinder", KeywordEnum.Cylinder},
-        {"disk", KeywordEnum.Disk},
         {"diffuse", KeywordEnum.Diffuse},
         {"specular", KeywordEnum.Specular},
         {"uniform", KeywordEnum.Uniform},
@@ -460,27 +456,40 @@ public class Scene
 
     public ICamera? Camera;
 
+    /// <summary>
+    /// List of materials
+    /// </summary>
     public IDictionary<string, Material> Materials;
     
+    /// <summary>
+    /// List of floating variables.
+    /// </summary>
     public IDictionary<string, float> FloatVariables;
 
-    public Scene(World wd, ICamera? camera, IDictionary<string, Material> materials, IDictionary<string, float> floatVariables)
+    /// <summary>
+    /// 
+    /// </summary>
+    public HashSet<string> OverriddenVariables;
+
+    public Scene(World? wd = null, ICamera? camera = null, IDictionary<string, Material>? materials = null, IDictionary<string, float>? floatVariables = null, HashSet<string>? overriddenVariables = null)
     {
-        Wd = wd;
+        Wd = wd ?? new World();
         Camera = camera;
-        Materials = materials;
-        FloatVariables = floatVariables;
+        Materials = materials ?? new Dictionary<string, Material>();
+        FloatVariables = floatVariables ?? new Dictionary<string, float>();
+        OverriddenVariables = overriddenVariables ?? new HashSet<string>();
     }
     
     /// <summary>
-    /// Read a token from <paramref name="inputFile"/> and check that it matches <paramref name="symbol"/>`.
+    /// Read a token from <paramref name="inputFile"/> and check that it matches <paramref name="symbol"/>.
     /// </summary>
     /// <param name="inputFile"></param>
-    /// <param name="symbol"></param>
+    /// <param name="symbol"> the symbol. </param>
+    /// <exception cref="GrammarErrorException"> a lexical error is found. </exception>
     public static void ExpectSymbol(InputStream inputFile, string symbol)
     {
         var token = inputFile.ReadToken();
-        if (token is not LiteralNumberToken || ((SymbolToken) token).Symbol != symbol)
+        if (token is not SymbolToken || ((SymbolToken) token).Symbol != symbol)
             throw new GrammarErrorException($"Got {token} instead of {symbol}",token.Location);
     }
 
@@ -489,7 +498,7 @@ public class Scene
     /// </summary>
     /// <param name="inputFile"></param>
     /// <param name="keywords"></param>
-    /// <returns></returns>
+    /// <returns> the keyword.  </returns>
     /// <exception cref="GrammarErrorException"> a lexical error is found. </exception>
     public static KeywordEnum ExpectKeywords(InputStream inputFile, List<KeywordEnum> keywords)
     {
@@ -504,50 +513,59 @@ public class Scene
     }
 
     /// <summary>
-    /// Read a token from `input_file`
-    /// and check that it is either a literal number or a variable in `scene`
-    /// Return the number as a ``float``."""
+    /// Read a token from <paramref name="inputFile"/> and check that it is either a literal number or a variable in <paramref name="scene"/>.
     /// </summary>
     /// <param name="inputFile"></param>
     /// <param name="scene"></param>
-    /// <returns></returns>
+    /// <returns> the number as a float. </returns>
+    /// <exception cref="GrammarErrorException"> a lexical error is found. </exception>
     public static float ExpectNumber(InputStream inputFile, Scene scene)
     {
         var token = inputFile.ReadToken();
-        if (token is LiteralNumberToken a) return a.Value;
-        else if (token is IdentifierToken b)
+        switch (token)
         {
-            var variableName = b.Identifier;
-            if (!scene.FloatVariables.ContainsKey(variableName))
-                throw new GrammarErrorException($"unknown variable '{token}'", token.Location);
-            return scene.FloatVariables[variableName];
+            case LiteralNumberToken numberToken:
+                return numberToken.Value;
+            case IdentifierToken identifierToken:
+            {
+                var variableName = identifierToken.Identifier;
+                if (!scene.FloatVariables.ContainsKey(variableName))
+                    throw new GrammarErrorException($"Unknown variable '{token}'", identifierToken.Location);
+                return scene.FloatVariables[variableName];
+            }
+            default:
+                throw new GrammarErrorException($"Got '{token}' instead of a number", token.Location);
         }
-
-        throw new GrammarErrorException($"got '{token}' instead of a number", token.Location);
-    }
-
-    public string ExpectIdentifier(InputStream inputFile, Scene scene)
-    {
-        //Read a token from `input_file` and check that it is an identifier.
-        //Return the name of the identifier.
-        var token = inputFile.ReadToken();
-        if (token is not IdentifierToken a)
-            throw new GrammarErrorException($"got '{token}' instead of an identifier", token.Location);
-        return a.Identifier;
     }
 
     /// <summary>
-    /// Read a token from `input_file` and check that it is a literal string.
-    ///Return the value of the string (a ``str``)."""
+    /// Read a token from <paramref name="inputFile"/> and check that it is an identifier.
     /// </summary>
     /// <param name="inputFile"></param>
-    /// <returns></returns>
+    /// <returns> the name of the identifier. </returns>
+    /// <exception cref="GrammarErrorException"> a lexical error is found. </exception>
+    public static string ExpectIdentifier(InputStream inputFile)
+    {
+ 
+        var token = inputFile.ReadToken();
+        if (token is not IdentifierToken)
+            throw new GrammarErrorException($"got '{token}' instead of an identifier", token.Location);
+        return ((IdentifierToken) token).Identifier;
+    }
+
+
+    /// <summary>
+    /// Read a token from <paramref name="inputFile"/> and check that it is a literal string.
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <returns> the value of the string (a string). </returns>
+    /// <exception cref="GrammarErrorException"> a lexical error is found. </exception>
     public static string ExpectString(InputStream inputFile)
     {
         var token = inputFile.ReadToken();
-        if (token is not StringToken a) 
+        if (token is not StringToken) 
             throw new GrammarErrorException($"got '{token}' instead of a string", token.Location);
-        return a.Str;
+        return ((StringToken) token).Str;
     }
 
     public static Vec ParseVector(InputStream inputFile, Scene scene)
@@ -563,7 +581,7 @@ public class Scene
         return new Vec(x, y, z);
     }
     
-    public Color ParseColor(InputStream inputFile, Scene scene)
+    public static Color ParseColor(InputStream inputFile, Scene scene)
     {
         ExpectSymbol(inputFile, "<");
         var r = ExpectNumber(inputFile, scene);
@@ -576,7 +594,7 @@ public class Scene
         return new Color(r, g, b);
     }
 
-    public Pigment ParsePigment(InputStream inputFile, Scene scene)
+    public static Pigment ParsePigment(InputStream inputFile, Scene scene)
     {
         var keyword = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Uniform, KeywordEnum.Checkered, KeywordEnum.Image});
 
@@ -614,5 +632,204 @@ public class Scene
         
         ExpectSymbol(inputFile, ")");
         return result;
+    }
+
+    public static Brdf ParseBrdf(InputStream inputFile, Scene scene)
+    {
+        var keyword = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Diffuse, KeywordEnum.Specular});
+        ExpectSymbol(inputFile, "(");
+        var pigment = ParsePigment(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+
+        Brdf result = new DiffuseBrdf();
+        switch (keyword)
+        {
+            case KeywordEnum.Diffuse:
+            {
+                result = new DiffuseBrdf(pigment);
+                break;
+            }
+            case KeywordEnum.Specular:
+            {
+                result = new SpecularBrdf(pigment);
+                break;
+            }
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+
+        return result;
+    }
+
+    public static (string, Material) ParseMaterial(InputStream inputFile, Scene scene)
+    {
+        var name = ExpectIdentifier(inputFile);
+        ExpectSymbol(inputFile, "(");
+        var brdf = ParseBrdf(inputFile, scene);
+        ExpectSymbol(inputFile, ",");
+        var emittedRadiance = ParsePigment(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+        
+        return (name, new Material(brdf, emittedRadiance));
+    }
+
+    public static Transformation ParseTransformation(InputStream inputFile, Scene scene)
+    {
+        var result = Transformation.Identity();
+
+        while (true)
+        {
+            var keyword = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Identity, KeywordEnum.Translation, KeywordEnum.RotationX, KeywordEnum.RotationY, KeywordEnum.RotationZ, KeywordEnum.Scaling});
+
+            switch (keyword)
+            {
+                case KeywordEnum.Identity:
+                    break;
+                case KeywordEnum.Translation:
+                    ExpectSymbol(inputFile, "(");
+                    result *= Transformation.Translation(ParseVector(inputFile, scene));
+                    ExpectSymbol(inputFile, ")");
+                    break;
+                case KeywordEnum.RotationX:
+                    ExpectSymbol(inputFile, "(");
+                    result *= Transformation.Rotation_X(ExpectNumber(inputFile, scene));
+                    ExpectSymbol(inputFile, ")");
+                    break;
+                case KeywordEnum.RotationY:
+                    ExpectSymbol(inputFile, "(");
+                    result *= Transformation.Rotation_Y(ExpectNumber(inputFile, scene));
+                    ExpectSymbol(inputFile, ")");
+                    break;
+                case KeywordEnum.RotationZ:
+                    ExpectSymbol(inputFile, "(");
+                    result *= Transformation.Rotation_Z(ExpectNumber(inputFile, scene));
+                    ExpectSymbol(inputFile, ")");
+                    break;
+                case KeywordEnum.Scaling:
+                    ExpectSymbol(inputFile, "(");
+                    result *= Transformation.Scale(ParseVector(inputFile, scene));
+                    ExpectSymbol(inputFile, ")");
+                    break;
+            }
+            
+            // We must peek the next token to check if there is another transformation that is being
+            // chained or if the sequence ends. Thus, this is a LL(1) parser.
+            var nextKw = inputFile.ReadToken();
+            if (nextKw is SymbolToken {Symbol: "*"}) continue;
+            
+            // Pretend you never read this token and put it back!
+            inputFile.UnreadToken(nextKw);
+            break;
+        }
+
+        return result;
+    }
+
+    public static Sphere ParseSphere(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        var materialName = ExpectIdentifier(inputFile);
+        // We raise the exception here because input_file is pointing to the end of the wrong identifier
+        if (!scene.Materials.ContainsKey(materialName)) throw new GrammarErrorException($"unknown material {materialName}", inputFile.Location);
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+
+        return new Sphere(transformation, scene.Materials[materialName]);
+    }
+    
+    public static Plane ParsePlane(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        var materialName = ExpectIdentifier(inputFile);
+        // We raise the exception here because input_file is pointing to the end of the wrong identifier
+        if (!scene.Materials.ContainsKey(materialName)) throw new GrammarErrorException($"unknown material {materialName}", inputFile.Location);
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+
+        return new Plane(transformation, scene.Materials[materialName]);
+    }
+
+    public static ICamera ParseCamera(InputStream inputFile, Scene scene)
+    {
+        ICamera result = new PerspectiveCamera();
+        ExpectSymbol(inputFile, "(");
+        var keyword = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Perspective, KeywordEnum.Orthogonal});
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ",");
+        var aspectRatio = ExpectNumber(inputFile, scene);
+        ExpectSymbol(inputFile, ",");
+        var distance = ExpectNumber(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+
+        switch (keyword)
+        {
+            case KeywordEnum.Perspective:
+                result = new PerspectiveCamera(distance, aspectRatio, transformation);
+                break;
+            case KeywordEnum.Orthogonal:
+                result = new OrthogonalCamera(aspectRatio, transformation);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Read a scene description from a stream and return a <see cref="Scene"/> object.
+    /// </summary>
+    /// <param name="inputFile"></param>
+    /// <param name="variables"></param>
+    /// <returns></returns>
+    public static Scene ParseScene(InputStream inputFile, IDictionary<string, float>? variables = null)
+    {
+        var scene = new Scene();
+        scene.FloatVariables = variables ?? new Dictionary<string, float>();
+        if (variables != null) scene.OverriddenVariables = new HashSet<string>(variables.Keys);
+
+        while (true)
+        {
+            var what = inputFile.ReadToken();
+            if (what is StopToken) break;
+            if (what is not KeywordToken token) throw new GrammarErrorException($"expected a keyword instead of {what}", inputFile.Location);
+
+            if (token.Keyword == KeywordEnum.Float)
+            {
+                var variableName = ExpectIdentifier(inputFile);
+                
+                // Save this for the error message
+                var variableLocation = inputFile.Location;
+                ExpectSymbol(inputFile, "(");
+                var variableValue = ExpectNumber(inputFile, scene);
+                ExpectSymbol(inputFile, ")");
+
+                if (scene.FloatVariables.ContainsKey(variableName) && !scene.OverriddenVariables.Contains(variableName)) throw new GrammarErrorException($"variable «{variableName}» cannot be redefined", variableLocation);
+                if (!scene.OverriddenVariables.Contains(variableName))
+                    // Only define the variable if it was not defined by the user outside the scene file (e.g., from the command line)
+                    scene.FloatVariables[variableName] = variableValue;
+            }     
+            else if (token.Keyword == KeywordEnum.Sphere) scene.Wd.Add(ParseSphere(inputFile, scene));
+            else if (token.Keyword == KeywordEnum.Plane) scene.Wd.Add(ParsePlane(inputFile, scene));
+            else if (token.Keyword == KeywordEnum.Camera)
+            {
+                if (scene.Camera != null) throw new GrammarErrorException("You cannot define more than one camera", what.Location);
+                scene.Camera = ParseCamera(inputFile, scene);
+            }
+            else if (token.Keyword == KeywordEnum.Material)
+            {
+                var (name, material) = ParseMaterial(inputFile, scene);
+                scene.Materials[name] = material;
+            }
+        }
+        
+        return scene;
     }
 }

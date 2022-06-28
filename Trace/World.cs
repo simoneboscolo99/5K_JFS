@@ -2,7 +2,7 @@ namespace Trace;
 
 public class World
 {
-    List<Shape> World1;
+    public List<Shape> World1;
 
     public World()
     {
