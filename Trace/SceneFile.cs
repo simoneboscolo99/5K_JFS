@@ -550,15 +550,7 @@ public class Scene
         return a.Str;
     }
 
-    public Brdf ParseBrdf(InputStream inputFile, Scene scene)
-    {
-        var brdfKeyword = ExpectKeywords(inputFile,
-            new List<KeywordEnum> {KeywordEnum.Diffuse, KeywordEnum.Specular});
-        {
-            
-        }
-    }
-
+    
 
     public static Vec ParseVector(InputStream inputFile, Scene scene)
     {

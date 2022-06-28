@@ -288,6 +288,114 @@ app.Command("convert", command =>
 // ===========================================================================
 
 
+// ===========================================================================
+// === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === 
+// ===========================================================================
+
+// This is a command with no arguments - it just does default action.
+app.Command("render", command =>
+{
+    // This is a command that has it's own options
+    // description and help text of the command
+    command.Description = "This is the description for render.";
+    command.ExtendedHelpText = "\nThis is the extended help text for render.\n";
+
+    var inputSceneName = command.Argument("inputSceneName", "Name of the input file with the scene.");
+    var width = command.Option("--width <INTEGER>", "Width of the image. \t\t Default: 480",
+        CommandOptionType.SingleValue);
+    var height = command.Option("--height <INTEGER>", "Height of the image. \t\t Default: 480",
+        CommandOptionType.SingleValue);
+    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view. \t\t\t Default: 0",
+        CommandOptionType.SingleValue);
+    var pfmoutputFilename = command.Option("--pfm-output <PFM_OUTPUT_FILENAME>",
+        "Path of the output hdr file. \t Default: output.pfm", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("--output <OUTPUT_FILENAME>",
+        "Path of the output ldr file. \t Default: output.png", CommandOptionType.SingleValue);
+    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: pathtracing",
+        CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1",
+        CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2",
+        CommandOptionType.SingleValue);
+    var numOfRays = command.Option("-n|--num-of-rays <INTEGER>",
+        "Number of rays departing from each surface point (only applicable with --algorithm=pathtracing).\t\t Default: 10",
+        CommandOptionType.SingleValue);
+    var maxDepth = command.Option("-md|--max-depth <INTEGER>",
+        "Maximum allowed ray depth (only applicable with --algorithm=pathtracing). \t\t Default: 3",
+        CommandOptionType.SingleValue);
+    var initState = command.Option("--init-state <INTEGER>",
+        "Initial seed for the random number generator (positive number). \t\t Default: 45",
+        CommandOptionType.SingleValue);
+    var initSeq = command.Option("--init-seq <INTEGER>",
+        "Identifier of the sequence produced by the random number generator (positive number). \t\t Default: 54",
+        CommandOptionType.SingleValue);
+    var samplesPerPixel = command.Option("-spp|--samples-per-pixel <SAMPLES_PER_PIXEL>",
+        "Number of samples per pixel (must be a perfect square, e.g., 16).. \t\t Default: 0",
+        CommandOptionType.SingleValue);
+    var declareFloat = command.Option("-d|--declare-float <STRING>",
+        "Declare a variable. The syntax is «--declare-float=VAR:VALUE». Example: --declare-float=clock:150",
+        CommandOptionType.MultipleValue);
+
+    command.HelpOption("-?|-h|--help");
+
+    command.OnExecute(() =>
+    {
+        // Do the command's work here, or via another object/method  
+
+        Console.WriteLine("Executing render");
+
+        var input = inputSceneName.Value;
+        var w = width.Value();
+        var h = height.Value();
+        var angle = angleDeg.Value();
+        var g = gamma.Value();
+        var f = factor.Value();
+        var output = outputFilename.Value();
+        var outputPfm = pfmoutputFilename.Value();
+        var ssp = samplesPerPixel.Value();
+        var alg = algorithm.Value();
+        var num = numOfRays.Value();
+        var max = maxDepth.Value();
+        var inState = initState.Value();
+        var inSeq = initSeq.Value();
+        var decFloat = declareFloat.Values;
+
+        try
+        {
+            Parameters.Parse_Command_Line_Render(w,h, angle, g, f, 
+                output, ssp, inSeq, inState, max, outputPfm, decFloat, num);
+            
+            Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
+            
+            var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
+            var aspectRatio = (float) Parameters.Width / Parameters.Height;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        var scene = new Scene();
+        
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return 0;
+    });
+
+});
+
+
+// ===========================================================================
+// === END === END === END === END === END === END === END === END === END ==
+// ===========================================================================
+
+
 
 // When no commands are specified, this block will execute.
 // This is the main "command"
