@@ -109,9 +109,8 @@ app.Command("demo", command =>
             // Creating the scene
             
             var world = new World();
-            var im = new HdrImage("memorial.pfm");
             var skyMaterial = new Material(
-                new DiffuseBrdf(new ImagePigment(im)), 
+                new DiffuseBrdf(new UniformPigment(new Color())), 
                 new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
                 );
             
@@ -129,7 +128,7 @@ app.Command("demo", command =>
             var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
             
             world.Add(new Sphere(
-                Transformation.Scale(new Vec(5f, 5f, 5f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
                 skyMaterial
                 )
             );
@@ -192,15 +191,15 @@ app.Command("demo", command =>
             {
                 case "ONOFF":
                     renderer = new OnOffTracing(world);
-                    Console.WriteLine("Using on/off renderer");
+                    Console.WriteLine("Using on/off renderer\n");
                     break;
                 case "FLAT":
                     renderer = new FlatTracing(world);
-                    Console.WriteLine("Using flat renderer");
+                    Console.WriteLine("Using flat renderer\n");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world, maxDepth: 6, numOfRays: 8, russianRouletteLimit: 2);
-                    Console.WriteLine("Using path tracing");
+                    renderer = new PathTracing(world, maxDepth: 3, numOfRays: 5, russianRouletteLimit: 3);
+                    Console.WriteLine("Using path tracing\n");
                     break;
                 default:
                     throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
@@ -208,23 +207,18 @@ app.Command("demo", command =>
             }
             
             tracer.Fire_All_Rays(renderer);
-
-            Console.WriteLine("Rendering completed");
             
             // Save pfm file
             const string pfmDemoPath = "Demo.pfm";
             using FileStream outputPfm = File.OpenWrite(pfmDemoPath);
             image.Write_pfm(outputPfm);
-            Console.WriteLine($"HDR demo image written to {pfmDemoPath}");
+            Console.WriteLine($"\nHDR demo image written to {pfmDemoPath}");
             
             // Convert to Ldr
             // Tone mapping
             image.Luminosity_Norm(Parameters.Factor);
             image.Clamp_Image();
-
-            //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
-            //const string pngDemoPath = "Demo.png";
-            //Parameters.Format = Path.GetExtension(pngDemoPath);
+            
             image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
             Console.WriteLine($"PNG demo image written to {Parameters.OutputFileName}");
         }
@@ -320,5 +314,3 @@ catch (Exception ex)
 {
     Console.WriteLine("Unable to execute application: {0}", ex.Message);
 }
-
-
