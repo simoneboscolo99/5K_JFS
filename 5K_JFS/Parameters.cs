@@ -215,12 +215,12 @@ public class Parameters
     /// <summary>
     /// Initial seed for the random number generator (positive number)
     /// </summary>
-    public static int InitState;
+    public static ulong InitState;
     
     /// <summary>
     /// Identifier of the sequence produced by the random number generator (positive number)
     /// </summary>
-    public static int InitSeq;
+    public static ulong InitSeq;
     
     /// <summary>
     /// Declare a variable. The syntax is «--declare-float=VAR:VALUE»
@@ -340,7 +340,7 @@ public class Parameters
         
         try
         {
-            InitState = Convert.ToInt32(inSt);
+            InitState = Convert.ToUInt64(inSt);
         }
         catch
         {
@@ -349,7 +349,7 @@ public class Parameters
         
         try
         {
-            InitSeq = Convert.ToInt32(inSeq);
+            InitSeq = Convert.ToUInt64(inSeq);
         }
         catch
         {
