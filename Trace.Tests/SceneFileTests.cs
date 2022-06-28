@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -53,6 +54,54 @@ public class SceneFileTests
         Assert.True(stream.ReadChar() == "", "Test end of file");
     }
 
+    public class AssertToken
+    {
+        public static void AssertIsKeyword(Token token, KeywordEnum keyword)
+        {
+            Assert.IsType<KeywordToken>(token);
+            Assert.True(
+                ((KeywordToken) token).Keyword == keyword,
+                $"Token {token} is not equal to keyword {keyword}"
+            );
+        }
+
+        public static void AssertIsIdentifier(Token token, string identifier)
+        {
+            Assert.IsType<IdentifierToken>(token);
+            Assert.True(
+                ((IdentifierToken) token).Identifier == identifier,
+                $"Expecting identifier {identifier} instead of {token}"
+            );
+        }
+
+        public static void AssertIsSymbol(Token token, string symbol)
+        {
+            Assert.IsType<SymbolToken>(token);
+            Assert.True(
+                ((SymbolToken) token).Symbol == symbol,
+                $"Expecting symbol {symbol} instead of {token}"
+            );
+        }
+
+        public static void AssertIsString(Token token, string s)
+        {
+            Assert.IsType<StringToken>(token);
+            Assert.True(
+                ((StringToken) token).Str == s,
+                $"Token {token} is not equal to string {s}"
+            );
+        }
+
+        public static void AssertIsNumber(Token token, float number)
+        {
+            Assert.IsType<LiteralNumberToken>(token);
+            Assert.True(
+                Functions.Are_Close(((LiteralNumberToken) token).Value, number),
+                $"Token {token} is not equal to number {number}"
+            );
+        }
+    }
+
     [Fact]
     public void TestLexer()
     {
@@ -91,52 +140,120 @@ diffuse(image(""my file.pfm"")),
         AssertToken.AssertIsSymbol(stream.ReadToken(), ")");
         Assert.IsType<StopToken>(stream.ReadToken());
     }
-}
 
-public class AssertToken
-{
-    public static void AssertIsKeyword(Token token, KeywordEnum keyword)
+    [Fact]
+    public void TestParser()
     {
-        Assert.IsType<KeywordToken>(token);
-        Assert.True(
-            ((KeywordToken) token).Keyword == keyword, 
-            $"Token {token} is not equal to keyword {keyword}"
-            );
+        var line = Encoding.ASCII.GetBytes(@"
+            float clock(150)
+                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
+                material sky_material(
+                 diffuse(uniform(<0, 0, 0>)),
+                 uniform(<0.7, 0.5, 1>)
+                ) 
+                
+                # here is a comment
+                
+                material ground_material(
+                 diffuse(checkered(<0.3, 0.5, 0.1>, 
+                                    <0.1, 0.2, 0.5>, 4)),
+                 uniform(<0, 0, 0>)
+                )
+    
+                material sphere_material(
+                 specular(uniform(<0.5, 0.5, 0.5>)),
+                 uniform(<0, 0, 0>)
+                )
+    
+                plane (sky_material, translation([0, 0, 100]) * rotation_y(clock))
+                plane (ground_material, identity)
+                # hi
+                sphere(sphere_material, translation([0, 0, 1]))
+            ");
+        
+        Stream streamline = new MemoryStream(line);
+        var stream = new InputStream(streamline);
+
+        var scene = Scene.ParseScene(inputFile: stream);
+        
+        // Check that the float variables are ok
+        Assert.True(scene.FloatVariables.Count == 1, "Test FloatVariables length");
+        Assert.True(scene.FloatVariables.ContainsKey("clock"), "Test FloatVariables contains");
+        Assert.True(Functions.Are_Close(scene.FloatVariables["clock"],150.0f), "Test FloatVariables value");
+        
+        // Check that the materials are ok
+        Assert.True(scene.Materials.Count == 3, "Test Materials length");
+        Assert.True(scene.Materials.ContainsKey("sphere_material"), "Test Materials contains 1");
+        Assert.True(scene.Materials.ContainsKey("sky_material"), "Test Materials contains 2");
+        Assert.True(scene.Materials.ContainsKey("ground_material"), "Test Materials contains 3");
+
+        var sphereMaterial = scene.Materials["sphere_material"];
+        var skyMaterial = scene.Materials["sky_material"];
+        var groundMaterial = scene.Materials["ground_material"];
+        
+        Assert.IsType<DiffuseBrdf>(skyMaterial.Brdf);
+        Assert.IsType<UniformPigment>(skyMaterial.Brdf.Pg);
+        Assert.True(((UniformPigment) skyMaterial.Brdf.Pg).C.Is_Close(new Color()));
+        
+        Assert.IsType<DiffuseBrdf>(groundMaterial.Brdf);
+        Assert.IsType<CheckeredPigment>(groundMaterial.Brdf.Pg);
+        Assert.True(((CheckeredPigment) groundMaterial.Brdf.Pg).C1.Is_Close(new Color(0.3f, 0.5f, 0.1f)));
+        Assert.True(((CheckeredPigment) groundMaterial.Brdf.Pg).C2.Is_Close(new Color(0.1f, 0.2f, 0.5f)));
+        Assert.True(((CheckeredPigment) groundMaterial.Brdf.Pg).NumOfSteps == 4);
+        
+        Assert.IsType<SpecularBrdf>(sphereMaterial.Brdf);
+        Assert.IsType<UniformPigment>(sphereMaterial.Brdf.Pg);
+        Assert.True(((UniformPigment) sphereMaterial.Brdf.Pg).C.Is_Close(new Color(0.5f, 0.5f, 0.5f)));
+
+        Assert.IsType<UniformPigment>(skyMaterial.EmittedRadiance);
+        Assert.True(((UniformPigment) skyMaterial.EmittedRadiance).C.Is_Close(new Color(0.7f, 0.5f, 1.0f)));
+        Assert.IsType<UniformPigment>(groundMaterial.EmittedRadiance);
+        Assert.True(((UniformPigment) groundMaterial.EmittedRadiance).C.Is_Close(new Color()));
+        Assert.IsType<UniformPigment>(sphereMaterial.EmittedRadiance);
+        Assert.True(((UniformPigment) sphereMaterial.EmittedRadiance).C.Is_Close(new Color()));
+        
+        // Check that the shapes are ok
+        Assert.True(scene.Wd.World1.Count == 3, "Test World length");
+        Assert.IsType<Plane>(scene.Wd.World1[0]);
+        Assert.True(scene.Wd.World1[0].Tr.Is_Close(Transformation.Translation(new Vec(0.0f, 0.0f, 100.0f)) * Transformation.Rotation_Y(150.0f)));
+        Assert.IsType<Plane>(scene.Wd.World1[1]);
+        Assert.True(scene.Wd.World1[1].Tr.Is_Close(Transformation.Identity()));
+        Assert.IsType<Sphere>(scene.Wd.World1[2]);
+        Assert.True(scene.Wd.World1[2].Tr.Is_Close(Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f))));
+        
+        // Check that the camera is ok
+        Assert.IsType<PerspectiveCamera>(scene.Camera);
+        Assert.True(((PerspectiveCamera) scene.Camera!).T.Is_Close(Transformation.Rotation_Z(30.0f) * Transformation.Translation(new Vec(-4.0f, 0.0f, 1.0f))));
+        Assert.True(Functions.Are_Close(((PerspectiveCamera) scene.Camera!).AspectRatio, 1.0f));
+        Assert.True(Functions.Are_Close(((PerspectiveCamera) scene.Camera!).Distance, 2.0f));
     }
 
-    public static void AssertIsIdentifier(Token token, string identifier)
+    [Fact]
+    public void TestParserUndefinedMaterial()
     {
-        Assert.IsType<IdentifierToken>(token);
-        Assert.True(
-            ((IdentifierToken) token).Identifier == identifier, 
-            $"Expecting identifier {identifier} instead of {token}" 
-            );
+        // Check that unknown materials raise a GrammarError
+        var line = Encoding.ASCII.GetBytes(@"plane(this_material_does_not_exist, identity)");
+        
+        Stream streamline = new MemoryStream(line);
+        var stream = new InputStream(streamline);
+        
+        var ex = Assert.Throws<GrammarErrorException>(() => Scene.ParseScene(inputFile: stream));
+        Assert.Contains("unknown material this_material_does_not_exist", ex.Message);
     }
 
-    public static void AssertIsSymbol(Token token, string symbol)
+    [Fact]
+    public void TestParserDoubleCamera()
     {
-        Assert.IsType<SymbolToken>(token);
-        Assert.True(
-            ((SymbolToken) token).Symbol == symbol,
-            $"Expecting symbol {symbol} instead of {token}"
-            );
-    }
-
-    public static void AssertIsString(Token token, string s)
-    {
-        Assert.IsType<StringToken>(token);
-        Assert.True(
-            ((StringToken) token).Str == s,
-            $"Token {token} is not equal to string {s}"
-            );
-    }
-
-    public static void AssertIsNumber(Token token, float number)
-    {
-        Assert.IsType<LiteralNumberToken>(token);
-        Assert.True(
-            Functions.Are_Close(((LiteralNumberToken) token).Value, number),
-            $"Token {token} is not equal to number {number}"
-        );
+        // Check that defining two cameras in the same file raises a GrammarError
+        var line = Encoding.ASCII.GetBytes(@"
+            camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 1.0)
+            camera(orthogonal, identity, 1.0, 1.0)
+        ");
+        
+        Stream streamline = new MemoryStream(line);
+        var stream = new InputStream(streamline);
+        
+        var ex = Assert.Throws<GrammarErrorException>(() => Scene.ParseScene(inputFile: stream));
+        Assert.Contains("You cannot define more than one camera", ex.Message);
     }
 }
