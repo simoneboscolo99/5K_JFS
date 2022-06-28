@@ -362,7 +362,7 @@ app.Command("render", command =>
         try
         {
             Parameters.Parse_Command_Line_Render(w,h, angle, g, f, 
-                output, ssp, inSeq, inState, max, outputPfm, decFloat, num);
+                output, ssp, inSeq, inState, max, outputPfm, decFloat, num, input);
         }
         catch (Exception e)
         {
