@@ -289,7 +289,7 @@ app.Command("convert", command =>
 
 
 // ===========================================================================
-// === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === 
+// ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER === 
 // ===========================================================================
 
 // This is a command with no arguments - it just does default action.
@@ -363,6 +363,20 @@ app.Command("render", command =>
         {
             Parameters.Parse_Command_Line_Render(w,h, angle, g, f, 
                 output, ssp, inSeq, inState, max, outputPfm, decFloat, num, input);
+            
+            Console.WriteLine("Parameters: \n" 
+                              + $"Width: {Parameters.Width} \n" 
+                              + $"Height: {Parameters.Height} \n"
+                              + $"Angle_Deg: {Parameters.AngleDeg} \n" 
+                              + $"Gamma: {Parameters.Gamma} \n"
+                              + $"A: {Parameters.Factor} \n" 
+                              + $"Orthogonal: {Parameters.Orthogonal} \n" 
+                              + $"Samples per side: {Parameters.SamplesPerSide} \n"
+                              + $"Init State: {Parameters.InitState} \n"
+                              + $"Init Seq: {Parameters.InitSeq} \n"
+                              + $"Number of rays: {Parameters.NumOfRays} \n"
+                              + $"Max depth: {Parameters.MaxDepth} \n"
+            );
         }
         catch (Exception e)
         {
@@ -371,65 +385,77 @@ app.Command("render", command =>
 
         var scene = new Scene();
 
-        using Stream fileStream = File.OpenRead(Parameters.InputSceneName);
-        
+        using (Stream fileStream = File.OpenRead(Parameters.InputSceneName))
+        {
+            try
+            {
+                scene = Scene.ParseScene(new InputStream(fileStream, Parameters.InputSceneName), 
+                    Parameters.DeclareFloat);
+            }
+            catch (GrammarErrorException e)
+            {
+                var loc = e.Location;
+                Console.WriteLine($"{loc.FileName}:{loc.LineNum}:{loc.ColumnNum}: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         try
         {
-            scene = Scene.ParseScene(new InputStream(fileStream, Parameters.InputSceneName), 
-                Parameters.DeclareFloat);
-        }
-        catch (GrammarErrorException e)
-        {
-            var loc = e.Location;
-            Console.WriteLine($"{loc.FileName}:{loc.LineNum}:{loc.ColumnNum}: {e.Message}");
+            Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
+            var image = new HdrImage(Parameters.Width, Parameters.Height);
+            
+            Console.WriteLine($"Aspect ratio: {((PerspectiveCamera) scene.Camera!).AspectRatio}");
+            Console.WriteLine($"Distance: {((PerspectiveCamera) scene.Camera!).Distance}");
+            
+            Console.WriteLine($"SkyMaterial: { ((UniformPigment) scene.Materials["skyMaterial"].EmittedRadiance).C.ToString()}");
+            var tracer = new ImageTracer(image, scene.Camera!, Parameters.SamplesPerSide);
+            
+            // Rendering
+            var alg = algorithm.Value() ?? "PATHTRACING";
+            var upperAlg = alg.ToUpper();
+            Solver renderer;
+            switch (upperAlg)
+            {
+                case "ONOFF":
+                    renderer = new OnOffTracing(scene.Wd);
+                    Console.WriteLine("Using on/off renderer\n");
+                    break;
+                case "FLAT":
+                    renderer = new FlatTracing(scene.Wd);
+                    Console.WriteLine("Using flat renderer\n");
+                    break;
+                case "PATHTRACING":
+                    renderer = new PathTracing(scene.Wd, pcg: new Pcg(Parameters.InitState, Parameters.InitSeq), maxDepth: Parameters.MaxDepth, numOfRays: Parameters.NumOfRays);
+                    Console.WriteLine("Using path tracing\n");
+                    break;
+                default:
+                    throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
+                                               "\n - onoff \n - flat \n - pathtracing \n");
+            }
+            
+            tracer.Fire_All_Rays(renderer);
+        
+            // Save pfm file
+            using FileStream outputpfm = File.OpenWrite(Parameters.PfmOutputFilename);
+            image.Write_pfm(outputpfm);
+            Console.WriteLine($"\nHDR demo image written to {Parameters.PfmOutputFilename}");
+            
+            // Convert to Ldr
+            // Tone mapping
+            image.Luminosity_Norm(Parameters.Factor);
+            image.Clamp_Image();
+            
+            image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
+            Console.WriteLine($"PNG demo image written to {Parameters.OutputFileName}");
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
         }
-        
-        Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
-        var image = new HdrImage(Parameters.Width, Parameters.Height);
-        
-        var tracer = new ImageTracer(image, scene.Camera!, Parameters.SamplesPerSide);
-            
-        // Rendering
-        var alg = algorithm.Value() ?? "PATHTRACING";
-        var upperAlg = alg.ToUpper();
-        Solver renderer;
-        switch (upperAlg)
-        {
-            case "ONOFF":
-                renderer = new OnOffTracing(scene.Wd);
-                Console.WriteLine("Using on/off renderer\n");
-                break;
-            case "FLAT":
-                renderer = new FlatTracing(scene.Wd);
-                Console.WriteLine("Using flat renderer\n");
-                break;
-            case "PATHTRACING":
-                renderer = new PathTracing(scene.Wd,pcg: new Pcg(Parameters.InitState, Parameters.InitSeq),maxDepth: Parameters.MaxDepth, numOfRays: Parameters.NumOfRays);
-                Console.WriteLine("Using path tracing\n");
-                break;
-            default:
-                throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
-                                           "\n - onoff \n - flat \n - pathtracing \n");
-        }
-            
-        tracer.Fire_All_Rays(renderer);
-        
-        // Save pfm file
-        using FileStream outputpfm = File.OpenWrite(Parameters.PfmOutputFilename);
-        image.Write_pfm(outputpfm);
-        Console.WriteLine($"\nHDR demo image written to {Parameters.PfmOutputFilename}");
-            
-        // Convert to Ldr
-        // Tone mapping
-        image.Luminosity_Norm(Parameters.Factor);
-        image.Clamp_Image();
-            
-        image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
-        Console.WriteLine($"PNG demo image written to {Parameters.OutputFileName}");
         
         return 0;
     });

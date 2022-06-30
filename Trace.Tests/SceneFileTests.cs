@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -149,7 +148,7 @@ diffuse(image(""my file.pfm"")),
                 camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
                 material sky_material(
                  diffuse(uniform(<0, 0, 0>)),
-                 uniform(<0.7, 0.5, 1>)
+                 uniform(<0.7, 0.5, 1.0>)
                 ) 
                 
                 # here is a comment
@@ -165,10 +164,10 @@ diffuse(image(""my file.pfm"")),
                  uniform(<0, 0, 0>)
                 )
     
-                plane (sky_material, translation([0, 0, 100]) * rotation_y(clock))
+                plane (sky_material, translation([0.0, 0, 100.000]) * rotation_y(clock))
                 plane (ground_material, identity)
                 # hi
-                sphere(sphere_material, translation([0, 0, 1]))
+                sphere(sphere_material, translation([0.0000, 0, 1.00]))
             ");
         
         Stream streamline = new MemoryStream(line);
@@ -255,5 +254,18 @@ diffuse(image(""my file.pfm"")),
         
         var ex = Assert.Throws<GrammarErrorException>(() => Scene.ParseScene(inputFile: stream));
         Assert.Contains("You cannot define more than one camera", ex.Message);
+    }
+
+    [Fact]
+    public void TestMain()
+    {
+        using Stream fileStream = File.OpenRead("/Users/matteo_macchini/Desktop/5K_JFS/5K_JFS/Examples/demo.txt");
+        var scene = Scene.ParseScene(new InputStream(fileStream, "/Users/matteo_macchini/Desktop/5K_JFS/5K_JFS/Examples/demo.txt"));
+        
+        // Qui funziona sia che scrivo 1 sia che scrivo 1.0 o 1.000000
+        // Però nel main non funziona!!!!!!!!!
+        Assert.True(Functions.Are_Close(((PerspectiveCamera) scene.Camera!).AspectRatio, 1.0f));
+        var skyMaterial = scene.Materials["skyMaterial"];
+        Assert.True(((UniformPigment) skyMaterial.EmittedRadiance).C.Is_Close(new Color(0.9f, 0.9f, 0.5f)));
     }
 }

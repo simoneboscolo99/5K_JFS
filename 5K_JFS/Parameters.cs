@@ -1,6 +1,5 @@
 using Trace;
-using Xunit.Sdk;
-
+using System.Globalization;
 namespace _5K_JFS;
 
 /// <summary>
@@ -195,12 +194,12 @@ public class Parameters
     /// <summary>
     /// Path of the output hdr file
     /// </summary>
-    public static string PfmOutputFilename;
+    public static string PfmOutputFilename = "";
 
     /// <summary>
     /// Path of the input scene file
     /// </summary>
-    public static string InputSceneName;
+    public static string InputSceneName = "";
     
     /// <summary>
     /// Number of rays departing from each surface point
@@ -225,7 +224,7 @@ public class Parameters
     /// <summary>
     /// Declare a variable. The syntax is «--declare-float=VAR:VALUE»
     /// </summary>
-    public static IDictionary<string, float> DeclareFloat;
+    public static IDictionary<string, float> DeclareFloat = new Dictionary<string, float>();
 
     /// <summary>
     /// Parses command line parameters in demo mode.
@@ -253,12 +252,12 @@ public class Parameters
         var h = height ?? "480";
         var a = angle ?? "0";
         var g = gamma ?? "1";
-        var f = factor ?? "0,2";
+        var f = factor ?? "0.2";
         var output = outputFilename ?? "output.png";
         var pfm = pfmoutputFilename ?? "output.pfm";
         var ssp = samplesPerPixel ?? "0";
         var inSeq = initSeq ?? "54";
-        var inSt = initState ?? "45";
+        var inSt = initState ?? "42";
         var max = maxDepth ?? "3";
         var num = numOfRays ?? "10";
         var dec = declareFloat ?? new List<string>();
@@ -284,7 +283,7 @@ public class Parameters
 
         try
         {
-            AngleDeg = Convert.ToSingle(a);
+            AngleDeg = float.Parse(a , CultureInfo.InvariantCulture);
         }
         catch
         {
@@ -293,7 +292,7 @@ public class Parameters
 
         try
         {
-            Gamma = Convert.ToSingle(g);
+            Gamma = float.Parse(g , CultureInfo.InvariantCulture);
         }
         catch
         {
@@ -302,7 +301,7 @@ public class Parameters
 
         try
         {
-            Factor = Convert.ToSingle(f);
+            Factor = float.Parse(f , CultureInfo.InvariantCulture);
         }
         catch
         {

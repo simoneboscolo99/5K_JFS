@@ -177,7 +177,7 @@ public class InputStream
         while (true)
         {
             var ch = ReadChar();
-            bool all = Char.IsDigit(Convert.ToChar(ch)) | ch == "." | ch == "e" | ch == "E";
+            bool all = Char.IsDigit(Convert.ToChar(ch, CultureInfo.InvariantCulture)) | ch == "." | ch == "e" | ch == "E";
             if (all != true)
             {
                 UnreadChar(ch);
@@ -189,7 +189,7 @@ public class InputStream
 
         try
         {
-            var value = float.Parse(tkn);
+            var value = float.Parse(tkn, CultureInfo.InvariantCulture);
             val = value;
         }
 
@@ -208,7 +208,7 @@ public class InputStream
         {
             var ch = ReadChar();
             // Note that here we do not call "isalpha" but "isalnum": digits are ok after the first character
-            if ((Char.IsLetterOrDigit(Convert.ToChar(ch)) | ch == "_") != true)
+            if ((Char.IsLetterOrDigit(Convert.ToChar(ch, CultureInfo.InvariantCulture)) | ch == "_") != true)
             {
                 UnreadChar(ch);
                 break;
@@ -268,13 +268,13 @@ public class InputStream
                 return ParseStringToken(Location);
             default:
             {
-                if (Char.IsDigit(Convert.ToChar(ch)) | ch is "+" or "-" or ".")
+                if (Char.IsDigit(Convert.ToChar(ch, CultureInfo.InvariantCulture)) | ch is "+" or "-" or ".")
                 {
                     //A floating-point number
                     return ParseFloatToken(ch, Location);
                 }
 
-                if (Char.IsLetter(Convert.ToChar(ch)) | ch == "_")
+                if (Char.IsLetter(Convert.ToChar(ch, CultureInfo.InvariantCulture)) | ch == "_")
                 {
                     //Since it begins with an alphabetic character, it must either be a keyword 
                     // or a identifier

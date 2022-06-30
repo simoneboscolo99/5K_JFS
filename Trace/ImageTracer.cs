@@ -72,7 +72,8 @@ public class ImageTracer
         using (var pbar = new ProgressBar(maxTicks, "Starting", options))
         {
             DateTime mDataOraStart = DateTime.Now;
-            for (int row = 0; row < Image.Height; row++)
+            //for (int row = 0; row < Image.Height; row++)
+            Parallel.For(0, Image.Height, i =>
             {
                 for (int col = 0; col < Image.Width; col++)
                 {
@@ -90,22 +91,22 @@ public class ImageTracer
                             {
                                 var uPixel = (interpixelcol + Pcg.Random_Float()) / SamplesPerSide;
                                 var vPixel = (interpixelrow + Pcg.Random_Float()) / SamplesPerSide;
-                                var ray = Fire_Ray(col, row, uPixel, vPixel);
+                                var ray = Fire_Ray(col, i, uPixel, vPixel);
                                 cumColor += solver.Tracing(ray);
                             }
                         }
 
-                        Image.Set_Pixel(col, row, cumColor * (1.0f / SamplesPerSide * SamplesPerSide));
+                        Image.Set_Pixel(col, i, cumColor * (1.0f / SamplesPerSide * SamplesPerSide));
                     }
 
                     else
                     {
-                        var ray = Fire_Ray(col, row);
-                        Image.Set_Pixel(col, row, solver.Tracing(ray));
+                        var ray = Fire_Ray(col, i);
+                        Image.Set_Pixel(col, i, solver.Tracing(ray));
                     }
                 }
-                pbar.Tick(row == Image.Height - 1 ? "Rendering completed" : "Rendering...");
-            }
+                pbar.Tick(i == Image.Height - 1 ? "Rendering completed" : "Rendering...");
+            });
         }
     }
     

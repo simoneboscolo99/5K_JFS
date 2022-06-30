@@ -1,0 +1,10 @@
+material sphereMaterial(
+    diffuse(uniform(<0.3, 0.4, 0.8>)),
+    uniform(<0,0,0>)
+)
+
+
+sphere(sphereMaterial, translation([0,0,0]))
+
+
+camera(perspective, translation([-1, 0, 0]), 1.000, 1.000)
