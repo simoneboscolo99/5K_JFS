@@ -255,17 +255,4 @@ diffuse(image(""my file.pfm"")),
         var ex = Assert.Throws<GrammarErrorException>(() => Scene.ParseScene(inputFile: stream));
         Assert.Contains("You cannot define more than one camera", ex.Message);
     }
-
-    [Fact]
-    public void TestMain()
-    {
-        using Stream fileStream = File.OpenRead("/Users/matteo_macchini/Desktop/5K_JFS/5K_JFS/Examples/demo.txt");
-        var scene = Scene.ParseScene(new InputStream(fileStream, "/Users/matteo_macchini/Desktop/5K_JFS/5K_JFS/Examples/demo.txt"));
-        
-        // Qui funziona sia che scrivo 1 sia che scrivo 1.0 o 1.000000
-        // Però nel main non funziona!!!!!!!!!
-        Assert.True(Functions.Are_Close(((PerspectiveCamera) scene.Camera!).AspectRatio, 1.0f));
-        var skyMaterial = scene.Materials["skyMaterial"];
-        Assert.True(((UniformPigment) skyMaterial.EmittedRadiance).C.Is_Close(new Color(0.9f, 0.9f, 0.5f)));
-    }
 }
