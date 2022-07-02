@@ -270,7 +270,6 @@ public class PlaneTests
     }
 
     [Fact]
-    //test after transformation
     public void TestTransformation()
     {
         var plane = new Plane(Transformation.Rotation_Y(90.0f));
@@ -479,7 +478,7 @@ public class DiskTests
         Assert.False(hit2, "Test quick intersection 2");
         Assert.False((intersection2 != null), "Hit 2 disk");
 
-        var ray3 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(0.1f, 0.0f, 0.0f));
+        var ray3 = new Ray(new Point(0.0f, 0.0f, 1.0f), new Vec(1.0f, 0.0f, 0.0f));
         var intersection3 = disk.Ray_Intersection(ray3);
         Assert.False((intersection3 != null), "Hit 3 disk");
 
@@ -540,5 +539,103 @@ public class DiskTests
         disk.Tr = Transformation.Rotation_Y(90.0f);
         Assert.True(disk.Is_Internal(new Point(0.0f, -0.5f, 0.2f)), "Test internal 3");
         Assert.False(disk.Is_Internal(new Point(0.4f, -0.5f, 0.2f)), "Test internal 4");
+    }
+}
+
+public class BoxTest
+{
+    [Fact]
+    public void TestHit()
+    {
+        var box = new Box();
+        var ray1 = new Ray(new Point(-0.5f, 0.5f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
+        var intersection1 = box.Ray_Intersection(ray1);
+        var hit1 = box.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+        Assert.True(intersection1 != null, "Check intersection 1");
+        Assert.True(new HitRecord(
+            new Point(-0.5f, 0.5f, 1.0f),
+            new Normal(0.0f, 0.0f, 1.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.3125f, 0.583333333f),
+            new Material()
+            ).Is_Close(intersection1), "Test hit 1");
+
+        var ray2 = new Ray(new Point(0.0f, -0.5f, 0.5f), new Vec(-1.0f, 0.0f, 0.0f));
+        var intersection2 = box.Ray_Intersection(ray2);
+        var hit2 = box.Quick_Ray_Intersection(ray2);
+        Assert.True(hit2, "Test quick intersection 2");
+        Assert.True(intersection2 != null, "Check intersection 2");
+        Assert.True(new HitRecord(
+            new Point(-1.0f, -0.5f, 0.5f),
+            new Normal(1.0f, 0.0f, 0.0f),
+            1.0f,
+            ray2,
+            new Vec2D(0.1875f, 0.41666666666f),
+            new Material()
+        ).Is_Close(intersection2), "Test hit 2");
+
+        var ray3 = new Ray(new Point(-2.0f, -0.5f, 0.5f), new Vec(-1.0f, 0.0f, 0.0f));
+        var intersection3 = box.Ray_Intersection(ray3);
+        var hit3 = box.Quick_Ray_Intersection(ray3);
+        Assert.False(hit3, "Test quick intersection 3");
+        Assert.False(intersection3 != null, "Check intersection 3");
+        
+        var ray4 = new Ray(new Point(-2.0f, -0.5f, 0.5f), new Vec(0.0f, 1.0f, 0.0f));
+        var intersection4 = box.Ray_Intersection(ray4);
+        var hit4 = box.Quick_Ray_Intersection(ray4);
+        Assert.False(hit4, "Test quick intersection 4");
+        Assert.False(intersection4 != null, "Check intersection 4");
+        
+        var ray5 = new Ray(new Point(0.8f, 2.0f, -0.8f), new Vec(0.0f, -1.0f, 0.0f));
+        var hit5 = box.Quick_Ray_Intersection(ray5);
+        Assert.True(hit5, "Test 5");
+        var ray6 = new Ray(new Point(-0.8f, 2.0f, 0.8f), new Vec(0.0f, -1.0f, 0.0f));
+        var hit6 = box.Quick_Ray_Intersection(ray6);
+        Assert.True(hit6, "Test 6");
+        var ray7 = new Ray(new Point(0.8f, 2.0f, 0.8f), new Vec(0.0f, -1.0f, 0.0f));
+        var hit7 = box.Quick_Ray_Intersection(ray7);
+        Assert.True(hit7, "Test 7");
+        var ray8 = new Ray(new Point(-0.8f, 2.0f, -0.8f), new Vec(0.0f, -1.0f, 0.0f));
+        var hit8 = box.Quick_Ray_Intersection(ray8);
+        Assert.True(hit8, "Test 8");
+    }
+
+    [Fact]
+    public void TestTransformation()
+    {
+        var box = new Box(T: Transformation.Translation(new Vec(10.0f, 0.0f, 0.0f)));
+        var ray1 = new Ray(new Point(9.5f, 0.5f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
+        var intersection1 = box.Ray_Intersection(ray1);
+        var hit1 = box.Quick_Ray_Intersection(ray1);
+        Assert.True(hit1, "Test quick intersection 1");
+        Assert.True(intersection1 != null, "Test intersection 1");
+        Assert.True(new HitRecord(
+            new Point(9.5f, 0.5f, 1.0f),
+            new Normal(0.0f, 0.0f, 1.0f),
+            1.0f,
+            ray1,
+            new Vec2D(0.3125f, 0.583333333f), 
+            new Material()
+        ).Is_Close(intersection1), "Test hit 1");
+        
+        var ray2 = new Ray(new Point(-0.5f, 0.5f, 2.0f), new Vec(0.0f, 0.0f, -1.0f));
+        var intersection2 = box.Ray_Intersection(ray2);
+        var hit2 = box.Quick_Ray_Intersection(ray2);
+        Assert.False(hit2, "Test quick intersection 2");
+        Assert.False(intersection2 != null, "Check intersection 2");
+    }
+    
+    [Fact]
+    public void TestIsInternal()
+    {
+        var box = new Box();
+        Assert.True(box.Is_Internal(new Point(0.4f, -0.95f, 0.0f)), "Test internal 1");
+        Assert.False(box.Is_Internal(new Point(0.2f, -0.95f, -1.1f)), "Test internal 2");
+        
+        box.Tr = Transformation.Translation(new Vec(0.0f, 0.0f, 0.3f));
+        Assert.False(box.Is_Internal(new Point(0.2f, -0.95f, -0.8f)), "Test internal 3");
+        Assert.True(box.Is_Internal(new Point(0.4f, -0.5f, 0.2f)), "Test internal 4");
     }
 }

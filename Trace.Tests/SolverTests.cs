@@ -37,7 +37,7 @@ public class SolverTests
         var world = new World();
         var sphere1 = new Sphere();
         var sphere2 = new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, 0.5f)));
-        var csg = new CsgDiff(sphere1, sphere2, Transformation.Scale(new Vec(0.5f, 0.5f, 0.5f)));
+        var csg = new CsgDifference(sphere1, sphere2, Transformation.Scale(new Vec(0.5f, 0.5f, 0.5f)));
         world.Add(csg);
         
         var image = new HdrImage(3, 3);

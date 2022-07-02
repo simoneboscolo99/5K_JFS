@@ -66,38 +66,37 @@ public class CheckeredPigment : Pigment
       false => C2
     };
   }
+}
 
-  /// <summary>
-  /// A textured pigment
-  /// The texture is given through a PFM image.
-  /// </summary>
-  public class ImagePigment : Pigment
+/// <summary>
+/// A textured pigment
+/// The texture is given through a PFM image.
+/// </summary>
+public class ImagePigment : Pigment
+{
+  //texture given by an image
+  public HdrImage Img;
+
+  public ImagePigment(HdrImage img)
   {
-    //texture given by an image
-    public HdrImage Img;
+    Img = img;
+  }
 
-    public ImagePigment(HdrImage img)
-    {
-      Img = img;
-    }
+  public override Color Get_Color(Vec2D v)
+  {
+    //"casting" (u,v) coordinates on image points
+    var col = (int) (v.U * Img.Width);
+    var row = (int) (v.V * Img.Height);
 
-    public override Color Get_Color(Vec2D v)
-    {
-      //"casting" (u,v) coordinates on image points
-      var col = (int) (v.U * Img.Width);
-      var row = (int) (v.V * Img.Height);
+    if (col >= Img.Width)
+      col = Img.Width - 1;
 
-      if (col >= Img.Width)
-        col = Img.Width - 1;
+    if (row >= Img.Height)
+      row = Img.Height - 1;
 
-      if (row >= Img.Height)
-        row = Img.Height - 1;
-
-      /* A nicer solution would implement bilinear interpolation to reduce pixelization artifacts
-      See https://en.wikipedia.org/wiki/Bilinear_interpolation */ //finita brdf lo faccio
-      return Img.Get_Pixel(col, row);
-    }
-    
+    /* A nicer solution would implement bilinear interpolation to reduce pixelization artifacts
+    See https://en.wikipedia.org/wiki/Bilinear_interpolation */ //finita brdf lo faccio
+    return Img.Get_Pixel(col, row);
   }
   
 }

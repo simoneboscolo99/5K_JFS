@@ -2,8 +2,7 @@ namespace Trace;
 
 /// <summary>
 /// A generic 3D shape. This is an abstract class, and you should only use it
-/// to derive concrete classes. Be sure to redefine the method:
-/// meth:`.Shape.ray_intersection`.
+/// to derive concrete classes.
 /// </summary>
 public abstract class Shape
 {
@@ -11,7 +10,7 @@ public abstract class Shape
     public Material Mt { get; }
 
     /// <summary>
-    /// Create a shape, potentially associating a transformation to it
+    /// Create a shape, potentially associating a transformation to it.
     /// </summary>
     /// <param name="t"></param>
     /// <param name="material"></param>
@@ -22,7 +21,7 @@ public abstract class Shape
     }
 
     /// <summary>
-    /// Compute the intersection between a ray and this shape
+    /// Compute the intersection between a ray and this shape.
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
@@ -43,13 +42,30 @@ public abstract class Shape
     /// <param name="p"></param>
     /// <returns></returns>
     public abstract bool Is_Internal(Point p);
+}
 
+// ===========================================================================
+// === SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ====
+// ===========================================================================
+
+/// <summary>
+/// A 3D unit sphere centered on the origin of the axes.
+/// </summary>
+public class Sphere : Shape
+{
+    /// <summary>
+    /// Create a unit sphere, potentially associating a transformation to it
+    /// </summary>
+    /// <param name="T"></param>
+    /// <param name="m"></param>
+    public Sphere(Transformation? T = null, Material? m = null) : base(T,m) { }
+    
     /// <summary>
     /// Convert a 3D point on the surface of the unit sphere into a (u, v) 2D point
     /// </summary>
     /// <param name="p"></param>
     /// <returns></returns>
-    public Vec2D Sphere_Point_to_uv(Point p)
+    private Vec2D Sphere_Point_To_UV(Point p)
     {
         var u = (float)(Math.Atan2(p.Y, p.X) / (2.0 * Math.PI));
         if (u < 0) u += 1.0f;
@@ -65,36 +81,18 @@ public abstract class Shape
     /// <param name="point"></param>
     /// <param name="rayDir"></param>
     /// <returns></returns>
-    public Normal Sphere_Normal(Point point, Vec rayDir)
+    private Normal Sphere_Normal(Point point, Vec rayDir)
     {
         var result = new Normal(point.X, point.Y, point.Z);
         if (point.To_Vec().Dot(rayDir) > 0.0f) result = -result;
         return result;
     }
-}
-
-// ===========================================================================
-// === SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ==== SPHERE ====
-// ===========================================================================
-
-/// <summary>
-/// A 3D unit sphere centered on the origin of the axes
-/// </summary>
-public class Sphere : Shape
-{
-    /// <summary>
-    /// Create a unit sphere, potentially associating a transformation to it
-    /// </summary>
-    /// <param name="T"></param>
-    /// <param name="m"></param>
-    public Sphere(Transformation? T = null, Material? m = null) : base(T,m) { }
     
     /// <summary>
     /// Checks if a ray intersects the sphere. Return a `HitRecord`, or `Null` if no intersection was found.
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
-
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -125,7 +123,7 @@ public class Sphere : Shape
             Tr * Sphere_Normal(hitPoint, invRay.Dir),
             firstHitT,
             r,
-            Sphere_Point_to_uv(hitPoint),
+            Sphere_Point_To_UV(hitPoint),
             Mt
             );
     }
@@ -154,7 +152,7 @@ public class Sphere : Shape
                 Tr * Sphere_Normal(hitPoint1, invRay.Dir),
                 tmin,
                 r,
-                Sphere_Point_to_uv(hitPoint1),
+                Sphere_Point_To_UV(hitPoint1),
                 Mt
             ));
         }
@@ -165,7 +163,7 @@ public class Sphere : Shape
                 Tr * Sphere_Normal(hitPoint2, invRay.Dir), 
                 tmax, 
                 r, 
-                Sphere_Point_to_uv(hitPoint2), 
+                Sphere_Point_To_UV(hitPoint2), 
                 Mt
                 ));
         }
@@ -434,6 +432,11 @@ public class Cylinder : Shape
 public class Disk : Shape
 {
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="T"></param>
+    /// <param name="m"></param>
     public Disk(Transformation? T = null, Material? m = null) : base(T, m) { }
 
     public override HitRecord? Ray_Intersection(Ray r)
@@ -497,58 +500,128 @@ public class Disk : Shape
 }
 
 /// <summary>
-/// 
+/// A 3D box with faces parallel to the x, y and z axis.
 /// </summary>
 public class Box : Shape
 {
-    public Box(Transformation? T = null, Material? m = null) : base(T, m) { }
+    /*
+    /// <summary>
+    /// 
+    /// </summary>
+    public Point Max;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Point Min;
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="max"></param>
+    /// <param name="min"></param>
+    /// <param name="T"></param>
+    /// <param name="m"></param>
+    public Box(Point? max = null, Point? min = null, Transformation? T = null, Material? m = null) : base(T, m)
+    {
+        Max = max ?? new Point(1.0f, 1.0f, 1.0f);
+        Min = min ?? new Point(-1.0f, -1.0f, -1.0f);
+    } */
+
+    public Point[] Bounds = new Point[2];
+    
+    public Box(Point? max = null, Point? min = null, Transformation? T = null, Material? m = null) : base(T, m)
+    {
+        Bounds[0] = max ?? new Point(-1.0f, -1.0f, -1.0f);
+        Bounds[1] = min ?? new Point(1.0f, 1.0f, 1.0f);
+    }
+
+    private Normal Box_Normal(Point point, Vec rayDir)
+    {
+        Normal result;
+        if (Functions.Are_Close(point.X, Bounds[0].X)) result = new Normal(-1.0f, 0.0f, 0.0f);
+        else if (Functions.Are_Close(point.X, Bounds[1].X)) result = new Normal(1.0f, 0.0f, 0.0f);
+        else if (Functions.Are_Close(point.Y, Bounds[0].Y)) result = new Normal(0.0f, -1.0f, 0.0f);
+        else if (Functions.Are_Close(point.Y, Bounds[1].Y)) result = new Normal(0.0f, 1.0f, 0.0f);
+        else if (Functions.Are_Close(point.Z, Bounds[0].Z)) result = new Normal(0.0f, 0.0f, -1.0f);
+        else result = new Normal(0.0f, 0.0f, 1.0f);
+        if (result.To_Vec().Dot(rayDir) > 0.0f) result = -result;
+        return result;
+    }
+
+    public Vec2D Box_Point_To_UV(Point p) // Reference: http://raytracerchallenge.com/bonus/texture-mapping.html
+                                          // http://ilkinulas.github.io/development/unity/2016/05/06/uv-mapping.html
+    {
+        Vec2D uv;
+        // Left face
+        if (Functions.Are_Close(p.X, Bounds[0].X))
+            uv = new Vec2D(Coord(2, false, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+        // Right face
+        else if (Functions.Are_Close(p.X, Bounds[1].X))
+            uv = new Vec2D(0.5f + Coord(2, true, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+        // Down face
+        else if (Functions.Are_Close(p.Y, Bounds[0].Y))
+            uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, 2/3.0f + Coord(2, false, p)/3.0f);
+        // Up face
+        else if (Functions.Are_Close(p.Y, Bounds[1].Y))
+            uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, Coord(2, true, p)/3.0f);
+        // Back face
+        else if (Functions.Are_Close(p.Z, Bounds[0].Z))
+            uv = new Vec2D(0.75f + Coord(0, true, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+        // Front face
+        else 
+            uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+        return uv;
+    }
+    
+    private float Coord(float axis, bool minus, Point p)
+    {
+        var min = Bounds[0].Z;
+        var max = Bounds[1].Z;
+        var coord = p.Z;
+        switch (axis)
+        {
+            case 0:
+                min = Bounds[0].X;
+                max = Bounds[1].X;
+                coord = p.X;
+                break;
+            case 1:
+                min = Bounds[0].Y;
+                max = Bounds[1].Y;
+                coord = p.Y;
+                break;
+        }
+
+        if (minus) return (max - coord) / (max - min);
+        return (coord - min) / (max - min);
+    }
 
     public override HitRecord? Ray_Intersection(Ray r)
     {
-        /*var invRay = Tr.Inverse * r;
-        float txmin, txmax, tymin, tymax, tzmin, tzmax, tmin, tmax;
-        
-        // Resolve negative zero problem
+        var invRay = Tr.Inverse * r;
+        float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
         var invDirX = 1 / invRay.Dir.X;
-        if (invDirX >= 0)
-        {
-            txmin = (-1.0f - invRay.Origin.X) * invDirX;
-            txmax = (1.0f - invRay.Origin.X) * invDirX;
-        }
-        else
-        {
-            txmin = (1.0f - invRay.Origin.X) * invDirX;
-            txmax = (-1.0f - invRay.Origin.X) * invDirX;
-        }
-
         var invDirY = 1 / invRay.Dir.Y;
-        if (invDirY >= 0)
-        {
-            tymin = (-1.0f - invRay.Origin.Y) * invDirY;
-            tymax = (1.0f - invRay.Origin.Y) * invDirY;
-        }
-        else
-        {
-            tymin = (1.0f - invRay.Origin.Y) * invDirY;
-            tymax = (-1.0f - invRay.Origin.Y) * invDirY;
-        }
+        var invDirZ = 1 / invRay.Dir.Z;
+        var signx = (invRay.Dir.X < 0).GetHashCode();
+        var signy = (invRay.Dir.Y < 0).GetHashCode();
+        var signz = (invRay.Dir.Z < 0).GetHashCode();
 
-        if (txmax < tymin || tymax < txmin) return null;
-        tmin = txmin > tymin ? txmin : tymin;
-        tmax = txmax < tymax ? txmax : tymax;
+        tmin = (Bounds[signx].X - invRay.Origin.X) * invDirX;
+        tmax = (Bounds[1-signx].X - invRay.Origin.X) * invDirX;
+        tymin = (Bounds[signy].Y - invRay.Origin.Y) * invDirY;
+        tymax = (Bounds[1-signy].Y - invRay.Origin.Y) * invDirY;
+
+        if (tmin > tymax || tymin > tmax) return null;
+        if (tymin > tmin) tmin = tymin;
+        if (tymax < tmax) tmax = tymax;
         
-        if (invRay.Dir.Z >= 0)
-        {
-            tzmin = (-1.0f - invRay.Origin.Z) / invRay.Dir.Z;
-            tzmax = (1.0f - invRay.Origin.Z) / invRay.Dir.Z;
-        }
-        else
-        {
-            tzmin = (1.0f - invRay.Origin.Z) / invRay.Dir.Z;
-            tzmax = (-1.0f - invRay.Origin.Z) / invRay.Dir.Z;
-        }
-
-        if (tmax < tzmin || tzmax < tmin) return null;
+        tzmin = (Bounds[signz].Z - invRay.Origin.Z) * invDirZ;
+        tzmax = (Bounds[1-signz].Z - invRay.Origin.Z) * invDirZ;
+        
+        if (tmin > tzmax || tzmin > tmax) return null;
         if (tzmin > tmin) tmin = tzmin;
         if (tzmax < tmax) tmax = tzmax;
         
@@ -557,29 +630,56 @@ public class Box : Shape
         else if (tmax < invRay.TMax && tmax > invRay.TMin) firstHitT = tmax;
         else return null;
         var hitPoint = invRay.At(firstHitT);
-
+        
         return new HitRecord(
             Tr * hitPoint,
-            Tr * new Normal(0.0f, 0.0f, dZ),
-            tmin,
+            Tr * Box_Normal(hitPoint, invRay.Dir),
+            firstHitT,
             r,
-            new Vec2D(u, v),
+            Box_Point_To_UV(hitPoint),
             Mt
-        ); */
-        return null;
-
+        );
     }
 
     public override bool Quick_Ray_Intersection(Ray r)
     {
-        return false;
+        var invRay = Tr.Inverse * r;
+        float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+        var invDirX = 1 / invRay.Dir.X;
+        var invDirY = 1 / invRay.Dir.Y;
+        var invDirZ = 1 / invRay.Dir.Z;
+        var signx = (invRay.Dir.X < 0).GetHashCode();
+        var signy = (invRay.Dir.Y < 0).GetHashCode();
+        var signz = (invRay.Dir.Z < 0).GetHashCode();
+
+        tmin = (Bounds[signx].X - invRay.Origin.X) * invDirX;
+        tmax = (Bounds[1-signx].X - invRay.Origin.X) * invDirX;
+        tymin = (Bounds[signy].Y - invRay.Origin.Y) * invDirY;
+        tymax = (Bounds[1-signy].Y - invRay.Origin.Y) * invDirY;
+
+        if (tmin > tymax || tymin > tmax) return false;
+        if (tymin > tmin) tmin = tymin;
+        if (tymax < tmax) tmax = tymax;
+        
+        tzmin = (Bounds[signz].Z - invRay.Origin.Z) * invDirZ;
+        tzmax = (Bounds[1-signz].Z - invRay.Origin.Z) * invDirZ;
+
+        if (tmin > tzmax || tzmin > tmax) return false;
+        if (tzmin > tmin) tmin = tzmin;
+        if (tzmax < tmax) tmax = tzmax;
+        return (tmin > invRay.TMin && tmin < invRay.TMax) || (tmax > invRay.TMin && tmax < invRay.TMax);
     }
 
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         return null;
     }
-    
+
     public override bool Is_Internal(Point p)
-        => p.X is < 1.0f and > -1.0f && p.Y is < 1.0f and > -1.0f && p.Z is < 1.0f and > -1.0f;
+    {
+        p = Tr.Inverse * p;
+        return p.X is < 1.0f and > -1.0f && p.Y is < 1.0f and > -1.0f && p.Z is < 1.0f and > -1.0f;
+    }
+        
 }
