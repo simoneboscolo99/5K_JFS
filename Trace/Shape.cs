@@ -1,20 +1,28 @@
 namespace Trace;
 
 /// <summary>
-/// A generic 3D shape. This is an abstract class, and you should only use it
-/// to derive concrete classes.
+/// A generic 3D shape. This is an abstract class, and you should only use it to derive concrete classes:
+/// <see cref="Sphere"/>, <see cref="Plane"/>, <see cref="Cylinder"/>, <see cref="Disk"/>, <see cref="Box"/>.
 /// </summary>
 public abstract class Shape
 {
+    /// <summary>
+    /// The transformation associated to the shape.
+    /// </summary>
     public Transformation Tr { get; set; }
-    public Material Mt { get; }
+    
+    /// <summary>
+    /// The material of the shape.
+    /// </summary>
+    protected Material Mt { get; }
 
     /// <summary>
-    /// Create a shape, potentially associating a transformation to it.
+    /// Shape constructor. Initialize a new instance of the <see cref="Shape"/> class, potentially associating a transformation to it.
+    /// This is an abstract constructor, therefore it cannot be directly used in the code.
     /// </summary>
-    /// <param name="t"></param>
-    /// <param name="material"></param>
-    public Shape(Transformation? t = null, Material? material = null)
+    /// <param name="t"> The transformation associated to the shape.</param>
+    /// <param name="material"> The material of the shape.</param>
+    protected Shape(Transformation? t = null, Material? material = null)
     {
         Tr = t ?? Transformation.Identity();
         Mt = material ?? new Material();
@@ -23,25 +31,60 @@ public abstract class Shape
     /// <summary>
     /// Compute the intersection between a ray and this shape.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/> containing all information about the intersection.
+    /// If no intersection is found, null is returned. </returns>
     public abstract HitRecord? Ray_Intersection(Ray r);
 
+    /// <summary>
+    /// Compute the list of all intersections between a ray and this shape. This method is necessary for the implementation of CSG
+    /// (Constructive Solid Geometry).
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of all intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, null is returned. </returns>
     public abstract List<HitRecord>? Ray_Intersection_List(Ray r);
 
     /// <summary>
-    /// Determine whether a ray hits the shape or not
+    /// Determine whether a ray hits the shape or not.
     /// </summary>
-    /// <param name="r"> Ray. </param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> True is there is an intersection, false otherwise. </returns>
     public abstract bool Quick_Ray_Intersection(Ray r);
 
     /// <summary>
-    /// 
+    /// Determine whether the given point is inside the shape or not.
     /// </summary>
-    /// <param name="p"></param>
-    /// <returns></returns>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point is inside the shape, false otherwise. </returns>
     public abstract bool Is_Internal(Point p);
+    
+    /// <summary>
+    /// Computes the union (CSG) between two shapes.
+    /// </summary>
+    /// <param name="s1"> The first shape. </param>
+    /// <param name="s2"> The second shape. </param>
+    /// <returns> The union shape: <see cref="CsgUnion"/>. </returns>           
+    public static CsgUnion operator +(Shape s1, Shape s2)
+        => new(s1, s2);
+    
+    /// <summary>
+    /// Computes the difference (CSG) between two shapes.
+    /// </summary>
+    /// <param name="s1"> The first shape. </param>
+    /// <param name="s2"> The second shape. </param>
+    /// <returns> The difference shape: <see cref="CsgDifference"/>. </returns>
+    public static CsgDifference operator -(Shape s1, Shape s2)
+        => new(s1, s2);
+    
+    /// <summary>
+    /// Computes intersection (CSG) between two shapes.
+    /// </summary>
+    /// <param name="s1"> The first shape. </param>
+    /// <param name="s2"> The second shape. </param>
+    /// <returns> The intersection shape: <see cref="CsgIntersection"/>. </returns>
+    public static CsgIntersection operator *(Shape s1, Shape s2)
+        => new (s1, s2);
 }
 
 // ===========================================================================
@@ -54,17 +97,17 @@ public abstract class Shape
 public class Sphere : Shape
 {
     /// <summary>
-    /// Create a unit sphere, potentially associating a transformation to it
+    /// Sphere constructor. Initialize a new instance of the <see cref="Sphere"/> class, potentially associating a transformation to it.
     /// </summary>
-    /// <param name="T"></param>
-    /// <param name="m"></param>
+    /// <param name="T"> The transformation associated to the sphere. </param>
+    /// <param name="m"> The material of the sphere. </param>
     public Sphere(Transformation? T = null, Material? m = null) : base(T,m) { }
     
     /// <summary>
-    /// Convert a 3D point on the surface of the unit sphere into a (u, v) 2D point
+    /// Convert a 3D point on the surface of the unit sphere into a (u, v) 2D point.
     /// </summary>
-    /// <param name="p"></param>
-    /// <returns></returns>
+    /// <param name="p"> The 3D point. </param>
+    /// <returns> A <see cref="Vec2D"/> containing the coordinates of the surface point of the sphere. </returns>
     private Vec2D Sphere_Point_To_UV(Point p)
     {
         var u = (float)(Math.Atan2(p.Y, p.X) / (2.0 * Math.PI));
@@ -74,13 +117,12 @@ public class Sphere : Shape
     }
 
     /// <summary>
-    /// Compute the normal of a unit sphere. The normal is computed for `point`
-    /// (a point on the surface of the sphere), and it is chosen so that it is
-    /// always in the opposite direction with respect to `ray_dir`.
+    /// Compute the normal of a unit sphere. The normal is computed for <paramref name="point"/> (a point on the surface of
+    /// the sphere), and it is chosen so that it is always in the opposite direction with respect to <paramref name="rayDir"/>.
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="rayDir"></param>
-    /// <returns></returns>
+    /// <param name="point"> The point. </param>
+    /// <param name="rayDir"> The direction of the ray. </param>
+    /// <returns> The normal. </returns>
     private Normal Sphere_Normal(Point point, Vec rayDir)
     {
         var result = new Normal(point.X, point.Y, point.Z);
@@ -89,10 +131,10 @@ public class Sphere : Shape
     }
     
     /// <summary>
-    /// Checks if a ray intersects the sphere. Return a `HitRecord`, or `Null` if no intersection was found.
+    /// Checks if a ray intersects the sphere.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/>, or `Null` if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -128,6 +170,11 @@ public class Sphere : Shape
             );
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -172,10 +219,10 @@ public class Sphere : Shape
     }
 
     /// <summary>
-    /// Quickly checks if a ray intersects the sphere
+    /// Quickly checks if a ray intersects the sphere.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -193,6 +240,11 @@ public class Sphere : Shape
         return (tmin > invRay.TMin && tmin < invRay.TMax) || (tmax > invRay.TMin  && tmax < invRay.TMax);
     }
 
+    /// <summary>
+    /// Determine whether the given point is inside the sphere or not.
+    /// </summary>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point is inside the sphere, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -248,6 +300,11 @@ public class Plane : Shape
         );
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var hit = Ray_Intersection(r);
@@ -260,7 +317,7 @@ public class Plane : Shape
     /// Quickly checks if a ray intersects the plane
     /// </summary>
     /// <param name="r"> Ray </param>
-    /// <returns> True if there is intersection, otherwise false </returns>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -268,7 +325,12 @@ public class Plane : Shape
         var t = -invRay.Origin.Z / invRay.Dir.Z;
         return invRay.TMin < t && t < invRay.TMax;
     }
-    
+   
+    /// <summary>
+    /// Determine whether the given point belongs the plane or not.
+    /// </summary>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point lies on the plane, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -292,6 +354,11 @@ public class Cylinder : Shape
     /// <param name="m"></param>
     public Cylinder(Transformation? T = null, Material? m = null) : base(T, m) { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -332,6 +399,11 @@ public class Cylinder : Shape
         );
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -385,6 +457,11 @@ public class Cylinder : Shape
         return intersections.Count == 0 ? null : intersections;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -413,7 +490,12 @@ public class Cylinder : Shape
         }
         return false;
     }
-    
+  
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -439,6 +521,11 @@ public class Disk : Shape
     /// <param name="m"></param>
     public Disk(Transformation? T = null, Material? m = null) : base(T, m) { }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -473,6 +560,11 @@ public class Disk : Shape
         );
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var hit = Ray_Intersection(r);
@@ -481,6 +573,11 @@ public class Disk : Shape
         return intersections;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -491,6 +588,11 @@ public class Disk : Shape
         return !(dist > 1.0f) && invRay.TMin < t && t < invRay.TMax;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -504,16 +606,10 @@ public class Disk : Shape
 /// </summary>
 public class Box : Shape
 {
-    /*
     /// <summary>
     /// 
     /// </summary>
-    public Point Max;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public Point Min;
+    public Point[] Bounds = new Point[2];
     
     /// <summary>
     /// 
@@ -524,18 +620,16 @@ public class Box : Shape
     /// <param name="m"></param>
     public Box(Point? max = null, Point? min = null, Transformation? T = null, Material? m = null) : base(T, m)
     {
-        Max = max ?? new Point(1.0f, 1.0f, 1.0f);
-        Min = min ?? new Point(-1.0f, -1.0f, -1.0f);
-    } */
-
-    public Point[] Bounds = new Point[2];
-    
-    public Box(Point? max = null, Point? min = null, Transformation? T = null, Material? m = null) : base(T, m)
-    {
         Bounds[0] = max ?? new Point(-1.0f, -1.0f, -1.0f);
         Bounds[1] = min ?? new Point(1.0f, 1.0f, 1.0f);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="rayDir"></param>
+    /// <returns></returns>
     private Normal Box_Normal(Point point, Vec rayDir)
     {
         Normal result;
@@ -549,6 +643,11 @@ public class Box : Shape
         return result;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public Vec2D Box_Point_To_UV(Point p) // Reference: http://raytracerchallenge.com/bonus/texture-mapping.html
                                           // http://ilkinulas.github.io/development/unity/2016/05/06/uv-mapping.html
     {
@@ -574,6 +673,13 @@ public class Box : Shape
         return uv;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="axis"></param>
+    /// <param name="minus"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
     private float Coord(float axis, bool minus, Point p)
     {
         var min = Bounds[0].Z;
@@ -597,6 +703,11 @@ public class Box : Shape
         return (coord - min) / (max - min);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -641,6 +752,11 @@ public class Box : Shape
         );
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -671,15 +787,74 @@ public class Box : Shape
         return (tmin > invRay.TMin && tmin < invRay.TMax) || (tmax > invRay.TMin && tmax < invRay.TMax);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
-        return null;
+        var invRay = Tr.Inverse * r;
+        float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+        var invDirX = 1 / invRay.Dir.X;
+        var invDirY = 1 / invRay.Dir.Y;
+        var invDirZ = 1 / invRay.Dir.Z;
+        var signx = (invRay.Dir.X < 0).GetHashCode();
+        var signy = (invRay.Dir.Y < 0).GetHashCode();
+        var signz = (invRay.Dir.Z < 0).GetHashCode();
+
+        tmin = (Bounds[signx].X - invRay.Origin.X) * invDirX;
+        tmax = (Bounds[1-signx].X - invRay.Origin.X) * invDirX;
+        tymin = (Bounds[signy].Y - invRay.Origin.Y) * invDirY;
+        tymax = (Bounds[1-signy].Y - invRay.Origin.Y) * invDirY;
+
+        if (tmin > tymax || tymin > tmax) return null;
+        if (tymin > tmin) tmin = tymin;
+        if (tymax < tmax) tmax = tymax;
+        
+        tzmin = (Bounds[signz].Z - invRay.Origin.Z) * invDirZ;
+        tzmax = (Bounds[1-signz].Z - invRay.Origin.Z) * invDirZ;
+        
+        if (tmin > tzmax || tzmin > tmax) return null;
+        if (tzmin > tmin) tmin = tzmin;
+        if (tzmax < tmax) tmax = tzmax;
+        var intersections = new List<HitRecord>();
+        var hitPoint1 = invRay.At(tmin);
+        var hitPoint2 = invRay.At(tmax);
+        if (tmin < invRay.TMax && tmin > invRay.TMin) {
+            intersections.Add(new HitRecord(
+                Tr * hitPoint1,
+                Tr * Box_Normal(hitPoint1, invRay.Dir),
+                tmin,
+                r,
+                Box_Point_To_UV(hitPoint1),
+                Mt
+            ));
+        }
+
+        if (tmax < invRay.TMax && tmax > invRay.TMin) {
+            intersections.Add(new HitRecord(
+                Tr * hitPoint2,
+                Tr * Box_Normal(hitPoint2, invRay.Dir), 
+                tmax, 
+                r, 
+                Box_Point_To_UV(hitPoint2), 
+                Mt
+            ));
+        }
+
+        return intersections.Count == 0 ? null : intersections;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
         return p.X is < 1.0f and > -1.0f && p.Y is < 1.0f and > -1.0f && p.Z is < 1.0f and > -1.0f;
     }
-        
 }

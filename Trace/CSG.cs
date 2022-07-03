@@ -1,28 +1,48 @@
 namespace Trace;
 
+/// <summary>
+/// Constructive Solid Geometry (CSG). <br/>
+/// A 3D shape given by the union of two shapes: <see cref="S1"/> + <see cref="S2"/>.
+/// </summary>
 public class CsgUnion : Shape
 {
     /// <summary>
-    /// First shape.
+    /// The first shape.
     /// </summary>
-    public Shape S1;
+    private Shape S1;
 
     /// <summary>
-    /// Second shape.
+    /// The second shape.
     /// </summary>
-    public Shape S2;
+    private Shape S2;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="s1"> The first shape. </param>
+    /// <param name="s2"> The second shape. </param>
+    /// <param name="t"> The transformation associated to the union shape. </param>
+    /// <param name="material"> The material of the union shape. </param>
     public CsgUnion(Shape s1, Shape s2, Transformation? t = null, Material? material = null) : base(t, material)
     {
         S1 = s1;
         S2 = s2;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
         => Ray_Intersection_List(r)?[0];
-
-    // not very quick!
-    public override bool Quick_Ray_Intersection(Ray r)
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
+    public override bool Quick_Ray_Intersection(Ray r) // not very quick!
     {
         var invRay = Tr.Inverse * r;
         var intersections1 = S1.Ray_Intersection_List(invRay);
@@ -30,6 +50,11 @@ public class CsgUnion : Shape
         return intersections1 != null || intersections2 != null;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -42,6 +67,11 @@ public class CsgUnion : Shape
         return intersections.Count != 0 ? intersections.OrderBy(o => o.T).ToList() : null;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"> The point. </param>
+    /// <returns></returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -50,32 +80,48 @@ public class CsgUnion : Shape
 }
 
 /// <summary>
-/// s1 - s2
+/// Constructive Solid Geometry (CSG). <br/>
+/// A 3D shape given by the difference of two shapes: <see cref="S1"/> - <see cref="S2"/>.
 /// </summary>
-// S1 - S2
 public class CsgDifference : Shape
 {
     /// <summary>
-    /// First shape.
+    /// The first shape.
     /// </summary>
     public Shape S1;
 
     /// <summary>
-    /// Second shape.
+    /// The second shape.
     /// </summary>
     public Shape S2;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="s1"> The first shape. </param>
+    /// <param name="s2"> The second shape. </param>
+    /// <param name="t"> The transformation associated to the difference shape. </param>
+    /// <param name="material"> The material of the difference shape. </param>
     public CsgDifference(Shape s1, Shape s2, Transformation? t = null, Material? material = null) : base(t, material)
     {
         S1 = s1;
         S2 = s2;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
         => Ray_Intersection_List(r)?[0];
 
-    // not very quick!
-    public override bool Quick_Ray_Intersection(Ray r)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
+    public override bool Quick_Ray_Intersection(Ray r) // not very quick!
     {
         var invRay = Tr.Inverse * r;
         var intersections1 = S1.Ray_Intersection_List(invRay);
@@ -98,6 +144,11 @@ public class CsgDifference : Shape
         return intersections.Count > 0;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -121,6 +172,11 @@ public class CsgDifference : Shape
         return intersections.Count != 0 ? intersections.OrderBy(o => o.T).ToList() : null;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"> The point. </param>
+    /// <returns></returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -128,29 +184,49 @@ public class CsgDifference : Shape
     }
 }
 
+/// <summary>
+/// Constructive Solid Geometry (CSG). <br/>
+/// A 3D shape given by the intersection of two shapes: <see cref="S1"/> ∩ <see cref="S2"/>.
+/// </summary>
 public class CsgIntersection : Shape
 {
     /// <summary>
-    /// First shape.
+    /// The first shape.
     /// </summary>
-    public Shape S1;
+    private Shape S1;
 
     /// <summary>
-    /// Second shape.
+    /// The second shape.
     /// </summary>
-    public Shape S2;
+    private Shape S2;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="s1"> The first shape. </param>
+    /// <param name="s2"> The second shape. </param>
+    /// <param name="t"> The transformation associated to the intersection shape. </param>
+    /// <param name="material"> The material of the intersection shape. </param>
     public CsgIntersection(Shape s1, Shape s2, Transformation? t = null, Material? material = null) : base(t, material)
     {
         S1 = s1;
         S2 = s2;
     }
-    
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
     public override HitRecord? Ray_Intersection(Ray r)
         => Ray_Intersection_List(r)?[0];
     
-    // not very quick!
-    public override bool Quick_Ray_Intersection(Ray r)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
+    public override bool Quick_Ray_Intersection(Ray r) // not very quick!
     {
         var invRay = Tr.Inverse * r;
         var intersections1 = S1.Ray_Intersection_List(invRay);
@@ -171,7 +247,11 @@ public class CsgIntersection : Shape
         return intersections.Count > 0;
     }
 
-    // DA CAMBIARE!!!!
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns></returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -193,6 +273,11 @@ public class CsgIntersection : Shape
         return intersections.Count != 0 ? intersections.OrderBy(o => o.T).ToList() : null;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p"> The point. </param>
+    /// <returns></returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
