@@ -37,14 +37,12 @@ public class VecTests
         Assert.True(Functions.Are_Close(v.Normalize().Norm(), 1.0f), "Test Normalization");
         Assert.True(v.ToNormal().Is_Close(new Normal(1.0f, 2.0f, 3.0f)), "Test to Normal");
     }
-
 }
-
 
 public class PointTests
 {
     Point _a = new(1.0f, 2.0f, 3.0f);
-    Point b = new(4.0f, 6.0f, 8.0f);
+    Point _b = new(4.0f, 6.0f, 8.0f);
     float scalar = 2.0f;
     private Vec c = new(4.0f, 6.0f, 8.0f);
 
@@ -52,28 +50,26 @@ public class PointTests
     public void TestPoints()
     {
         Assert.True(_a.Is_Close(_a), "Test constructor 1");
-        Assert.False(_a.Is_Close(b), "Test constructor 2");
+        Assert.False(_a.Is_Close(_b), "Test constructor 2");
     }
 
     [Fact]
     public void Test_Point_Operations()
     {
-        Assert.True((scalar * b).Is_Close(new Point(8.0f, 12.0f, 16.0f)), "Test scalar*Point");
+        Assert.True((scalar * _b).Is_Close(new Point(8.0f, 12.0f, 16.0f)), "Test scalar*Point");
         Assert.True((_a * scalar).Is_Close(new Point(2.0f, 4.0f, 6.0f)), "Test Point*scalar");
-        Assert.False((scalar * b).Is_Close(new Point(9.0f, 12.0f, 16.0f)), "scalar*Point does not work");
+        Assert.False((scalar * _b).Is_Close(new Point(9.0f, 12.0f, 16.0f)), "scalar*Point does not work");
         Assert.False((_a * scalar).Is_Close(new Point(2.0f, 5.0f, 6.0f)), "Point*scalar does not work");
-        Assert.True((_a + b).Is_Close(new Point(5.0f, 8.0f, 11.0f)), "Test Point+Point");
-        Assert.False((_a + b).Is_Close(new Point(5.0f, 9.0f, 11.0f)), "Point+Point does not work");
-        Assert.True((b - _a).Is_Close(new Vec(3.0f, 4.0f, 5.0f)), "Test Point-Point");
-        Assert.False((b - _a).Is_Close(new Vec(3.0f, 4.0f, 6.0f)), "Point-Point does not work");
+        Assert.True((_a + _b).Is_Close(new Point(5.0f, 8.0f, 11.0f)), "Test Point+Point");
+        Assert.False((_a + _b).Is_Close(new Point(5.0f, 9.0f, 11.0f)), "Point+Point does not work");
+        Assert.True((_b - _a).Is_Close(new Vec(3.0f, 4.0f, 5.0f)), "Test Point-Point");
+        Assert.False((_b - _a).Is_Close(new Vec(3.0f, 4.0f, 6.0f)), "Point-Point does not work");
         Assert.True((_a + c).Is_Close(new Point(5.0f, 8.0f, 11.0f)), "Test Point+Vec");
         Assert.False((_a + c).Is_Close(new Point(5.0f, 10.0f, 11.0f)), "Point+Vec does not work");
         Assert.True((_a - c).Is_Close(new Point(-3.0f, -4.0f, -5.0f)), "Test Point-Vec");
         Assert.False((_a - c).Is_Close(new Point(3.0f, -4.0f, -5.0f)), "Point-Vec does not work");
     }
-
 }
-
 
 public class NormalTest
 {

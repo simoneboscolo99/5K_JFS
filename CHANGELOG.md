@@ -1,5 +1,6 @@
 # Version 0.3.0
 
+-   New shapes available: `Box`, `Cylinder` and implementation of *CSG* (Union, Difference and Intersection) [#8](https://github.com/simoneboscolo99/5K_JFS/pull/8)
 -   Implement a path tracer [#6](https://github.com/simoneboscolo99/5K_JFS/pull/6)
 
 # Version 0.2.0

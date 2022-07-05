@@ -54,6 +54,14 @@ public class CameraTests
         Assert.True(ray3.At(1.0f).Is_Close(new Point(0.0f, 2.0f, 1.0f)), "Test point ray3");
         Assert.True(ray4.At(1.0f).Is_Close(new Point(0.0f, -2.0f, 1.0f)), "Test point ray4");
     }
+
+    [Fact]
+    public void TestPerspectiveCameraTransform()
+    {
+        var cam = new PerspectiveCamera(t: Transformation.Translation(new Vec(0.0f, -2.0f, 0.0f)));
+        var ray = cam.Fire_Ray(0.5f, 0.5f);
+        Assert.True(ray.At(1.0f).Is_Close(new Point(0.0f, -2.0f, 0.0f)), "Test camera transformation");
+    }
 }
 
 public class ImageTracerTests
@@ -75,7 +83,7 @@ public class ImageTracerTests
     }
 
     [Fact]
-    public void Test_uv_SubMapping()
+    public void TestUvSubMapping()
     {
         var ray1 = tracer.Fire_Ray(0, 0, 2.5f, 1.5f);
         var ray2 = tracer.Fire_Ray(2, 1);
@@ -92,5 +100,34 @@ public class ImageTracerTests
             for (int col = 0; col < image.Width; col++)
                 Assert.True(image.Get_Pixel(col, row).Is_Close(new Color(1.0f, 2.0f, 3.0f)), "Test solver");
         }
+    }
+
+    [Fact]
+    public void TestAntialiasing()
+    {
+        var smallImage = new HdrImage(1, 1);
+        var oCamera = new OrthogonalCamera(aspectRatio: 1);
+        var aTracer = new ImageTracer(smallImage, oCamera, 10);
+        
+        var solver = new TraceRay();
+        aTracer.Fire_All_Rays(solver);
+        Assert.True(solver.NumOfRays == 100);
+    }
+}
+public class TraceRay : Solver
+{
+    public int NumOfRays;
+            
+    public TraceRay(World? world = null, Color? backgroundColor = null) : base(world, backgroundColor){}
+    public override Color Tracing(Ray ray)
+    {
+        var point = ray.At(1.0f);
+        // Check that all the rays intersect the screen within the region [−1, 1] × [−1, 1]
+        Assert.True(Functions.Are_Close(point.X, 0.0f));
+        Assert.True(point.Y is <= 1.0f and >= -1.0f);
+        Assert.True(point.Z is <= 1.0f and >= -1.0f);
+
+        NumOfRays += 1;
+        return new Color();
     }
 }

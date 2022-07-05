@@ -11,7 +11,7 @@ public struct Transformation
     /// 
     /// </summary>
     public Matrix4x4 M; //= new Matrix4x4(); 
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -48,7 +48,8 @@ public struct Transformation
     /// <param name="angleDeg">degree</param>
     /// <returns></returns>
     public static Transformation Rotation_X(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))),
+            Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
 
     /// <summary>
     /// 
@@ -56,7 +57,8 @@ public struct Transformation
     /// <param name="angleDeg">degree</param>
     /// <returns></returns>
     public static Transformation Rotation_Y(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))),
+            Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
 
     /// <summary>
     /// 
@@ -64,7 +66,8 @@ public struct Transformation
     /// <param name="angleDeg">degree</param>
     /// <returns></returns>
     public static Transformation Rotation_Z(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))),
+            Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
 
     /// <summary>
     /// 
@@ -82,7 +85,8 @@ public struct Transformation
     /// <param name="v">Vec(X,Y,Z)</param>
     /// <returns></returns>
     public static Transformation Translation(Vec v)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)), Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)),
+            Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
 
     /// <summary>
     /// Inverse
@@ -172,7 +176,7 @@ public struct Transformation
     public Transformation Clone()
     {
         // ReSharper disable once HeapView.BoxingAllocation
-        return ((Transformation)MemberwiseClone());
+        return ((Transformation) MemberwiseClone());
 
     }
 }

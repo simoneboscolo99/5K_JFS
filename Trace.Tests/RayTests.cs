@@ -5,7 +5,7 @@ namespace Trace.Tests;
 public class RayTests
 {
     [Fact]
-    public void Test_Ray()
+    public void TestRay()
     {
         Ray ray1 = new (new Point(1.0f, 2.0f, 3.0f), new Vec(5.0f, 4.0f, -1.0f));
         Ray ray2 = new (new Point(1.0f, 2.0f, 3.0f), new Vec(5.0f, 4.0f, -1.0f));
@@ -15,7 +15,7 @@ public class RayTests
     }
     
     [Fact]
-    public void Test_At()
+    public void TestAt()
     {
         Ray ray = new(new Point(1.0f, 2.0f, 4.0f), new Vec(4.0f, 2.0f, 1.0f));
         const float t0 = 0.0f;
@@ -27,7 +27,7 @@ public class RayTests
     }
 
     [Fact]
-    public void Test_Transform_Ray()
+    public void TestTransformRay()
     {
         Ray ray = new(new Point(1.0f, 2.0f, 3.0f), new Vec(6.0f, 5.0f, 4.0f));
         var tr = Transformation.Translation(new(10.0f, 11.0f, 12.0f))*Transformation.Rotation_X(90f);
