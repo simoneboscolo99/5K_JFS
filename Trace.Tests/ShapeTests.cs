@@ -283,7 +283,7 @@ public class PlaneTests
             1.0f,
             ray1,
             new Vec2D(0.0f, 0.0f), new Material()
-        ).Is_Close(intersection1), "Test hTplane 1");
+        ).Is_Close(intersection1), "Test hit plane 1");
         var intersections1 = plane.Ray_Intersection_List(ray1);
         Assert.True(intersections1 is {Count: 1}, "Test list hits");
         Assert.True(new HitRecord(
@@ -561,6 +561,14 @@ public class BoxTest
             new Vec2D(0.3125f, 0.583333333f),
             new Material()
             ).Is_Close(intersection1), "Test hit 1");
+        var intersections1 = box.Ray_Intersection_List(ray1);
+        Assert.True(intersections1!.Count == 2, "Test list hits");
+        Assert.True(intersections1[1].WorldPoint.Is_Close(new Point(-0.5f, 0.5f, -1.0f)), 
+            "Test point second hit");
+        Assert.True(intersections1[1].N.Is_Close(new Normal(0.0f, 0.0f, 1.0f)), 
+            "Test normal second hit");
+        Assert.True(Functions.Are_Close(intersections1[1].T, 3.0f), 
+            "Test distance second hit");
 
         var ray2 = new Ray(new Point(0.0f, -0.5f, 0.5f), new Vec(-1.0f, 0.0f, 0.0f));
         var intersection2 = box.Ray_Intersection(ray2);
@@ -578,9 +586,11 @@ public class BoxTest
 
         var ray3 = new Ray(new Point(-2.0f, -0.5f, 0.5f), new Vec(-1.0f, 0.0f, 0.0f));
         var intersection3 = box.Ray_Intersection(ray3);
+        var intersections3 = box.Ray_Intersection_List(ray3);
         var hit3 = box.Quick_Ray_Intersection(ray3);
         Assert.False(hit3, "Test quick intersection 3");
         Assert.False(intersection3 != null, "Check intersection 3");
+        Assert.False(intersections3 != null, "Test list hits");
         
         var ray4 = new Ray(new Point(-2.0f, -0.5f, 0.5f), new Vec(0.0f, 1.0f, 0.0f));
         var intersection4 = box.Ray_Intersection(ray4);
@@ -588,6 +598,7 @@ public class BoxTest
         Assert.False(hit4, "Test quick intersection 4");
         Assert.False(intersection4 != null, "Check intersection 4");
         
+        // Check with all faces to find bugs
         var ray5 = new Ray(new Point(0.8f, 2.0f, -0.8f), new Vec(0.0f, -1.0f, 0.0f));
         var hit5 = box.Quick_Ray_Intersection(ray5);
         Assert.True(hit5, "Test 5");

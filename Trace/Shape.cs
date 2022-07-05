@@ -33,7 +33,7 @@ public abstract class Shape
     /// </summary>
     /// <param name="r"> The ray. </param>
     /// <returns> The <see cref="HitRecord"/> containing all information about the intersection.
-    /// If no intersection is found, null is returned. </returns>
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public abstract HitRecord? Ray_Intersection(Ray r);
 
     /// <summary>
@@ -41,8 +41,8 @@ public abstract class Shape
     /// (Constructive Solid Geometry).
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns> The list of <see cref="HitRecord"/> of all intersections, ordered by the distance from the origin of the ray.
-    /// If no intersection is found, null is returned. </returns>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public abstract List<HitRecord>? Ray_Intersection_List(Ray r);
 
     /// <summary>
@@ -131,10 +131,10 @@ public class Sphere : Shape
     }
     
     /// <summary>
-    /// Checks if a ray intersects the sphere.
+    /// Check if a ray intersects the sphere.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns> The <see cref="HitRecord"/>, or `Null` if no intersection was found. </returns>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -171,10 +171,11 @@ public class Sphere : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the sphere by computing a list of all possible intersections.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -219,7 +220,7 @@ public class Sphere : Shape
     }
 
     /// <summary>
-    /// Quickly checks if a ray intersects the sphere.
+    /// Quickly check if a ray intersects the sphere.
     /// </summary>
     /// <param name="r"> The ray. </param>
     /// <returns> True if there is intersection, false otherwise. </returns>
@@ -241,7 +242,7 @@ public class Sphere : Shape
     }
 
     /// <summary>
-    /// Determine whether the given point is inside the sphere or not.
+    /// Check if a point is inside the sphere.
     /// </summary>
     /// <param name="p"> The point. </param>
     /// <returns> True if the point is inside the sphere, false otherwise. </returns>
@@ -253,26 +254,30 @@ public class Sphere : Shape
 }
 
 // ===========================================================================
+// === END === END === END === END === END === END === END === END === END ===
+// ===========================================================================
+
+// ===========================================================================
 // ==== PLANE === PLANE === PLANE === PLANE === PLANE === PLANE === PLANE ====
 // ===========================================================================
 
 /// <summary>
-/// A 3D infinite plane parallel to the x and y axis and passing through the origin.
+/// A 2D infinite plane parallel to the x and y axis and passing through the origin.
 /// </summary>
 public class Plane : Shape
 {
     /// <summary>
-    /// Create a xy plane, potentially associating a transformation to it
+    /// Plane constructor. Initialize a new instance of the <see cref="Plane"/> class, potentially associating a transformation to it.
     /// </summary>
-    /// <param name="T"></param>
-    /// <param name="m"></param>
+    /// <param name="T"> The transformation associated to the plane. </param>
+    /// <param name="m"> The material of the plane. </param>
     public Plane(Transformation? T = null, Material? m = null) : base(T,m) { }
 
     /// <summary>
-    /// Checks if a ray intersects the plane. Return a `HitRecord`, or `None` if no intersection was found.
+    /// Check if a ray intersects the plane.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
     { 
         var invRay = Tr.Inverse * r;
@@ -301,10 +306,11 @@ public class Plane : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the plane by computing a list of all possible intersections.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var hit = Ray_Intersection(r);
@@ -312,11 +318,11 @@ public class Plane : Shape
         var intersections = new List<HitRecord> {hit};
         return intersections;
     }
-
+    
     /// <summary>
-    /// Quickly checks if a ray intersects the plane
+    /// Quickly checks if a ray intersects the plane.
     /// </summary>
-    /// <param name="r"> Ray </param>
+    /// <param name="r"> The ray. </param>
     /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
@@ -339,26 +345,30 @@ public class Plane : Shape
 }
 
 // ===========================================================================
+// === END === END === END === END === END === END === END === END === END ===
+// ===========================================================================
+
+// ===========================================================================
 // ==== CYLINDER ==== CYLINDER ==== CYLINDER ==== CYLINDER ==== CYLINDER =====
 // ===========================================================================
 
 /// <summary>
-/// 
+/// A 3D open cylinder centered around the z axis with unit radius. The z-coordinate range is 0 to 1.
 /// </summary>
 public class Cylinder : Shape
 {
     /// <summary>
-    /// Create a cylinder, potentially associating a transformation to it
+    /// Cylinder constructor. Initialize a new instance of the <see cref="Cylinder"/> class, potentially associating a transformation to it.
     /// </summary>
-    /// <param name="T"></param>
-    /// <param name="m"></param>
+    /// <param name="T"> The transformation associated to the cylinder. </param>
+    /// <param name="m"> The material of the cylinder. </param>
     public Cylinder(Transformation? T = null, Material? m = null) : base(T, m) { }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the cylinder.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -400,10 +410,11 @@ public class Cylinder : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the cylinder by computing a list of all possible intersections.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -458,10 +469,10 @@ public class Cylinder : Shape
     }
 
     /// <summary>
-    /// 
+    /// Quickly checks if a ray intersects the cylinder.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -492,10 +503,10 @@ public class Cylinder : Shape
     }
   
     /// <summary>
-    /// 
+    /// Check if a point is inside the cylinder.
     /// </summary>
-    /// <param name="p"></param>
-    /// <returns></returns>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point is inside the cylinder, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -505,27 +516,31 @@ public class Cylinder : Shape
 }
 
 // ===========================================================================
+// === END === END === END === END === END === END === END === END === END ===
+// ===========================================================================
+
+// ===========================================================================
 // === DISK === DISK === DISK === DISK === DISK === DISK === DISK === DISK ===
 // ===========================================================================
 
 /// <summary>
-/// 
+/// A 2D circular disk of unit radius, parallel to the x and y axis and passing through the origin.
 /// </summary>
 public class Disk : Shape
 {
 
     /// <summary>
-    /// 
+    /// Disk constructor. Initialize a new instance of the <see cref="Disk"/> class, potentially associating a transformation to it.
     /// </summary>
-    /// <param name="T"></param>
-    /// <param name="m"></param>
+    /// <param name="T"> The transformation associated to the disk. </param>
+    /// <param name="m"> The material of the disk. </param>
     public Disk(Transformation? T = null, Material? m = null) : base(T, m) { }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the disk.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -561,10 +576,11 @@ public class Disk : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the disk by computing a list of all possible intersections.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var hit = Ray_Intersection(r);
@@ -574,10 +590,10 @@ public class Disk : Shape
     }
 
     /// <summary>
-    /// 
+    /// Quickly checks if a ray intersects the disk.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -589,10 +605,10 @@ public class Disk : Shape
     }
     
     /// <summary>
-    /// 
+    /// Determine whether the given point belongs the disk or not.
     /// </summary>
-    /// <param name="p"></param>
-    /// <returns></returns>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point lies on the disk, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -601,23 +617,31 @@ public class Disk : Shape
     }
 }
 
+// ===========================================================================
+// === END === END === END === END === END === END === END === END === END ===
+// ===========================================================================
+
+// ===========================================================================
+// === BOX === BOX === BOX === BOX === BOX === BOX === BOX === BOX === BOX ===
+// ===========================================================================
+
 /// <summary>
-/// A 3D box with faces parallel to the x, y and z axis.
+/// A 3D box with faces parallel to the axes.
 /// </summary>
 public class Box : Shape
 {
     /// <summary>
-    /// 
+    /// An array of two points representing the minimum (first element) and maximum (second element) extent of the box.
     /// </summary>
-    public Point[] Bounds = new Point[2];
+    private Point[] Bounds = new Point[2];
     
     /// <summary>
-    /// 
+    /// Box constructor. Initialize a new instance of the <see cref="Box"/> class, potentially associating a transformation to it.
     /// </summary>
-    /// <param name="max"></param>
-    /// <param name="min"></param>
-    /// <param name="T"></param>
-    /// <param name="m"></param>
+    /// <param name="max"> The point representing the maximum extent of each axis of the box. If not specified, the default value of 1 is used for each axis. </param>
+    /// <param name="min"> The point representing the minimum extent of each axis of the box. If not specified, the default value of -1 is used for each axis. </param>
+    /// <param name="T"> The transformation associated to the box. </param>
+    /// <param name="m"> The material of the box. </param>
     public Box(Point? max = null, Point? min = null, Transformation? T = null, Material? m = null) : base(T, m)
     {
         Bounds[0] = max ?? new Point(-1.0f, -1.0f, -1.0f);
@@ -625,11 +649,12 @@ public class Box : Shape
     }
 
     /// <summary>
-    /// 
+    /// Compute the normal to a box. The normal is computed for <paramref name="point"/> (a point on the surface of
+    /// the box), and it is chosen so that it is always in the opposite direction with respect to <paramref name="rayDir"/>.
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="rayDir"></param>
-    /// <returns></returns>
+    /// <param name="point"> The point. </param>
+    /// <param name="rayDir"> The direction of the ray. </param>
+    /// <returns> The normal. </returns>
     private Normal Box_Normal(Point point, Vec rayDir)
     {
         Normal result;
@@ -644,10 +669,10 @@ public class Box : Shape
     }
 
     /// <summary>
-    /// 
+    /// Convert a 3D point on the surface of the box into a (u, v) 2D point.
     /// </summary>
-    /// <param name="p"></param>
-    /// <returns></returns>
+    /// <param name="p"> The 3D point. </param>
+    /// <returns> A <see cref="Vec2D"/> containing the coordinates of the surface point of the box. </returns>
     public Vec2D Box_Point_To_UV(Point p) // Reference: http://raytracerchallenge.com/bonus/texture-mapping.html
                                           // http://ilkinulas.github.io/development/unity/2016/05/06/uv-mapping.html
     {
@@ -678,7 +703,7 @@ public class Box : Shape
     /// </summary>
     /// <param name="axis"></param>
     /// <param name="minus"></param>
-    /// <param name="p"></param>
+    /// <param name="p"> The point. </param>
     /// <returns></returns>
     private float Coord(float axis, bool minus, Point p)
     {
@@ -704,10 +729,10 @@ public class Box : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the box.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -753,10 +778,10 @@ public class Box : Shape
     }
 
     /// <summary>
-    /// 
+    /// Quickly checks if a ray intersects the box.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -788,10 +813,11 @@ public class Box : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the box by computing a list of all possible intersections.
     /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -848,13 +874,17 @@ public class Box : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a point is inside the box.
     /// </summary>
-    /// <param name="p"></param>
-    /// <returns></returns>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point is inside the box, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
         return p.X is < 1.0f and > -1.0f && p.Y is < 1.0f and > -1.0f && p.Z is < 1.0f and > -1.0f;
     }
 }
+
+// ===========================================================================
+// === END === END === END === END === END === END === END === END === END ===
+// ===========================================================================

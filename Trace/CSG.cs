@@ -17,7 +17,7 @@ public class CsgUnion : Shape
     private Shape S2;
 
     /// <summary>
-    /// 
+    /// CsgUnion constructor. Initialize a new instance of the <see cref="CsgUnion"/> class, potentially associating a transformation to it.
     /// </summary>
     /// <param name="s1"> The first shape. </param>
     /// <param name="s2"> The second shape. </param>
@@ -30,18 +30,18 @@ public class CsgUnion : Shape
     }
     
     /// <summary>
-    /// 
+    /// Check if a ray intersects the  <see cref="CsgUnion"/> shape.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
         => Ray_Intersection_List(r)?[0];
     
     /// <summary>
-    /// 
+    /// Quickly check if a ray intersects the  <see cref="CsgUnion"/>.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r) // not very quick!
     {
         var invRay = Tr.Inverse * r;
@@ -51,10 +51,11 @@ public class CsgUnion : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the  <see cref="CsgUnion"/> by computing a list of all possible intersections.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -68,10 +69,10 @@ public class CsgUnion : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a point is inside the  <see cref="CsgUnion"/>.
     /// </summary>
     /// <param name="p"> The point. </param>
-    /// <returns></returns>
+    /// <returns> True if the point is inside the  <see cref="CsgUnion"/>, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -96,7 +97,7 @@ public class CsgDifference : Shape
     public Shape S2;
 
     /// <summary>
-    /// 
+    /// CsgDifference constructor. Initialize a new instance of the <see cref="CsgDifference"/> class, potentially associating a transformation to it.
     /// </summary>
     /// <param name="s1"> The first shape. </param>
     /// <param name="s2"> The second shape. </param>
@@ -109,18 +110,18 @@ public class CsgDifference : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the <see cref="CsgDifference"/> shape.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
         => Ray_Intersection_List(r)?[0];
 
     /// <summary>
-    /// 
+    /// Quickly check if a ray intersects the<see cref="CsgDifference"/>.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r) // not very quick!
     {
         var invRay = Tr.Inverse * r;
@@ -145,10 +146,11 @@ public class CsgDifference : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the <see cref="CsgDifference"/> by computing a list of all possible intersections.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -173,10 +175,10 @@ public class CsgDifference : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a point is inside the <see cref="CsgDifference"/>.
     /// </summary>
     /// <param name="p"> The point. </param>
-    /// <returns></returns>
+    /// <returns> True if the point is inside the <see cref="CsgDifference"/>, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
@@ -201,7 +203,7 @@ public class CsgIntersection : Shape
     private Shape S2;
 
     /// <summary>
-    /// 
+    /// CsgIntersection constructor. Initialize a new instance of the <see cref="CsgIntersection"/> class, potentially associating a transformation to it.
     /// </summary>
     /// <param name="s1"> The first shape. </param>
     /// <param name="s2"> The second shape. </param>
@@ -214,18 +216,18 @@ public class CsgIntersection : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the <see cref="CsgIntersection"/> shape.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
     public override HitRecord? Ray_Intersection(Ray r)
         => Ray_Intersection_List(r)?[0];
     
     /// <summary>
-    /// 
+    /// Quickly check if a ray intersects the <see cref="CsgIntersection"/>.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> True if there is intersection, false otherwise. </returns>
     public override bool Quick_Ray_Intersection(Ray r) // not very quick!
     {
         var invRay = Tr.Inverse * r;
@@ -248,10 +250,11 @@ public class CsgIntersection : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a ray intersects the <see cref="CsgIntersection"/> by computing a list of all possible intersections.
     /// </summary>
     /// <param name="r"> The ray. </param>
-    /// <returns></returns>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
     public override List<HitRecord>? Ray_Intersection_List(Ray r)
     {
         var invRay = Tr.Inverse * r;
@@ -274,10 +277,10 @@ public class CsgIntersection : Shape
     }
 
     /// <summary>
-    /// 
+    /// Check if a point is inside the <see cref="CsgIntersection"/>.
     /// </summary>
     /// <param name="p"> The point. </param>
-    /// <returns></returns>
+    /// <returns> True if the point is inside the <see cref="CsgIntersection"/>, false otherwise. </returns>
     public override bool Is_Internal(Point p)
     {
         p = Tr.Inverse * p;
