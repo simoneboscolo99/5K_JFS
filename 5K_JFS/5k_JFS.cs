@@ -109,17 +109,27 @@ app.Command("demo", command =>
             var world = new World();
 
             // Creating the scene
-            var sphere1 = new Sphere(m: new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f)))));
-            var sphere2 = new Sphere(
-                Transformation.Translation(new Vec(0.0f, 0.0f, 0.5f)),
-                new Material(new DiffuseBrdf(new UniformPigment(new Color(0.8f, 0.4f, 0.3f))))
-            );
-            world.Add(new CsgIntersection(sphere1, sphere2));
-            /*var skyMaterial = new Material(
+            
+            // Code for the closed cylinder
+            /*var cylinderMaterial = new Material(
+                new DiffuseBrdf(new CheckeredPigment(
+                    new Color(0.3f, 0.5f, 0.1f), 
+                    new Color(0.1f, 0.2f, 0.5f),
+                    6))
+                );
+            
+            var cylinder = new Cylinder(m: cylinderMaterial);
+            var bottomDisk = new Disk(m: cylinderMaterial);
+            var upDisk = new Disk(T: Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)), cylinderMaterial);
+
+            var closedCylinder = new CsgUnion(cylinder, new CsgUnion(bottomDisk, upDisk), Transformation.Scale(new Vec(2.0f, 2.0f, 2.0f)));
+            world.Add(closedCylinder);*/
+            
+            // Demo image
+            var skyMaterial = new Material(
                 new DiffuseBrdf(new UniformPigment(new Color())), 
                 new UniformPigment(new Color(0.1f, 0.5f, 0.9f))
             );
-            
             var groundMaterial = new Material(
                 new DiffuseBrdf(
                     new CheckeredPigment(
@@ -128,57 +138,16 @@ app.Command("demo", command =>
                     )
                 )
             );
-
-            
-            var img = new HdrImage("dice.pfm");
-            var boxMaterial = new Material(new DiffuseBrdf(new ImagePigment(img)));
+            var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));            
             
             world.Add(new Sphere(
                     Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
                     skyMaterial
                 )
             );
-            world.Add(new Plane(m: boxMaterial));
-            world.Add(new Box(
-                    T: Transformation.Translation(new Vec(3.0f, 2.0f, 1.0f)),
-                    m: groundMaterial
-                )
-            );*/
-
-            /*var sphere1 = new Sphere(m: new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f)))));
-            var sphere2 = new Sphere(
-                Transformation.Translation(new Vec(0.0f, 0.6f, 0.6f)),
-                new Material(new DiffuseBrdf(new UniformPigment(new Color(0.8f, 0.4f, 0.3f))))
-                );
-            var csg = new CsgDiff(sphere1, sphere2, Transformation.Translation(new Vec(0.0f, 0.0f, 1.2f)),
-                new Material(new DiffuseBrdf(new UniformPigment(new Color(0.9f, 0.9f, 0.8f)))));
-            
-            world.Add(csg);*/
-
-            /*var skyMaterial = new Material(
-                new DiffuseBrdf(new UniformPigment(new Color())), 
-                new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
-            );
-            
-            var groundMaterial = new Material(
-                new DiffuseBrdf(
-                    new CheckeredPigment(
-                        new Color(0.3f, 0.5f, 0.1f), 
-                        new Color(0.1f, 0.2f, 0.5f)
-                    )
-                )
-            );
-
-            //var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
-
-            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));            
+            world.Add(new Plane(m: groundMaterial));
             world.Add(new Sphere(
-                Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
-                skyMaterial
-                )
-            ); 
-            world.Add(new Plane(m: groundMaterial));*/
-            /*world.Add(new Sphere(
                     Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
                     sphereMaterial
                 )
@@ -187,7 +156,7 @@ app.Command("demo", command =>
                     Transformation.Translation(new Vec(1.0f, 2.5f, 0.0f)),
                     mirrorMaterial
                 )
-            );*/
+            );
 
             // Spheres at the vertices of the cube
             /*var scale = Transformation.Scale(new Vec(0.1f, 0.1f, 0.1f));
@@ -224,7 +193,7 @@ app.Command("demo", command =>
             // Creating the camera
             ICamera camera;
             if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.5f)));
             
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
