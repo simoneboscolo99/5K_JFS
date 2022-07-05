@@ -106,33 +106,44 @@ app.Command("demo", command =>
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
     
             var image = new HdrImage(Parameters.Width, Parameters.Height);
-            
+            var world = new World();
 
             // Creating the scene
             
-            var world = new World();
-
-            var skyMaterial = new Material(
-                new DiffuseBrdf(new UniformPigment(new Color())), 
-                new UniformPigment(new Color(1.0f, 0.9f, 0.5f))
+            // Code for the closed cylinder
+            /*var cylinderMaterial = new Material(
+                new DiffuseBrdf(new CheckeredPigment(
+                    new Color(0.3f, 0.5f, 0.1f), 
+                    new Color(0.1f, 0.2f, 0.5f),
+                    6))
                 );
             
+            var cylinder = new Cylinder(m: cylinderMaterial);
+            var bottomDisk = new Disk(m: cylinderMaterial);
+            var upDisk = new Disk(T: Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)), cylinderMaterial);
+
+            var closedCylinder = new CsgUnion(cylinder, new CsgUnion(bottomDisk, upDisk), Transformation.Scale(new Vec(2.0f, 2.0f, 2.0f)));
+            world.Add(closedCylinder);*/
+            
+            // Demo image
+            var skyMaterial = new Material(
+                new DiffuseBrdf(new UniformPigment(new Color())), 
+                new UniformPigment(new Color(0.1f, 0.5f, 0.9f))
+            );
             var groundMaterial = new Material(
                 new DiffuseBrdf(
                     new CheckeredPigment(
                         new Color(0.3f, 0.5f, 0.1f), 
                         new Color(0.1f, 0.2f, 0.5f)
-                        )
                     )
+                )
             );
-
             var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
-
-            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));            
             
             world.Add(new Sphere(
-                Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
-                skyMaterial
+                    Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
+                    skyMaterial
                 )
             );
             world.Add(new Plane(m: groundMaterial));
@@ -181,9 +192,9 @@ app.Command("demo", command =>
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(10.0f) * Transformation.Translation(new Vec(-2.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Translation(new Vec(-1.0f, 0.0f, 1.0f)));
-
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, -0.0f, 0.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.5f)));
+            
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
             // Rendering
@@ -201,11 +212,11 @@ app.Command("demo", command =>
                     Console.WriteLine("Using flat renderer");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world, maxDepth: 4);
+                    renderer = new PathTracing(world, maxDepth: 2, numOfRays: 10);
                     Console.WriteLine("Using path tracing");
                     break;
                 default:
-                    throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
+                    throw new RuntimeException($"\nInvalid renderer {alg}. Possible renderers are:" +
                                                    "\n - onoff \n - flat \n - pathtracing \n");
             }
             
@@ -221,7 +232,7 @@ app.Command("demo", command =>
             
             // Convert to Ldr
             // Tone mapping
-            image.Luminosity_Norm(Parameters.Factor);
+            image.Luminosity_Norm(Parameters.Factor, luminosity: 0.2f);
             image.Clamp_Image();
 
             //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);

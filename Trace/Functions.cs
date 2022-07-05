@@ -50,4 +50,12 @@ public class Functions
     /// <returns> The angle in radians. </returns>
     public static float ToRadians(float angleDeg)
         => (float)(angleDeg * Math.PI / 180.0);
+    
+    public static void Swap<T>(ref T lhs, ref T rhs)
+    {
+        T temp;
+        temp = lhs;
+        lhs = rhs;
+        rhs = temp;
+    }
 }

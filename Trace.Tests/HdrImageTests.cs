@@ -2,40 +2,46 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using SixLabors.ImageSharp.Formats.Jpeg;
 using Xunit;
 
 namespace Trace.Tests;
 
 public class HdrImageTests
 {
-    HdrImage image = new(7, 4);
+    HdrImage _image = new(7, 4);
+
+    [Fact]
+    public void TestCreation()
+    {
+        Assert.True(_image.Height == 4, "Test height");
+        Assert.True(_image.Width == 7, "Test width");
+    }
 
     [Fact]
     public void TestCoord()
     {
-        Assert.True(image.Valid_Coordinates(0, 0), "Test 1");
-        Assert.True(image.Valid_Coordinates(6, 3), "Test 2");
-        Assert.False(image.Valid_Coordinates(-1, 0), "Test 3");
-        Assert.False(image.Valid_Coordinates(0, -1), "Test 4");
-        Assert.False(image.Valid_Coordinates(0, 4), "Test 5");
-        Assert.False(image.Valid_Coordinates(7, 0), "Test 6");
+        Assert.True(_image.Valid_Coordinates(0, 0), "Test 1");
+        Assert.True(_image.Valid_Coordinates(6, 3), "Test 2");
+        Assert.False(_image.Valid_Coordinates(-1, 0), "Test 3");
+        Assert.False(_image.Valid_Coordinates(0, -1), "Test 4");
+        Assert.False(_image.Valid_Coordinates(0, 4), "Test 5");
+        Assert.False(_image.Valid_Coordinates(7, 0), "Test 6");
     }
 
     [Fact]
     public void TestPos()
     {
-        Assert.True(image.Pixel_Offset(3, 2) == 17, "Test 1");
-        Assert.True(image.Pixel_Offset(4, 3) == 25, "Test 2");
-        Assert.True(image.Pixel_Offset(6, 3) == 7 * 4 - 1, "Test 3");
+        Assert.True(_image.Pixel_Offset(3, 2) == 17, "Test 1");
+        Assert.True(_image.Pixel_Offset(4, 3) == 25, "Test 2");
+        Assert.True(_image.Pixel_Offset(6, 3) == 7 * 4 - 1, "Test 3");
     }
 
     [Fact]
     public void TestGetSetPixel()
     {
         Color a = new Color(2.0f, 3.0f, 5.0f);
-        image.Set_Pixel(3, 2, a);
-        Assert.True(image.Get_Pixel(3, 2).Is_Close(a), "Test 1");
+        _image.Set_Pixel(3, 2, a);
+        Assert.True(_image.Get_Pixel(3, 2).Is_Close(a), "Test 1");
     }
 
     [Fact]
@@ -201,32 +207,32 @@ public class HdrImageTests
     [Fact]
     public void TestLuminosity_Ave()
     {
-        image = new HdrImage(2, 1);
-        image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
-        image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
-        Assert.True(Functions.Are_Close(100.0f, image.Luminosity_Ave(0.0f)));
+        _image = new HdrImage(2, 1);
+        _image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
+        _image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
+        Assert.True(Functions.Are_Close(100.0f, _image.Luminosity_Ave(0.0f)));
     }
 
     [Fact]
     public void TestLuminosityNorm()
     {
-        image = new HdrImage(2, 1);
-        image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
-        image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
-        image.Luminosity_Norm(1000.0f, 100.0f);
-        Assert.True(image.Get_Pixel(0, 0).Is_Close(new Color(0.5e2f, 1.0e2f, 1.5e2f)));
-        Assert.True(image.Get_Pixel(1, 0).Is_Close(new Color(0.5e4f, 1.0e4f, 1.5e4f)));
+        _image = new HdrImage(2, 1);
+        _image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
+        _image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
+        _image.Luminosity_Norm(1000.0f, 100.0f);
+        Assert.True(_image.Get_Pixel(0, 0).Is_Close(new Color(0.5e2f, 1.0e2f, 1.5e2f)));
+        Assert.True(_image.Get_Pixel(1, 0).Is_Close(new Color(0.5e4f, 1.0e4f, 1.5e4f)));
     }
 
     [Fact]
     public void TestClampImage()
     {
-        image = new HdrImage(2, 1);
-        image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
-        image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
-        image.Clamp_Image();
+        _image = new HdrImage(2, 1);
+        _image.Set_Pixel(0, 0, new Color(5.0f, 10.0f, 15.0f)); // Luminosity: 10.0
+        _image.Set_Pixel(1, 0, new Color(500.0f, 1000.0f, 1500.0f)); // Luminosity: 1000.0
+        _image.Clamp_Image();
         //Just check that the R/G/B values are within the expected boundaries
-        foreach (var curPixel in image.Image)
+        foreach (var curPixel in _image.Image)
         {
             Assert.True(curPixel.R is >= 0 and <= 1);
             Assert.True(curPixel.G is >= 0 and <= 1);

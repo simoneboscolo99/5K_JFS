@@ -9,6 +9,13 @@ public class ColorTests
     float scalar = 2.0f;
 
     [Fact]
+    public void TestCreateAndClose()
+    {
+        Assert.True(a.Is_Close(new Color(1.0f, 2.0f, 3.0f)), "Test creation");
+        Assert.False(a.Is_Close(new Color(3.0f, 4.0f, 5.0f)), "Test is_close function");
+    }
+
+    [Fact]
     public void TestAdd()
     {
         Assert.True((a + b).Is_Close(new Color(6.0f, 5.0f, 11.0f)), "Test 1");

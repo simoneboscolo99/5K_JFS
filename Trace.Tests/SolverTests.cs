@@ -1,4 +1,3 @@
-using System.Numerics;
 using Xunit;
 
 namespace Trace.Tests;
@@ -32,6 +31,34 @@ public class SolverTests
         Assert.True(image.Get_Pixel(2, 2).Is_Close(Color.Black));
     }
 
+    [Fact]
+    public void TestOnOffCSG()
+    {
+        var world = new World();
+        var sphere1 = new Sphere();
+        var sphere2 = new Sphere(Transformation.Translation(new Vec(0.0f, 0.0f, 0.5f)));
+        var csg = new CsgDifference(sphere1, sphere2, Transformation.Scale(new Vec(0.5f, 0.5f, 0.5f)));
+        world.Add(csg);
+        
+        var image = new HdrImage(3, 3);
+        var camera = new OrthogonalCamera();
+        var tracer = new ImageTracer(image, camera);
+        var renderer = new OnOffTracing(world);
+        tracer.Fire_All_Rays(renderer);
+        
+        Assert.True(image.Get_Pixel(0, 0).Is_Close(Color.Black), "Test 1");
+        Assert.True(image.Get_Pixel(1, 0).Is_Close(Color.Black), "Test 2");
+        Assert.True(image.Get_Pixel(2, 0).Is_Close(Color.Black), "Test 3");
+        
+        Assert.True(image.Get_Pixel(0, 1).Is_Close(Color.Black), "Test 4");
+        Assert.True(image.Get_Pixel(1, 1).Is_Close(Color.White), "Test 5");
+        Assert.True(image.Get_Pixel(2, 1).Is_Close(Color.Black), "Test 6");
+
+        Assert.True(image.Get_Pixel(0, 2).Is_Close(Color.Black), "Test 7");
+        Assert.True(image.Get_Pixel(1, 2).Is_Close(Color.Black), "Test 8");
+        Assert.True(image.Get_Pixel(2, 2).Is_Close(Color.Black), "Test 9");
+    }
+
    [Fact]
     public void TestFlatRenderer()
     {
@@ -61,11 +88,11 @@ public class SolverTests
     }
 
     [Fact]
-    public void Furnace_Test()
+    public void FurnaceTest()
     {
         var pcg = new Pcg();
+        
         //Run the furnace_test several times using random values for the emitted radiance and reflectance
-
         for (int i = 0; i < 7; i++)
         {
             var world = new World();
@@ -87,5 +114,4 @@ public class SolverTests
 
         }
     }
-    
 }

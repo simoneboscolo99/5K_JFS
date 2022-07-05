@@ -23,6 +23,8 @@ public struct Transformation
     public static Transformation Scale(Vec v)
         => new(Matrix4x4.CreateScale(v.X, v.Y, v.Z), Matrix4x4.CreateScale(1 / v.X, 1 / v.Y, 1 / v.Z));
 
+    // ANTICLOCKWISE ROTATION!!!!!!!!!!
+    
     /// <summary>
     /// 
     /// </summary> Rotation around X ccw
