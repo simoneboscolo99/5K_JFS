@@ -255,4 +255,38 @@ diffuse(image(""my file.pfm"")),
         var ex = Assert.Throws<GrammarErrorException>(() => Scene.ParseScene(inputFile: stream));
         Assert.Contains("You cannot define more than one camera", ex.Message);
     }
+
+    [Fact]
+    public void TestParserCsg()
+    {
+        var line = Encoding.ASCII.GetBytes(@"
+                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
+                material sky_material(
+                 diffuse(uniform(<0, 0, 0>)),
+                 uniform(<0.7, 0.5, 1.0>)
+                ) 
+                # here is a comment
+                union(
+                    intersection(sphere(sky_material, translation([0, 0, 1.00])), cylinder(sky_material, identity), identity),
+                    difference(box([-1, -1, -1], [1, 1, 1], sky_material, translation([0, 0, 1.00])), disk(sky_material, identity), identity),
+                    identity)
+            ");
+        
+        Stream streamline = new MemoryStream(line);
+        var stream = new InputStream(streamline);
+
+        var scene = Scene.ParseScene(inputFile: stream);
+
+        // check world is ok
+        Assert.True(scene.Wd.World1.Count == 1, "Test World length");
+        Assert.IsType<CsgUnion>(scene.Wd.World1[0]);
+        Assert.IsType<CsgIntersection>(((CsgUnion) scene.Wd.World1[0]).S1);
+        Assert.IsType<CsgDifference>(((CsgUnion) scene.Wd.World1[0]).S2);
+        Assert.IsType<Sphere>(((CsgIntersection)((CsgUnion) scene.Wd.World1[0]).S1).S1);
+        Assert.IsType<Cylinder>(((CsgIntersection)((CsgUnion) scene.Wd.World1[0]).S1).S2);
+        Assert.IsType<Box>(((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1);
+        Assert.True(((Box) (((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1)).Bounds[0].Is_Close(new Point(1.0f, 1.0f, 1.0f)));
+        Assert.True(((Box) (((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1)).Bounds[1].Is_Close(new Point(-1.0f, -1.0f, -1.0f)));
+        Assert.IsType<Disk>(((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S2);
+    }
 }

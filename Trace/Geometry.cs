@@ -145,7 +145,13 @@ public struct Vec
     /// </summary>
     /// <returns> The normal. </returns>
     public Normal ToNormal()
-        => new Normal(X, Y, Z);
+        => new(X, Y, Z);
+
+    /// <summary>
+    /// Converts the current <see cref="Vec"/> instance into a <see cref="Point"/> object with the same elements.
+    /// </summary>
+    /// <returns> The point. </returns>
+    public Point ToPoint() => new(X, Y, Z);
 
     /// <summary>
     /// Returns a value indicating whether this instance and a specified <see cref="Vec"/> object represent roughly the same vector.

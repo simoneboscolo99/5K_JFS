@@ -329,6 +329,12 @@ public enum KeywordEnum
     Material, 
     Plane, 
     Sphere,
+    Cylinder,
+    Disk,
+    Box,
+    Union,
+    Difference,
+    Intersection,
     Diffuse, 
     Specular, 
     Uniform, 
@@ -359,6 +365,12 @@ public class KeywordToken : Token
         {"material", KeywordEnum.Material},
         {"plane", KeywordEnum.Plane},
         {"sphere", KeywordEnum.Sphere},
+        {"cylinder", KeywordEnum.Cylinder},
+        {"disk", KeywordEnum.Disk},
+        {"box", KeywordEnum.Box},
+        {"union", KeywordEnum.Union},
+        {"difference", KeywordEnum.Difference},
+        {"intersection", KeywordEnum.Intersection},
         {"diffuse", KeywordEnum.Diffuse},
         {"specular", KeywordEnum.Specular},
         {"uniform", KeywordEnum.Uniform},
@@ -756,6 +768,279 @@ public class Scene
         return new Plane(transformation, scene.Materials[materialName]);
     }
 
+    public static Cylinder ParseCylinder(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        var materialName = ExpectIdentifier(inputFile);
+        if (!scene.Materials.ContainsKey(materialName)) throw new GrammarErrorException($"unknown material {materialName}", inputFile.Location);
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+
+        return new Cylinder(transformation, scene.Materials[materialName]);
+    }
+
+    public static Disk ParseDisk(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        var materialName = ExpectIdentifier(inputFile);
+        if (!scene.Materials.ContainsKey(materialName)) throw new GrammarErrorException($"unknown material {materialName}", inputFile.Location);
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+        
+        return new Disk(transformation, scene.Materials[materialName]);
+    }
+
+    public static Box ParseBox(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        var min = ParseVector(inputFile, scene).ToPoint();
+        ExpectSymbol(inputFile, ",");
+        var max = ParseVector(inputFile, scene).ToPoint();
+        ExpectSymbol(inputFile, ",");
+        var materialName = ExpectIdentifier(inputFile);
+        if (!scene.Materials.ContainsKey(materialName)) throw new GrammarErrorException($"unknown material {materialName}", inputFile.Location);
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+
+        return new Box(max, min, transformation, scene.Materials[materialName]);
+    }
+
+    public static CsgUnion ParseUnion(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        Shape firstShape = new Sphere();
+        var keyword1 = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Sphere, KeywordEnum.Plane, KeywordEnum.Cylinder, KeywordEnum.Disk, KeywordEnum.Box, KeywordEnum.Union, KeywordEnum.Difference, KeywordEnum.Intersection});
+        switch (keyword1)
+        {
+            case KeywordEnum.Sphere:
+                firstShape = ParseSphere(inputFile, scene);
+                break;
+            case KeywordEnum.Plane:
+                firstShape = ParsePlane(inputFile, scene);
+                break;
+            case KeywordEnum.Cylinder:
+                firstShape = ParseCylinder(inputFile, scene);
+                break;
+            case KeywordEnum.Disk:
+                firstShape = ParseDisk(inputFile, scene);
+                break;
+            case KeywordEnum.Box:
+                firstShape = ParseBox(inputFile, scene);
+                break;
+            case KeywordEnum.Union:
+                firstShape = ParseUnion(inputFile, scene);
+                break;
+            case KeywordEnum.Intersection:
+                firstShape = ParseIntersection(inputFile, scene);
+                break;
+            case KeywordEnum.Difference:
+                firstShape = ParseDifference(inputFile, scene);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        ExpectSymbol(inputFile, ",");
+        Shape secondShape = new Sphere();
+        var keyword2 = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Sphere, KeywordEnum.Plane, KeywordEnum.Cylinder, KeywordEnum.Disk, KeywordEnum.Box, KeywordEnum.Union, KeywordEnum.Difference, KeywordEnum.Intersection});
+        switch (keyword2)
+        {
+            case KeywordEnum.Sphere:
+                secondShape = ParseSphere(inputFile, scene);
+                break;
+            case KeywordEnum.Plane:
+                secondShape = ParsePlane(inputFile, scene);
+                break;
+            case KeywordEnum.Cylinder:
+                secondShape = ParseCylinder(inputFile, scene);
+                break;
+            case KeywordEnum.Disk:
+                secondShape = ParseDisk(inputFile, scene);
+                break;
+            case KeywordEnum.Box:
+                secondShape = ParseBox(inputFile, scene);
+                break;
+            case KeywordEnum.Union:
+                secondShape = ParseUnion(inputFile, scene);
+                break;
+            case KeywordEnum.Intersection:
+                secondShape = ParseIntersection(inputFile, scene);
+                break;
+            case KeywordEnum.Difference:
+                secondShape = ParseDifference(inputFile, scene);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+        
+        return new CsgUnion(firstShape, secondShape, transformation);
+    }
+    
+    public static CsgDifference ParseDifference(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        
+        Shape firstShape = new Sphere();
+        var keyword1 = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Sphere, KeywordEnum.Plane, KeywordEnum.Cylinder, KeywordEnum.Disk, KeywordEnum.Box, KeywordEnum.Union, KeywordEnum.Difference, KeywordEnum.Intersection});
+        switch (keyword1)
+        {
+            case KeywordEnum.Sphere:
+                firstShape = ParseSphere(inputFile, scene);
+                break;
+            case KeywordEnum.Plane:
+                firstShape = ParsePlane(inputFile, scene);
+                break;
+            case KeywordEnum.Cylinder:
+                firstShape = ParseCylinder(inputFile, scene);
+                break;
+            case KeywordEnum.Disk:
+                firstShape = ParseDisk(inputFile, scene);
+                break;
+            case KeywordEnum.Box:
+                firstShape = ParseBox(inputFile, scene);
+                break;
+            case KeywordEnum.Union:
+                firstShape = ParseUnion(inputFile, scene);
+                break;
+            case KeywordEnum.Intersection:
+                firstShape = ParseIntersection(inputFile, scene);
+                break;
+            case KeywordEnum.Difference:
+                firstShape = ParseDifference(inputFile, scene);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        ExpectSymbol(inputFile, ",");
+        Shape secondShape = new Sphere();
+        var keyword2 = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Sphere, KeywordEnum.Plane, KeywordEnum.Cylinder, KeywordEnum.Disk, KeywordEnum.Box, KeywordEnum.Union, KeywordEnum.Difference, KeywordEnum.Intersection});
+        switch (keyword2)
+        {
+            case KeywordEnum.Sphere:
+                secondShape = ParseSphere(inputFile, scene);
+                break;
+            case KeywordEnum.Plane:
+                secondShape = ParsePlane(inputFile, scene);
+                break;
+            case KeywordEnum.Cylinder:
+                secondShape = ParseCylinder(inputFile, scene);
+                break;
+            case KeywordEnum.Disk:
+                secondShape = ParseDisk(inputFile, scene);
+                break;
+            case KeywordEnum.Box:
+                secondShape = ParseBox(inputFile, scene);
+                break;
+            case KeywordEnum.Union:
+                secondShape = ParseUnion(inputFile, scene);
+                break;
+            case KeywordEnum.Intersection:
+                secondShape = ParseIntersection(inputFile, scene);
+                break;
+            case KeywordEnum.Difference:
+                secondShape = ParseDifference(inputFile, scene);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+        
+        return new CsgDifference(firstShape, secondShape, transformation);
+    }
+    
+    public static CsgIntersection ParseIntersection(InputStream inputFile, Scene scene)
+    {
+        ExpectSymbol(inputFile, "(");
+        
+        Shape firstShape = new Sphere();
+        var keyword1 = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Sphere, KeywordEnum.Plane, KeywordEnum.Cylinder, KeywordEnum.Disk, KeywordEnum.Box, KeywordEnum.Union, KeywordEnum.Difference, KeywordEnum.Intersection});
+        switch (keyword1)
+        {
+            case KeywordEnum.Sphere:
+                firstShape = ParseSphere(inputFile, scene);
+                break;
+            case KeywordEnum.Plane:
+                firstShape = ParsePlane(inputFile, scene);
+                break;
+            case KeywordEnum.Cylinder:
+                firstShape = ParseCylinder(inputFile, scene);
+                break;
+            case KeywordEnum.Disk:
+                firstShape = ParseDisk(inputFile, scene);
+                break;
+            case KeywordEnum.Box:
+                firstShape = ParseBox(inputFile, scene);
+                break;
+            case KeywordEnum.Union:
+                firstShape = ParseUnion(inputFile, scene);
+                break;
+            case KeywordEnum.Intersection:
+                firstShape = ParseIntersection(inputFile, scene);
+                break;
+            case KeywordEnum.Difference:
+                firstShape = ParseDifference(inputFile, scene);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        ExpectSymbol(inputFile, ",");
+        Shape secondShape = new Sphere();
+        var keyword2 = ExpectKeywords(inputFile, new List<KeywordEnum> {KeywordEnum.Sphere, KeywordEnum.Plane, KeywordEnum.Cylinder, KeywordEnum.Disk, KeywordEnum.Box, KeywordEnum.Union, KeywordEnum.Difference, KeywordEnum.Intersection});
+        switch (keyword2)
+        {
+            case KeywordEnum.Sphere:
+                secondShape = ParseSphere(inputFile, scene);
+                break;
+            case KeywordEnum.Plane:
+                secondShape = ParsePlane(inputFile, scene);
+                break;
+            case KeywordEnum.Cylinder:
+                secondShape = ParseCylinder(inputFile, scene);
+                break;
+            case KeywordEnum.Disk:
+                secondShape = ParseDisk(inputFile, scene);
+                break;
+            case KeywordEnum.Box:
+                secondShape = ParseBox(inputFile, scene);
+                break;
+            case KeywordEnum.Union:
+                secondShape = ParseUnion(inputFile, scene);
+                break;
+            case KeywordEnum.Intersection:
+                secondShape = ParseIntersection(inputFile, scene);
+                break;
+            case KeywordEnum.Difference:
+                secondShape = ParseDifference(inputFile, scene);
+                break;
+            default:
+                Assert.False(true, "This line should be unreachable.");
+                break;
+        }
+        
+        ExpectSymbol(inputFile, ",");
+        var transformation = ParseTransformation(inputFile, scene);
+        ExpectSymbol(inputFile, ")");
+        
+        return new CsgIntersection(firstShape, secondShape, transformation);
+    }
+
     public static ICamera ParseCamera(InputStream inputFile, Scene scene)
     {
         ICamera result = new PerspectiveCamera();
@@ -793,8 +1078,10 @@ public class Scene
     /// <returns></returns>
     public static Scene ParseScene(InputStream inputFile, IDictionary<string, float>? variables = null)
     {
-        var scene = new Scene();
-        scene.FloatVariables = variables ?? new Dictionary<string, float>();
+        var scene = new Scene
+        {
+            FloatVariables = variables ?? new Dictionary<string, float>()
+        };
         if (variables != null) scene.OverriddenVariables = new HashSet<string>(variables.Keys);
 
         while (true)
@@ -803,32 +1090,57 @@ public class Scene
             if (what is StopToken) break;
             if (what is not KeywordToken token) throw new GrammarErrorException($"expected a keyword instead of {what}", inputFile.Location);
 
-            if (token.Keyword == KeywordEnum.Float)
+            switch (token.Keyword)
             {
-                var variableName = ExpectIdentifier(inputFile);
+                case KeywordEnum.Float:
+                {
+                    var variableName = ExpectIdentifier(inputFile);
                 
-                // Save this for the error message
-                var variableLocation = inputFile.Location;
-                ExpectSymbol(inputFile, "(");
-                var variableValue = ExpectNumber(inputFile, scene);
-                ExpectSymbol(inputFile, ")");
+                    // Save this for the error message
+                    var variableLocation = inputFile.Location;
+                    ExpectSymbol(inputFile, "(");
+                    var variableValue = ExpectNumber(inputFile, scene);
+                    ExpectSymbol(inputFile, ")");
 
-                if (scene.FloatVariables.ContainsKey(variableName) && !scene.OverriddenVariables.Contains(variableName)) throw new GrammarErrorException($"variable «{variableName}» cannot be redefined", variableLocation);
-                if (!scene.OverriddenVariables.Contains(variableName))
-                    // Only define the variable if it was not defined by the user outside the scene file (e.g., from the command line)
-                    scene.FloatVariables[variableName] = variableValue;
-            }     
-            else if (token.Keyword == KeywordEnum.Sphere) scene.Wd.Add(ParseSphere(inputFile, scene));
-            else if (token.Keyword == KeywordEnum.Plane) scene.Wd.Add(ParsePlane(inputFile, scene));
-            else if (token.Keyword == KeywordEnum.Camera)
-            {
-                if (scene.Camera != null) throw new GrammarErrorException("You cannot define more than one camera", what.Location);
-                scene.Camera = ParseCamera(inputFile, scene);
-            }
-            else if (token.Keyword == KeywordEnum.Material)
-            {
-                var (name, material) = ParseMaterial(inputFile, scene);
-                scene.Materials[name] = material;
+                    if (scene.FloatVariables.ContainsKey(variableName) && !scene.OverriddenVariables.Contains(variableName)) throw new GrammarErrorException($"variable «{variableName}» cannot be redefined", variableLocation);
+                    if (!scene.OverriddenVariables.Contains(variableName))
+                        // Only define the variable if it was not defined by the user outside the scene file (e.g., from the command line)
+                        scene.FloatVariables[variableName] = variableValue;
+                    break;
+                }
+                case KeywordEnum.Sphere:
+                    scene.Wd.Add(ParseSphere(inputFile, scene));
+                    break;
+                case KeywordEnum.Plane:
+                    scene.Wd.Add(ParsePlane(inputFile, scene));
+                    break;
+                case KeywordEnum.Cylinder:
+                    scene.Wd.Add(ParseCylinder(inputFile, scene));
+                    break;
+                case KeywordEnum.Disk:
+                    scene.Wd.Add(ParseDisk(inputFile, scene));
+                    break;
+                case KeywordEnum.Box:
+                    scene.Wd.Add(ParseBox(inputFile, scene));
+                    break;
+                case KeywordEnum.Union:
+                    scene.Wd.Add(ParseUnion(inputFile, scene));
+                    break;
+                case KeywordEnum.Difference:
+                    scene.Wd.Add(ParseDifference(inputFile, scene));
+                    break;
+                case KeywordEnum.Intersection:
+                    scene.Wd.Add(ParseIntersection(inputFile, scene));
+                    break;
+                case KeywordEnum.Camera when scene.Camera != null:
+                    throw new GrammarErrorException("You cannot define more than one camera", what.Location);
+                case KeywordEnum.Camera:
+                    scene.Camera = ParseCamera(inputFile, scene);
+                    break;
+                case KeywordEnum.Material:
+                    var (name, material) = ParseMaterial(inputFile, scene);
+                    scene.Materials[name] = material;
+                    break;
             }
         }
         

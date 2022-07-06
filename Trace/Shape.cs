@@ -633,7 +633,7 @@ public class Box : Shape
     /// <summary>
     /// An array of two points representing the minimum (first element) and maximum (second element) extent of the box.
     /// </summary>
-    private Point[] Bounds = new Point[2];
+    public Point[] Bounds = new Point[2];
     
     /// <summary>
     /// Box constructor. Initialize a new instance of the <see cref="Box"/> class, potentially associating a transformation to it.
