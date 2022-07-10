@@ -96,6 +96,8 @@ To view all the possible options run
 
 ## Contributing
 
+To contribute to 5K JFS, clone this repo locally and commit your code on a separate branch. Please write unit tests for your code and then open a *pull request*. *issue*
+
 ## History
 See the file [CHANGELOG.md](./CHANGELOG.md).
 
