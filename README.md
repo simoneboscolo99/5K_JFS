@@ -23,6 +23,7 @@ The contibutors to the project are [Simone Boscolo][2], [Gabriele Crespi][3] and
     - [Convert mode](#convert-mode)
 - [Examples](#examples)
 - [Gallery](#gallery)
+- [Contributing](#contributing)
 - [History](#history)
 - [License](#license)
 
@@ -58,6 +59,16 @@ some words
     
     dotnet run -- render -?
     
+    
+Available shapes are:
+- Spheres
+- Planes
+- Boxes
+- Disks
+- Open cylinders
+- Constructive Solid Geometry (CSG): union, difference and intersection of any pair of shapes mentioned above
+
+    
 
 ### Demo mode
 
@@ -67,7 +78,7 @@ some words
     
     dotnet run -- demo -?
 
-### Convert mode
+### Convert mode 🔄
 
     dotnet run -- convert [options]
     
@@ -75,12 +86,12 @@ some words
     
     dotnet run -- convert -?
     
-    
-### Animations
-
+   
 ## Examples
 
 ## Gallery
+
+## Contributing
 
 ## History
 See the file [CHANGELOG.md](./CHANGELOG.md).
