@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //not yet :) .... This program is an "image order" RayTracer
-
 using Microsoft.Extensions.CommandLineUtils;
 using Trace;
 using _5K_JFS;
@@ -106,6 +105,7 @@ app.Command("demo", command =>
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
     
             var image = new HdrImage(Parameters.Width, Parameters.Height);
+            
             var world = new World();
 
             // Creating the scene
@@ -205,15 +205,15 @@ app.Command("demo", command =>
             {
                 case "ONOFF":
                     renderer = new OnOffTracing(world);
-                    Console.WriteLine("Using on/off renderer");
+                    Console.WriteLine("Using on/off renderer\n");
                     break;
                 case "FLAT":
                     renderer = new FlatTracing(world);
-                    Console.WriteLine("Using flat renderer");
+                    Console.WriteLine("Using flat renderer\n");
                     break;
                 case "PATHTRACING":
-                    renderer = new PathTracing(world, maxDepth: 2, numOfRays: 10);
-                    Console.WriteLine("Using path tracing");
+                    renderer = new PathTracing(world, maxDepth: 3, numOfRays: 5, russianRouletteLimit: 3);
+                    Console.WriteLine("Using path tracing\n");
                     break;
                 default:
                     throw new RuntimeException($"\nInvalid renderer {alg}. Possible renderers are:" +
@@ -221,23 +221,18 @@ app.Command("demo", command =>
             }
             
             tracer.Fire_All_Rays(renderer);
-
-            Console.WriteLine("Rendering completed");
             
             // Save pfm file
             const string pfmDemoPath = "Demo.pfm";
             using FileStream outputPfm = File.OpenWrite(pfmDemoPath);
             image.Write_pfm(outputPfm);
-            Console.WriteLine($"HDR demo image written to {pfmDemoPath}");
+            Console.WriteLine($"\nHDR demo image written to {pfmDemoPath}");
             
             // Convert to Ldr
             // Tone mapping
             image.Luminosity_Norm(Parameters.Factor, luminosity: 0.2f);
             image.Clamp_Image();
-
-            //using Stream fileStream = File.OpenWrite(Parameters.OutputFileName);
-            //const string pngDemoPath = "Demo.png";
-            //Parameters.Format = Path.GetExtension(pngDemoPath);
+            
             image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
             Console.WriteLine($"PNG demo image written to {Parameters.OutputFileName}");
         }
@@ -302,6 +297,186 @@ app.Command("convert", command =>
         return 0; // return 0 on a successful execution
     });
 });
+// ===========================================================================
+// === END === END === END === END === END === END === END === END === END ==
+// ===========================================================================
+
+
+// ===========================================================================
+// ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER === 
+// ===========================================================================
+
+// This is a command with no arguments - it just does default action.
+app.Command("render", command =>
+{
+    // This is a command that has it's own options
+    // description and help text of the command
+    command.Description = "This is the description for render.";
+    command.ExtendedHelpText = "\nThis is the extended help text for render.\n";
+
+    var inputSceneName = command.Argument("inputSceneName", "Name of the input file with the scene.");
+    var width = command.Option("--width <INTEGER>", "Width of the image. \t\t Default: 480",
+        CommandOptionType.SingleValue);
+    var height = command.Option("--height <INTEGER>", "Height of the image. \t\t Default: 480",
+        CommandOptionType.SingleValue);
+    var angleDeg = command.Option("-a|--angle-deg <FLOAT>", "Angle of view. \t\t\t Default: 0",
+        CommandOptionType.SingleValue);
+    var pfmoutputFilename = command.Option("--pfm-output <PFM_OUTPUT_FILENAME>",
+        "Path of the output hdr file. \t Default: output.pfm", CommandOptionType.SingleValue);
+    var outputFilename = command.Option("--output <OUTPUT_FILENAME>",
+        "Path of the output ldr file. \t Default: output.png", CommandOptionType.SingleValue);
+    var algorithm = command.Option("--algorithm <ALGORITHM>", "Algorithm of rendering. \t\t Default: pathtracing",
+        CommandOptionType.SingleValue);
+    var gamma = command.Option("-g|--gamma <FLOAT>", "Exponent for gamma-correction. \t Default: 1",
+        CommandOptionType.SingleValue);
+    var factor = command.Option("-f|--factor <FLOAT>", "Multiplicative factor. \t\t Default: 0,2",
+        CommandOptionType.SingleValue);
+    var numOfRays = command.Option("-n|--num-of-rays <INTEGER>",
+        "Number of rays departing from each surface point (only applicable with --algorithm=pathtracing).\t\t Default: 10",
+        CommandOptionType.SingleValue);
+    var maxDepth = command.Option("-md|--max-depth <INTEGER>",
+        "Maximum allowed ray depth (only applicable with --algorithm=pathtracing). \t\t Default: 3",
+        CommandOptionType.SingleValue);
+    var initState = command.Option("--init-state <INTEGER>",
+        "Initial seed for the random number generator (positive number). \t\t Default: 45",
+        CommandOptionType.SingleValue);
+    var initSeq = command.Option("--init-seq <INTEGER>",
+        "Identifier of the sequence produced by the random number generator (positive number). \t\t Default: 54",
+        CommandOptionType.SingleValue);
+    var samplesPerPixel = command.Option("-spp|--samples-per-pixel <SAMPLES_PER_PIXEL>",
+        "Number of samples per pixel (must be a perfect square, e.g., 16).. \t\t Default: 0",
+        CommandOptionType.SingleValue);
+    var declareFloat = command.Option("-d|--declare-float <STRING>",
+        "Declare a variable. The syntax is «--declare-float=VAR:VALUE». Example: --declare-float=clock:150",
+        CommandOptionType.MultipleValue);
+
+    command.HelpOption("-?|-h|--help");
+
+    command.OnExecute(() =>
+    {
+        // Do the command's work here, or via another object/method  
+
+        Console.WriteLine("Executing render");
+
+        var input = inputSceneName.Value;
+        var w = width.Value();
+        var h = height.Value();
+        var angle = angleDeg.Value();
+        var g = gamma.Value();
+        var f = factor.Value();
+        var output = outputFilename.Value();
+        var outputPfm = pfmoutputFilename.Value();
+        var ssp = samplesPerPixel.Value();
+        var num = numOfRays.Value();
+        var max = maxDepth.Value();
+        var inState = initState.Value();
+        var inSeq = initSeq.Value();
+        var decFloat = declareFloat.Values;
+
+        try
+        {
+            Parameters.Parse_Command_Line_Render(w,h, angle, g, f, 
+                output, ssp, inSeq, inState, max, outputPfm, decFloat, num, input);
+            
+            Console.WriteLine("Parameters: \n" 
+                              + $"Width: {Parameters.Width} \n" 
+                              + $"Height: {Parameters.Height} \n"
+                              + $"Angle_Deg: {Parameters.AngleDeg} \n" 
+                              + $"Gamma: {Parameters.Gamma} \n"
+                              + $"A: {Parameters.Factor} \n" 
+                              + $"Orthogonal: {Parameters.Orthogonal} \n" 
+                              + $"Samples per side: {Parameters.SamplesPerSide} \n"
+                              + $"Init State: {Parameters.InitState} \n"
+                              + $"Init Seq: {Parameters.InitSeq} \n"
+                              + $"Number of rays: {Parameters.NumOfRays} \n"
+                              + $"Max depth: {Parameters.MaxDepth} \n"
+            );
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        var scene = new Scene();
+
+        using (Stream fileStream = File.OpenRead(Parameters.InputSceneName))
+        {
+            try
+            {
+                scene = Scene.ParseScene(new InputStream(fileStream, Parameters.InputSceneName), 
+                    Parameters.DeclareFloat);
+            }
+            catch (GrammarErrorException e)
+            {
+                var loc = e.Location;
+                Console.WriteLine($"{loc.FileName}:{loc.LineNum}:{loc.ColumnNum}: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        try
+        {
+            Console.WriteLine($"Generating a {Parameters.Width}x{Parameters.Height} image");
+            var image = new HdrImage(Parameters.Width, Parameters.Height);
+            
+            Console.WriteLine($"Aspect ratio: {((PerspectiveCamera) scene.Camera!).AspectRatio}");
+            Console.WriteLine($"Distance: {((PerspectiveCamera) scene.Camera!).Distance}");
+            
+            Console.WriteLine($"SkyMaterial: { ((UniformPigment) scene.Materials["skyMaterial"].EmittedRadiance).C.ToString()}");
+            var tracer = new ImageTracer(image, scene.Camera!, Parameters.SamplesPerSide);
+            
+            // Rendering
+            var alg = algorithm.Value() ?? "PATHTRACING";
+            var upperAlg = alg.ToUpper();
+            Solver renderer;
+            switch (upperAlg)
+            {
+                case "ONOFF":
+                    renderer = new OnOffTracing(scene.Wd);
+                    Console.WriteLine("Using on/off renderer\n");
+                    break;
+                case "FLAT":
+                    renderer = new FlatTracing(scene.Wd);
+                    Console.WriteLine("Using flat renderer\n");
+                    break;
+                case "PATHTRACING":
+                    renderer = new PathTracing(scene.Wd, pcg: new Pcg(Parameters.InitState, Parameters.InitSeq), maxDepth: Parameters.MaxDepth, numOfRays: Parameters.NumOfRays);
+                    Console.WriteLine("Using path tracing\n");
+                    break;
+                default:
+                    throw new RuntimeException($"\nInvalid renderer {algorithm}. Possible renderers are:" +
+                                               "\n - onoff \n - flat \n - pathtracing \n");
+            }
+            
+            tracer.Fire_All_Rays(renderer);
+        
+            // Save pfm file
+            using FileStream outputpfm = File.OpenWrite(Parameters.PfmOutputFilename);
+            image.Write_pfm(outputpfm);
+            Console.WriteLine($"\nHDR demo image written to {Parameters.PfmOutputFilename}");
+            
+            // Convert to Ldr
+            // Tone mapping
+            image.Luminosity_Norm(Parameters.Factor);
+            image.Clamp_Image();
+            
+            image.Write_Ldr_Image(Parameters.OutputFileName, Parameters.Format, Parameters.Gamma);
+            Console.WriteLine($"PNG demo image written to {Parameters.OutputFileName}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
+        return 0;
+    });
+
+});
+
+
 // ===========================================================================
 // === END === END === END === END === END === END === END === END === END ==
 // ===========================================================================

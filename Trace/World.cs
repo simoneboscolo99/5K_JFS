@@ -11,14 +11,14 @@ public class World
     /// <summary>
     /// 
     /// </summary>
-    List<Shape> Wd;
+    public List<Shape> World1;
 
     /// <summary>
     /// 
     /// </summary>
     public World()
     {
-        Wd = new List<Shape>();
+        World1 = new List<Shape>();
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class World
     /// <param name="shape"></param>
     public void Add(Shape shape)
     {
-        Wd.Add(shape);
+        World1.Add(shape);
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class World
     public HitRecord? Ray_Intersection(Ray ray)
     {
         HitRecord? closest = null;
-        foreach (var v in Wd)
+        foreach (var v in World1)
         {
             var intersection = v.Ray_Intersection(ray);
             if (intersection == null) continue;

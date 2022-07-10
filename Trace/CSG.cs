@@ -9,12 +9,12 @@ public class CsgUnion : Shape
     /// <summary>
     /// The first shape.
     /// </summary>
-    private Shape S1;
+    public Shape S1;
 
     /// <summary>
     /// The second shape.
     /// </summary>
-    private Shape S2;
+    public Shape S2;
 
     /// <summary>
     /// CsgUnion constructor. Initialize a new instance of the <see cref="CsgUnion"/> class, potentially associating a transformation to it.
@@ -195,12 +195,12 @@ public class CsgIntersection : Shape
     /// <summary>
     /// The first shape.
     /// </summary>
-    private Shape S1;
+    public Shape S1;
 
     /// <summary>
     /// The second shape.
     /// </summary>
-    private Shape S2;
+    public Shape S2;
 
     /// <summary>
     /// CsgIntersection constructor. Initialize a new instance of the <see cref="CsgIntersection"/> class, potentially associating a transformation to it.

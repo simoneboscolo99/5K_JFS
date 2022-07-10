@@ -2,13 +2,32 @@ using System.Numerics;
 
 namespace Trace;
 
+/// <summary>
+/// 
+/// </summary>
 public struct Transformation
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public Matrix4x4 M; //= new Matrix4x4(); 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public Matrix4x4 InvM; // = new Matrix4x4();
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public static Transformation Identity() => new(Matrix4x4.Identity, Matrix4x4.Identity);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="m"></param>
+    /// <param name="invM"></param>
     public Transformation(Matrix4x4 m, Matrix4x4 invM)
     {
         M = m;
@@ -23,15 +42,14 @@ public struct Transformation
     public static Transformation Scale(Vec v)
         => new(Matrix4x4.CreateScale(v.X, v.Y, v.Z), Matrix4x4.CreateScale(1 / v.X, 1 / v.Y, 1 / v.Z));
 
-    // ANTICLOCKWISE ROTATION!!!!!!!!!!
-    
     /// <summary>
     /// 
     /// </summary> Rotation around X ccw
     /// <param name="angleDeg">degree</param>
     /// <returns></returns>
     public static Transformation Rotation_X(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg))),
+            Matrix4x4.CreateRotationX(Functions.ToRadians(angleDeg)));
 
     /// <summary>
     /// 
@@ -39,7 +57,8 @@ public struct Transformation
     /// <param name="angleDeg">degree</param>
     /// <returns></returns>
     public static Transformation Rotation_Y(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg))),
+            Matrix4x4.CreateRotationY(Functions.ToRadians(angleDeg)));
 
     /// <summary>
     /// 
@@ -47,9 +66,13 @@ public struct Transformation
     /// <param name="angleDeg">degree</param>
     /// <returns></returns>
     public static Transformation Rotation_Z(float angleDeg)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))), Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg))),
+            Matrix4x4.CreateRotationZ(Functions.ToRadians(angleDeg)));
 
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public bool Is_Consistent()
     {
         var I = Matrix4x4.Multiply(M, InvM);
@@ -62,7 +85,8 @@ public struct Transformation
     /// <param name="v">Vec(X,Y,Z)</param>
     /// <returns></returns>
     public static Transformation Translation(Vec v)
-        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)), Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
+        => new Transformation(Matrix4x4.Transpose(Matrix4x4.CreateTranslation(v.X, v.Y, v.Z)),
+            Matrix4x4.Transpose(Matrix4x4.CreateTranslation(-v.X, -v.Y, -v.Z)));
 
     /// <summary>
     /// Inverse
@@ -70,9 +94,21 @@ public struct Transformation
     public Transformation Inverse
         => new(InvM, M);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public static Transformation operator *(Transformation a, Transformation b)
         => new(Matrix4x4.Multiply(a.M, b.M), Matrix4x4.Multiply(b.InvM, a.InvM));
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
     public static Point operator *(Transformation a, Point p)
     {
         var newp = new Point(p.X * a.M.M11 + p.Y * a.M.M12 + p.Z * a.M.M13 + a.M.M14,
@@ -88,6 +124,12 @@ public struct Transformation
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="v"></param>
+    /// <returns></returns>
     public static Vec operator *(Transformation a, Vec v)
     {
         var newVec = new Vec(v.X * a.M.M11 + v.Y * a.M.M12 + v.Z * a.M.M13,
@@ -96,6 +138,12 @@ public struct Transformation
         return newVec;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
     public static Normal operator *(Transformation a, Normal n)
     {
         var c = new Normal(n.X * a.InvM.M11 + n.Y * a.InvM.M21 + n.Z * a.InvM.M31,
@@ -104,16 +152,31 @@ public struct Transformation
         return c;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="ray"></param>
+    /// <returns></returns>
     public static Ray operator *(Transformation a, Ray ray)
         => new Ray(a * ray.Origin, a * ray.Dir);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="T"></param>
+    /// <returns></returns>
     public bool Is_Close(Transformation T)
         => Functions.Are_Matrices_close(M, T.M) && Functions.Are_Matrices_close(InvM, T.InvM);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public Transformation Clone()
     {
         // ReSharper disable once HeapView.BoxingAllocation
-        return ((Transformation)MemberwiseClone());
+        return ((Transformation) MemberwiseClone());
 
     }
 }

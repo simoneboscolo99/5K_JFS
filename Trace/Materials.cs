@@ -98,8 +98,8 @@ public class ImagePigment : Pigment
     See https://en.wikipedia.org/wiki/Bilinear_interpolation */ //finita brdf lo faccio
     return Img.Get_Pixel(col, row);
   }
-  
 }
+
 
 /// <summary>
 /// An abstract class representing a Bidirectional Reflectance Distribution Function
@@ -201,3 +201,4 @@ public class Material
     EmittedRadiance = emittedRadiance ?? new UniformPigment(Color.Black);
   }
 }
+
