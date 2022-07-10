@@ -1,10 +1,14 @@
 # Tutorial input scene file
 
-In this file we present the different elements that can be inserted in the input file that describes the scene. At the end of this file you will be able to understand the examples (which you can find here), the images of which are shown in the readme gallery, and to build your own images.
+(instruction)
+
+In this file we present the different elements that can be inserted in the input file that describes the scene. At the end of this file you will be able to understand the examples (which you can find here), the images of which are shown in the readme gallery, and to build your own images. 
+
+All lines starting with the symbol `#` are considered comments, hence they are skipped by the compiler.
 
 ## Materials
 
-(color of objects)
+A material, which characterize the and the emission of an object, is declared in the following way: 
 
 `material name = (Brdf(Pigment), Pigment)`
 
@@ -48,13 +52,15 @@ CSG
 
 `translation(vector)`
 
-`rotationX(value)`
+`rotationX(angle)`
 
-analogous for `rotationY` and `rotationZ`. Transformations can be combined via a `*`. Pay attention to the order, since some trasformations are not commutative. If you don't need any transformation, just write the word 'identity'.
+analogous for `rotationY` and `rotationZ`. Be careful: the angle must be specified in degrees, not radians!
+
+Transformations can be combined via the `*` symbol. Pay attention to the order, since some trasformations are not commutative. If you don't need any transformation, just write the word 'identity'.
 
 example: 
-  rotationX(35.2)     or similarly      float angle(35.2) 
-                                        rotationX(angle)
+  *rotationX(35.2)*     or similarly      *float angle(35.2)* 
+                                        *rotationX(angle)*
 
 ## Cameras
 
@@ -62,5 +68,6 @@ example:
 
 where type can be one of this two words: perspective or orthogonal. Distance is a float number representing the distance between the obersver and the screen.
 
-example: camera(perspective, translation([-1, 0, 1]), 1.78, 1) where 1.78 is the number corresponding to the aspect ratio 16:9
-example: camera(orthogonal, rotationY(30) * translation([-4, 0, 0]), 1, 1)
+example: *camera(perspective, translation([-1, 0, 1]), 1.78, 1)* where 1.78 is the number corresponding to the aspect ratio 16:9
+
+example: *camera(orthogonal, rotationY(30) * translation([-4, 0, 0]), 1, 1)*
