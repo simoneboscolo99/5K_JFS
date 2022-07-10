@@ -21,7 +21,7 @@ The contibutors to the project are [Simone Boscolo][2], [Gabriele Crespi][3] and
     - [Demo mode](#demo-mode)
     - [Convert mode](#convert-mode)
 - [Examples](#examples)
-- [Gallery](#galley)
+- [Gallery](#gallery)
 - [History](#history)
 - [License](#license)
 
@@ -30,6 +30,8 @@ The contibutors to the project are [Simone Boscolo][2], [Gabriele Crespi][3] and
 ## Requirements
 
 5K JFS requires [.NET 6.0.x](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to run. the library does not work with lower versions.
+
+[ImageSharp](https://www.nuget.org/packages/SixLabors.ImageSharp/2.1.1), [CommandLineUtils](https://www.nuget.org/packages/Microsoft.Extensions.CommandLineUtils), [NetCore.Platforms](https://www.nuget.org/packages/Microsoft.NETCore.Platforms/7.0.0-preview.3.22175.4) and [ShellProgressBar](https://www.nuget.org/packages/ShellProgressBar/). Don't worry, they will be installed automatically when the repository is downloaded
 
 is available for Windows, Linux and MacOS.
 
