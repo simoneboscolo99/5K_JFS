@@ -6,21 +6,23 @@ In this file we present the different elements that can be inserted in the input
 
 (color of objects)
 
-`material 'name' = ('Brdf'('Pigment'), 'Pigment')`
+`material name = (Brdf(Pigment), Pigment)`
+
+name is a string that identifies the material. 
 
 the second pigment is the emitted radiance.
 
 Brdf can be diffuse or specular. Pigment types: uniform, checkered and image
 
-`'color' = <'R', 'G', 'B'>`
+`color = <R, G, B>`
 
 where R (red color), G (green color) and B (blue color) are float numbers from 0 to infinity. For a correct execution of the image, we recommend to use values from 0 to 1 for the three color components.
 
-`uniform('color')`
+`uniform(color)`
 
-`checkered('color1', 'color2', 'numberOfSteps')`
+`checkered(color1, color2, numberOfSteps)`
 
-`image('filename')`
+`image(filename)`
 
 where the file must be in pfm format. Be careful: if the file of the image is not in the directory where you are executing the code, you must specify the path of the file.
 
@@ -32,7 +34,7 @@ where the file must be in pfm format. Be careful: if the file of the image is no
 
 materialName has to be already define above, I cannot directly define a material here
 
-**transformation = {scaling, translation, rotationX, rotationY, rotationZ}**
+**transformation = {scaling, translation, rotationX, rotationY, rotationZ, identity}**
 
 CSG
 
@@ -40,21 +42,25 @@ CSG
 
 **CSGOperation = {union, difference, intersection}**
 
-`scaling('vector')`
+`scaling(vector)`
 
-`translation('vector')`
+`vector = [X, Y, Z]`
 
-`rotationX('value')`
+`translation(vector)`
 
-analogous for `rotationY` and `rotationZ`
+`rotationX(value)`
 
-example: rotationX(35.2) or similarly float angle(35.2) rotationX(angle)
+analogous for `rotationY` and `rotationZ`. Transformations can be combined via a `*`. Pay attention to the order, since some trasformations are not commutative. If you don't need any transformation, just write the word 'identity'.
+
+example: 
+  rotationX(35.2)     or similarly      float angle(35.2) 
+                                        rotationX(angle)
 
 ## Cameras
 
 `camera(type, transformation, aspectRatio, distance)`
 
-where type can be one of this two words: perspective or orthogonal
+where type can be one of this two words: perspective or orthogonal. Distance is a float number representing the distance between the obersver and the screen.
 
 example: camera(perspective, translation([-1, 0, 1]), 1.78, 1) where 1.78 is the number corresponding to the aspect ratio 16:9
 example: camera(orthogonal, rotationY(30) * translation([-4, 0, 0]), 1, 1)
