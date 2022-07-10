@@ -6,7 +6,8 @@
 ![release](https://img.shields.io/github/v/release/simoneboscolo99/5K_JFS?color=brightgreen)
 ![Top Language](https://img.shields.io/github/languages/top/simoneboscolo99/5K_JFS)
 ![OS](https://img.shields.io/badge/OS-Linux%20%7C%20MacOS%20%7C%20Windows-yellow)
-![Shield](https://img.shields.io/badge/OS-Linux%20%7C%20MacOS%20%7C%20Windows-yellow)
+![Shield](https://img.shields.io/badge/build-passing-brightgreen.svg)
+
 
 Welcome to 5K JFS, the future of pictures. This is a simple raytracer, written in C# and developed for the course _Numerical Methods for Photorealistic Image Generation_ held by professor [Maurizio Tomasi][1] at the University of Milan, Physics Department (Academic Year 2021-2022).
 
