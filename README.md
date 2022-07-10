@@ -40,6 +40,8 @@ Alternatively, you can download the latest version from the [releases page](http
 
 Describe somewhere the syntax used in scene files
 
+To get command-line help, simply run
+
     dotnet run
 
 ### Render mode
