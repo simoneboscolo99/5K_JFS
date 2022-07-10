@@ -53,12 +53,13 @@ To get command-line help, simply run
 
 ### Render mode
 
+You can create your own images throug this mode: it reads an external file describing the scene to render. Here you can easily learn how to write such a file. In order to use the render mode, you can go to the 5K_JFS/5K_JFS directory and run the following command
+
     dotnet run -- render [arguments] [options]
     
-some words
+The only argument for the render command is the path of the input file describing the scene. The user can find here some examples of input files. To view all the possible options just run
     
     dotnet run -- render -?
-    
     
 Available shapes are:
 - Spheres
@@ -82,7 +83,7 @@ some words
 
     dotnet run -- convert [options]
     
-some words
+To view all the possible options run
     
     dotnet run -- convert -?
     
