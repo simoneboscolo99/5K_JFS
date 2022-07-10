@@ -43,11 +43,13 @@ In order to use the library you can clone this repository through the command
 
     git clone git@github.com:simoneboscolo99/5K_JFS.git
     
-Alternatively, you can download the latest version from the [releases page](https://github.com/simoneboscolo99/5K_JFS/releases).
+Alternatively, you can download the latest version of the code from the [releases page](https://github.com/simoneboscolo99/5K_JFS/releases).
 
-Describe somewhere the syntax used in scene files
+To check that the code works as expected, you can run the suite of tests using the following command:
 
-To get command-line help, simply run
+    dotnet test
+
+To get command-line help for the usage, simply run
 
     dotnet run
 
