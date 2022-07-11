@@ -19,7 +19,7 @@ A material characterizes the color of an object and is declared in the following
 ```diff
 - material name = (Brdf(Pigment), Pigment)
 ```
-where `name` is a just the name assigned to the material. Then we must specify the Brdf type, which in turn needs pigment type. Finally, we need a second pigment to specify the emitted radiance.
+where `name` is a just the name assigned to the material. Then we must specify the Brdf type, which in turn needs a pigment. Finally, we need a second pigment to specify the emitted radiance.
 
 **BRDF types: diffuse, specular**
 
@@ -34,6 +34,7 @@ In order to create a Pigment, we need to know how to define a color. Colors are 
 where `R` (red color), `G` (green color) and `B` (blue color) are float numbers from 0 to infinity. Example: `<0.9, 0.5, 0.1>` <br/>
 For a correct execution of the image, we recommend to use values from 0 to 1 for the three color components.
 
+We can now report how the three different pigments are defined, giving, as always, some examples
 ```diff
 + uniform(color)
 ```
@@ -41,11 +42,10 @@ Example: `uniform(<0.9, 0.5, 0.1>)`
 ```diff
 + checkered(color1, color2, numOfSteps)
 ```
-where `numOfSteps` is the number of interations of the checkered pattern. Example: `checkered(<0.9, 0.5, 0.1>, <0.1, 0.9, 0.5>, 5)`
+where `numOfSteps` is the number of interations (integer) of the checkered pattern. <br/> Example: `checkered(<0.9, 0.5, 0.1>, <0.1, 0.9, 0.5>, 5)`
 ```diff
 + image(filename)
 ```
-
 where the file must be in pfm format. Example: `image("texture.pfm")`
 
 &emsp; ⚠️ &nbsp; **If the file of the image is not in the directory where you are executing the code, you must specify the path of the file** &nbsp; ⚠️
@@ -55,23 +55,25 @@ We thus have all the elements to define materials. We report two examples:
 `material redMaterial(diffuse(uniform(<1, 0, 0>)), uniform(<0, 0, 0>))` <br/>
 `material lightMaterial(diffuse(uniform(<1, 1, 1>)), uniform(<1, 1, 1>))`
 
-If the second pigment is uniform with color `<0, 0, 0>` (black), the object does not radiate light.
+If the second pigment is uniform with color `<0, 0, 0>` (black), the object does not radiate light. Once you have created a material, you can refer to it using its name.
 
 ## Shapes
 
 The shapes are the objects in our world. We can declare a shape in the following way:
-
 ```diff
 - shapeType = (materialName, transformation) 
 ```
-for regular shape, except for boxes
+. This is the way to proceed for the shapes: `Sphere`, `Cylinder`, `Disk`, `Plane`. 
 
+&emsp; ⚠️ &nbsp; **`materialName` has to be already define above, I cannot directly define a material here** &nbsp; ⚠️
+
+The last shape left, `Box`, requires a slightly different definition:
 ```diff
-- box = (pointMin, pointMax, materialName, transformation)
+- box = (minPoin, maxPoint, materialName, transformation)
 ```
+where `minPoint` and `maxPoint` are respectively
 
 
-materialName has to be already define above, I cannot directly define a material here
 
 **Transformation types:  scaling, translation, rotationX, rotationY, rotationZ, identity**
 
