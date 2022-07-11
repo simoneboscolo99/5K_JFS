@@ -94,6 +94,10 @@ To view all the possible options run
 
 ## Gallery
 
+ <p float="center">
+  <img src="./5K_JFS/Environment.png" height="300" />
+</p>
+
 ## Contributing
 
 To contribute to 5K JFS, clone this repo locally and commit your code on a separate branch. Please write unit tests for your code and then open a *pull request*. *issue*
