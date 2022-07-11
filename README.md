@@ -50,7 +50,7 @@ To check that the code works as expected, you can run the suite of tests using t
 
     dotnet test
 
-To get command-line help for the usage, simply run
+To get command line help for the usage, simply run
 
     dotnet run
 
@@ -78,9 +78,12 @@ some words
 ### Convert mode 
 🔄
 
-    dotnet run -- convert [options]
+If you are looking for a way to convert a `.pfm` file into an LDR file this is the mode for you. Just run the command
+
+    dotnet run -- convert -i <INPUT_FILENAME> -o <OUTPUT_FILENAME>  
     
-To view all the possible options run
+Available formats of the output file are: `.png`, `.jpg`, `.gif`, `.bmp` or `.pbm`. <br/>
+To view all the possible options you can run
     
     dotnet run -- convert -?
     
@@ -96,7 +99,7 @@ To view all the possible options run
 
 ## Contributing
 
-To contribute to 5K JFS, clone this repo locally and commit your code on a separate branch. Please write unit tests for your code and then open a *pull request*. *issue*
+To contribute to 5K JFS, clone this repo locally and commit your code on a separate branch. Please write unit tests for your code and then open a *pull request*. If you find any bug in our code, let us know by opening an *issue*. We will be grateful to any contribution!
 
 ## History
 See the file [CHANGELOG.md](./CHANGELOG.md).
