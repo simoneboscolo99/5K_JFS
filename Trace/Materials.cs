@@ -17,7 +17,7 @@ public abstract class Pigment
 }
 
 /// <summary>
-/// A uniform pigment
+/// A uniform pigment. <br/>
 /// This is the most boring pigment: a uniform hue over the whole surface.
 /// </summary>
 public class UniformPigment : Pigment
@@ -38,7 +38,7 @@ public class UniformPigment : Pigment
 
 //Let's play chess
 /// <summary>
-/// A checkered pigment
+/// A checkered pigment. <br/>
 /// The number of rows/columns in the checkered pattern is tunable, but you cannot have a different number of
 /// repetitions along the u/v directions.
 /// </summary>
@@ -69,7 +69,7 @@ public class CheckeredPigment : Pigment
 }
 
 /// <summary>
-/// A textured pigment
+/// A textured pigment. <br/>
 /// The texture is given through a PFM image.
 /// </summary>
 public class ImagePigment : Pigment

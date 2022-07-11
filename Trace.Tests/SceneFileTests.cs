@@ -145,7 +145,7 @@ diffuse(image(""my file.pfm"")),
     {
         var line = Encoding.ASCII.GetBytes(@"
             float clock(150)
-                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
+                camera(perspective, rotationZ(30) * translation([-4, 0, 1]), 1.0, 2.0)
                 material sky_material(
                  diffuse(uniform(<0, 0, 0>)),
                  uniform(<0.7, 0.5, 1.0>)
@@ -163,8 +163,8 @@ diffuse(image(""my file.pfm"")),
                  specular(uniform(<0.5, 0.5, 0.5>)),
                  uniform(<0, 0, 0>)
                 )
-    
-                plane (sky_material, translation([0.0, 0, 100.000]) * rotation_y(clock))
+   
+                plane (sky_material, translation([0.0, 0, 100.000]) * rotationY(clock))
                 plane (ground_material, identity)
                 # hi
                 sphere(sphere_material, translation([0.0000, 0, 1.00]))
@@ -245,7 +245,7 @@ diffuse(image(""my file.pfm"")),
     {
         // Check that defining two cameras in the same file raises a GrammarError
         var line = Encoding.ASCII.GetBytes(@"
-            camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 1.0)
+            camera(perspective, rotationZ(30) * translation([-4, 0, 1]), 1.0, 1.0)
             camera(orthogonal, identity, 1.0, 1.0)
         ");
         
@@ -260,7 +260,7 @@ diffuse(image(""my file.pfm"")),
     public void TestParserCsg()
     {
         var line = Encoding.ASCII.GetBytes(@"
-                camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
+                camera(perspective, rotationZ(30) * translation([-4, 0, 1]), 1.0, 2.0)
                 material sky_material(
                  diffuse(uniform(<0, 0, 0>)),
                  uniform(<0.7, 0.5, 1.0>)
@@ -285,8 +285,8 @@ diffuse(image(""my file.pfm"")),
         Assert.IsType<Sphere>(((CsgIntersection)((CsgUnion) scene.Wd.World1[0]).S1).S1);
         Assert.IsType<Cylinder>(((CsgIntersection)((CsgUnion) scene.Wd.World1[0]).S1).S2);
         Assert.IsType<Box>(((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1);
-        Assert.True(((Box) (((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1)).Bounds[0].Is_Close(new Point(1.0f, 1.0f, 1.0f)));
-        Assert.True(((Box) (((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1)).Bounds[1].Is_Close(new Point(-1.0f, -1.0f, -1.0f)));
+        Assert.True(((Box) (((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1)).Bounds[0].Is_Close(new Point(-1.0f, -1.0f, -1.0f)));
+        Assert.True(((Box) (((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S1)).Bounds[1].Is_Close(new Point(1.0f, 1.0f, 1.0f)));
         Assert.IsType<Disk>(((CsgDifference)((CsgUnion) scene.Wd.World1[0]).S2).S2);
     }
 }

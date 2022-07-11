@@ -644,8 +644,8 @@ public class Box : Shape
     /// <param name="m"> The material of the box. </param>
     public Box(Point? max = null, Point? min = null, Transformation? T = null, Material? m = null) : base(T, m)
     {
-        Bounds[0] = max ?? new Point(-1.0f, -1.0f, -1.0f);
-        Bounds[1] = min ?? new Point(1.0f, 1.0f, 1.0f);
+        Bounds[0] = min ?? new Point(-1.0f, -1.0f, -1.0f);
+        Bounds[1] = max ?? new Point(1.0f, 1.0f, 1.0f);
     }
 
     /// <summary>

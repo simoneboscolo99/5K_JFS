@@ -1,3 +1,5 @@
+# MATERIALS
+
 material skyMaterial(           
     diffuse(uniform(<0,0,0>)),  
     uniform(<0.9, 0.9, 0.5>)
@@ -16,11 +18,22 @@ material sphereMaterial(
     uniform(<0,0,0>)
 )
 
+material mirrorMaterial(
+    specular(uniform(<0.6, 0.2, 0.3>)),
+    uniform(<0,0,0>)
+)
+
+# SHAPES
+
 sphere(skyMaterial, scaling([200, 200, 200]) * translation([0, 0, 0.4]))
 
 sphere(sphereMaterial, translation([0, 0, 1]))
 
+sphere(mirrorMaterial, translation([1, 2.5, 0]))
+
 plane(groundMaterial, identity)
 
 
-camera(perspective, translation([-1, 0, 1]), 1.0, 1.0)
+# CAMERA
+
+camera(perspective, translation([-1, 0, 1]), 1.78, 1.0)

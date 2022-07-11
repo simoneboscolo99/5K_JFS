@@ -1,0 +1,11 @@
+# Scene's materials
+
+material mirrorMaterial(specular(uniform(<0.8,0.8,0.8>)), uniform(<0, 0, 0>)) 
+
+material skyMaterial(diffuse(uniform(<>)), uniform(<>))
+
+# Shapes
+
+# Camera
+camera(perspective, translation([-4, 0, 0]), 1, 1) 
+
