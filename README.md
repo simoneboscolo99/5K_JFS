@@ -15,19 +15,15 @@ The contibutors to the project are [Simone Boscolo][2], [Gabriele Crespi][3] and
 
 ## Table of Contents
 
-- [Features](#features)
 - [Requirements](#requirements)
 - [Usage](#usage)
     - [Render mode](#render-mode)
     - [Demo mode](#demo-mode)
     - [Convert mode](#convert-mode)
-- [Examples](#examples)
 - [Gallery](#gallery)
 - [Contributing](#contributing)
 - [History](#history)
 - [License](#license)
-
-## Features
 
 ## Requirements
 
@@ -89,13 +85,14 @@ To view all the possible options run
     
     dotnet run -- convert -?
     
-   
-## Examples
-
 ## Gallery
 
  <p float="center">
-  <img src="./5K_JFS/Environment.png" height="300" />
+  <img src="./5K_JFS/Images/demo.png" height="300" />
+</p>
+
+<p float="center">
+ <img src="./5K_JFS/Images/Cornell.png" height="300" />
 </p>
 
 ## Contributing
