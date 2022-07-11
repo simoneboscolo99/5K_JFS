@@ -1,4 +1,4 @@
-# Tutorial input scene file
+# Tutorial for the Input Scene File
 
 In this file we provide the necessary instructions to build the input file describing the scene. We advise you not to skip this tutorial! At the end of this file you will be able to understand [these](https://github.com/simoneboscolo99/5K_JFS/tree/master/5K_JFS/Examples) examples and to build your own images. 
 
@@ -19,9 +19,11 @@ A material characterizes the color of an object and is declared in the following
 ```diff
 - material name = (Brdf(Pigment), Pigment)
 ```
-where `name` is a just the name assigned to the material. Then we must specify the Brdf type, which in turn needs pigment type. Finally, we need a second pigment to specify the emitted radiance. If the second pigment is uniform with color <0, 0, 0> (black), the objetc does not radiate light.
+where `name` is a just the name assigned to the material. Then we must specify the Brdf type, which in turn needs pigment type. Finally, we need a second pigment to specify the emitted radiance.
 
-**Brdf types: diffuse, specular**
+**BRDF types: diffuse, specular**
+
+Just substitute one of the two BRDF types to the above `Brdf`.
 
 **Pigment types: uniform, checkered, image**
 
@@ -29,7 +31,8 @@ In order to create a Pigment, we need to know how to define a color. Colors are 
 ```diff
 + color = <R, G, B>
 ```
-where R (red color), G (green color) and B (blue color) are float numbers from 0 to infinity. For a correct execution of the image, we recommend to use values from 0 to 1 for the three color components.
+where `R` (red color), `G` (green color) and `B` (blue color) are float numbers from 0 to infinity. Example: `<0.9, 0.5, 0.1>` <br/>
+For a correct execution of the image, we recommend to use values from 0 to 1 for the three color components.
 
 ```diff
 + uniform(color)
@@ -43,13 +46,16 @@ where `numOfSteps` is the number of interations of the checkered pattern. Exampl
 + image(filename)
 ```
 
-where the file must be in pfm format. Example: `image("texture.pfm")` <br/> 
-Be careful: if the file of the image is not in the directory where you are executing the code, you must specify the path of the file.
+where the file must be in pfm format. Example: `image("texture.pfm")`
+
+&emsp; ⚠️ &nbsp; **If the file of the image is not in the directory where you are executing the code, you must specify the path of the file** &nbsp; ⚠️
 
 We thus have all the elements to define materials. We report two examples:
 
 `material redMaterial(diffuse(uniform(<1, 0, 0>)), uniform(<0, 0, 0>))` <br/>
 `material lightMaterial(diffuse(uniform(<1, 1, 1>)), uniform(<1, 1, 1>))`
+
+If the second pigment is uniform with color `<0, 0, 0>` (black), the object does not radiate light.
 
 ## Shapes
 
@@ -73,6 +79,7 @@ In order to create a transformation, we need to know how to define a vector. Vec
 ```diff
 + vector = [X, Y, Z]
 ```
+where `X`, `Y` and `Z` are float numbers. Example: `[10.2, -2.7, 5.4]`
 
 ```diff
 + scaling(vector)
@@ -86,8 +93,11 @@ In order to create a transformation, we need to know how to define a vector. Vec
 ```diff
 + rotationX(angle)
 ```
+Similarly to `RotationX` we can obtain `rotationY` and `rotationZ`. 
 
-analogous for `rotationY` and `rotationZ`. Be careful: the angle must be specified in degrees, not radians! Example: `rotationX(35.2)` or similarly `float angle(35.2) rotationX(angle)`
+&emsp; ⚠️ &nbsp; **The angle must be specified in degrees, not radians!** &nbsp; ⚠️
+
+Example: `rotationX(35.2)` or similarly `float angle(35.2) rotationX(angle)`
 
 Transformations can be combined via the `*` symbol. Example: `rotationY(30) * translation([-4, 0, 0])` Pay attention to the order, since some trasformations are not commutative. If you don't need any transformation, just write the word 'identity'.
 
@@ -100,7 +110,11 @@ where **CSGOperation: union, difference, intersection**
 
 ## Cameras
 
-The camera describes the position of the obeserver and the direction in which he observes. Be careful: for each scene you must define one and only one camera! We can declare a camera in the following way:
+The camera describes the position of the obeserver and the direction in which he observes. 
+
+&emsp; ⚠️ &nbsp; **For each scene you must define one and only one camera!** &nbsp; ⚠️
+
+We can declare a camera in the following way:
 
 ```diff
 - camera(type, transformation, aspectRatio, distance)
