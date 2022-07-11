@@ -2,8 +2,8 @@
 
 # 5K JFS
 
-[![license](https://img.shields.io/github/license/simoneboscolo99/5K_JFS?color=red)](./LICENSE)
-![release](https://img.shields.io/github/v/release/simoneboscolo99/5K_JFS?color=brightgreen)
+[![license](https://img.shields.io/github/license/simoneboscolo99/5K_JFS?color=orange)](./LICENSE)
+![release](https://img.shields.io/github/v/release/simoneboscolo99/5K_JFS?color=red)
 ![Top Language](https://img.shields.io/github/languages/top/simoneboscolo99/5K_JFS)
 ![OS](https://img.shields.io/badge/OS-Linux%20%7C%20MacOS%20%7C%20Windows-yellow)
 ![Shield](https://img.shields.io/badge/build-passing-brightgreen.svg)
@@ -51,7 +51,7 @@ To get command-line help for the usage, simply run
 
 ### Render mode
 
-You can create your own images throug this mode: it reads an external file describing the scene to render. Here you can easily learn how to write such a file. In order to use the render mode, you can go to the 5K_JFS/5K_JFS directory and run the following command
+You can create your own images throug this mode: it reads an external file describing the scene to render. [Here][5] you can easily learn how to write such a file. In order to use the render mode, you can go to the 5K_JFS/5K_JFS directory and run the following command
 
     dotnet run -- render [arguments] [options]
     
@@ -59,15 +59,8 @@ The only argument for the render command is the path of the input file describin
     
     dotnet run -- render -?
     
-Available shapes are:
-- Spheres
-- Planes
-- Boxes
-- Disks
-- Open cylinders
-- Constructive Solid Geometry (CSG): union, difference and intersection of any pair of shapes mentioned above
-
     
+All available shapes are explaind in details.    
 
 ### Demo mode
 
@@ -77,7 +70,8 @@ some words
     
     dotnet run -- demo -?
 
-### Convert mode 🔄
+### Convert mode 
+🔄
 
     dotnet run -- convert [options]
     
@@ -109,3 +103,4 @@ The code is released under GNU General Public License. See the file [LICENSE](./
 [2]: https://github.com/simoneboscolo99
 [3]: https://github.com/GabrieleCrespi
 [4]: https://github.com/MatteoMacchini
+[5]: https://github.com/simoneboscolo99/5K_JFS/blob/readme/5K_JFS/Examples/Tutorial.md
