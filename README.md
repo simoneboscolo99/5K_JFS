@@ -56,29 +56,35 @@ To get command line help for the usage, simply run
 
 ### Render mode 🌄
 
-You can create your own images throug this mode: it reads an input file describing the scene to render and then creates the image, using ray tracing. [Here][5] you can easily learn how to write an input file. <br/>
-In order to use the render mode, you can go to the `5K_JFS/5K_JFS` directory and run the following command
+You can create your own images throug this mode: it reads an input file describing the scene to render and creates the image. [Here][5] you can easily learn how to write an input file. <br/>
+In order to use the render mode, you must go to the `5K_JFS/5K_JFS` directory and run the following command
 
     dotnet run -- render [arguments] [options]
     
-The only required argument for the render command is the path of the input file describing the scene. [Here](https://github.com/simoneboscolo99/5K_JFS/tree/readme/5K_JFS/Examples) you can take a look at some examples  of input files. <br/>
-Feel free to explore all the possible options and to use the most suitable for you
+The only required argument for the render command is the path of the input file. [Here](https://github.com/simoneboscolo99/5K_JFS/tree/readme/5K_JFS/Examples) you can take a look at some examples of input files. <br/>
+Feel free to explore all the possible options and to use the most suitable for you. To view all the possible options you can run
     
     dotnet run -- render -?
     
-All available shapes are explaind in details in the input file [tutorial][5].    
+We note the possibility to declare float variables (more than 1): if the input file already contains that variable, the latter will be overwritten with the value specified on the command line.
+
+All available shapes are explaind in details in the input file [tutorial][5]. 
+
+Beware that it will take a very long time to produce the image! 🕛🕒🕕🕘
 
 ### Demo mode 👿
 
-To run the application and visualize a simple image, use the following command
+Use this mode to create a simple image, quickly checking that everything is still working. For example, running the following command
 
     dotnet run -- demo [options]
    
-To view all the possible options you can run
+the image ... will be generated. 
+
+To view all the possible options of the demo command you can run
     
     dotnet run -- demo -?
     
-It is also possible to vary the angle of the camera (option -a) in order to obtain an animation like the one shown. For further informations see this file. In order to create the animation [ffmpeg](https://ffmpeg.org) must be installed.
+[comment]: <> (This is a comment, it will not be includedIt is also possible to vary the angle of the camera (option -a) in order to obtain an animation like the one shown. For further informations see this file. In order to create the animation [ffmpeg](https://ffmpeg.org) must be installed.)
 
 ### Convert mode 🔄
 
