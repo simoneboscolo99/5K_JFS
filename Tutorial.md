@@ -17,13 +17,17 @@ Defining float variables is useful for particular transformations, as we will se
 
 A material characterizes the color of an object and is declared in the following way: 
 ```diff
-- material name = (Brdf(Pigment), Pigment)
+- material name = (Brdf, Pigment)
 ```
-where `name` is a just the name assigned to the material. Then we must specify the Brdf type, which in turn needs a pigment. Finally, we need a second pigment to specify the emitted radiance.
+where `name` is a just the name assigned to the material. Then we must specify the Brdf type, which in turn needs a pigment. Finally, we need a Pigment type to specify the emitted radiance.
 
 **BRDF types: diffuse, specular**
 
 Just substitute one of the two BRDF types to the above `Brdf`.
+
+```diff
++ Brdf(Pigment)
+```
 
 **Pigment types: uniform, checkered, image**
 
@@ -50,6 +54,11 @@ where the file must be in pfm format. Example: `image("texture.pfm")`
 
 &emsp; ⚠️ &nbsp; **If the file of the image is not in the directory where you are executing the code, you must specify the path of the file** &nbsp; ⚠️
 
+We can now examples of Brdf:
+
+`diffuse(image("texture.pfm"))` <br/>
+`specular(uniform(<0.9, 0.5, 0.1>))`
+
 We thus have all the elements to define materials. We report two examples:
 
 `material redMaterial(diffuse(uniform(<1, 0, 0>)), uniform(<0, 0, 0>))` <br/>
@@ -63,7 +72,7 @@ The shapes are the objects in our world. We can declare a shape in the following
 ```diff
 - shapeType = (materialName, transformation) 
 ```
-. This is the way to proceed for the shapes: `Sphere`, `Cylinder`, `Disk`, `Plane`. 
+So we must specify the name of the material and the transformation. This is the way to proceed for the shapes: `Sphere`, `Cylinder`, `Disk`, `Plane`. 
 
 &emsp; ⚠️ &nbsp; **`materialName` has to be already define above, I cannot directly define a material here** &nbsp; ⚠️
 
@@ -71,9 +80,11 @@ The last shape left, `Box`, requires a slightly different definition:
 ```diff
 - box = (minPoin, maxPoint, materialName, transformation)
 ```
-where `minPoint` and `maxPoint` are respectively
+where `minPoint` and `maxPoint` are 3D points representing respectively the minimum and maximum extent of each axis of the box.
 
+&emsp; ⚠️ &nbsp; **each component of `minPoint` must be smaller than the corresponding one in `maxPoint`** &nbsp; ⚠️
 
+We need to know the allowed transformations and how each transformation is declared
 
 **Transformation types:  scaling, translation, rotationX, rotationY, rotationZ, identity**
 
@@ -101,7 +112,14 @@ Similarly to `RotationX` we can obtain `rotationY` and `rotationZ`.
 
 Example: `rotationX(35.2)` or similarly `float angle(35.2) rotationX(angle)`
 
-Transformations can be combined via the `*` symbol. Example: `rotationY(30) * translation([-4, 0, 0])` Pay attention to the order, since some trasformations are not commutative. If you don't need any transformation, just write the word 'identity'.
+Transformations can be combined via the `*` symbol. Example: `rotationY(30) * translation([-4, 0, 0])` Pay attention to the order, since some trasformations are not commutative. If you don't need any transformation, just write the word 'identity'. <br/>
+The transformations are fundamental because they allow you to correctly place objects in the world. Moreover, you can zoom in, out or deform the shapes; for example, you can transform the sphere into an ellipsoid by scaling. We need to know the characteristics of the default shapes:
+
+- **Sphere** 🎱: it is centered at the origin and with unit radius.
+- **Plane** ⬜: xy plane, passing through the origin.
+- **Cylinder** 🎩: it is an **open** cylinder centered around the z axis and with unit radius. The z-coordinate range is 0 to 1.
+- **Disk** 💿: it is a circular disk of unit radius, parallel to the x and y axis and passing through the origin.
+- **Box** 🎁: it has faces parallel to the axes; the extent of each face is set in its definition, as we have seen above.
 
 We can construct more complicated shapes through the Constructive Solid Geometry (*CSG*) just doing the following:
 
@@ -112,7 +130,7 @@ where **CSGOperation: union, difference, intersection**
 
 ## Cameras
 
-The camera describes the position of the obeserver and the direction in which he observes. 
+The camera describes the position of the obeserver and the viewing direction. 
 
 &emsp; ⚠️ &nbsp; **For each scene you must define one and only one camera!** &nbsp; ⚠️
 
@@ -123,6 +141,8 @@ We can declare a camera in the following way:
 ```
 
 where `type` can be one of this two words: 'perspective' or 'orthogonal'. `distance` is a float number representing the distance between the obersver and the screen.
+
+**Type: perspective, orthogonal**
 
 Examples:
  
