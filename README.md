@@ -27,16 +27,16 @@ The contibutors to the project are [Simone Boscolo][2], [Gabriele Crespi][3] and
 
 ## Requirements
 
-5K JFS requires [.NET 6.0.x](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to run. the library does not work with lower versions.
+5K JFS requires [.NET 6.0.x](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) to run; older versions of .NET will not work. To develop our code the following external libraries have been used:
 
-- [ImageSharp](https://www.nuget.org/packages/SixLabors.ImageSharp/2.1.1)
--  [CommandLineUtils](https://www.nuget.org/packages/Microsoft.Extensions.CommandLineUtils) 
--  [NetCore.Platforms](https://www.nuget.org/packages/Microsoft.NETCore.Platforms/7.0.0-preview.3.22175.4) -
-- [ShellProgressBar](https://www.nuget.org/packages/ShellProgressBar/) 
+- [ImageSharp](https://www.nuget.org/packages/SixLabors.ImageSharp/2.1.1) to convert a pfm image into an LDR image
+- [CommandLineUtils](https://www.nuget.org/packages/Microsoft.Extensions.CommandLineUtils) to build the Comman Line Interface
+- [NetCore.Platforms](https://www.nuget.org/packages/Microsoft.NETCore.Platforms/7.0.0-preview.3.22175.4)
+- [ShellProgressBar](https://www.nuget.org/packages/ShellProgressBar/) to show a progress bar during while rendering
  
-Don't worry, they will be installed automatically when the repository is downloaded
+The user should not worry about them, since they will be installed automatically when the repository is downloaded.
 
-This library is available for Windows, Linux and MacOS.
+This library is available for Windows, Linux and MacOS systems.
 
 ## Usage
 
