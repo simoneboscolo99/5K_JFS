@@ -148,3 +148,8 @@ Examples:
  
  `camera(perspective, translation([-1, 0, 1]), 1.78, 1)` <sub> &emsp;   1.78 is the number corresponding to the aspect ratio 16:9 </sub> <br/>
 `camera(orthogonal, translation([-1, 0, 0]), 1.78, 1)`
+
+
+
+That's all you need to know! Now it's time to let your imagination run wild and create your first images! 💥
+
