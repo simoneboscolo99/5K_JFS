@@ -17,9 +17,9 @@ The contibutors to the project are [Simone Boscolo][2], [Gabriele Crespi][3] and
 
 - [Requirements](#requirements)
 - [Usage](#usage)
-    - [Render mode](#render-mode)
-    - [Demo mode](#demo-mode)
-    - [Convert mode](#convert-mode)
+    - [Render mode](#render-mode-)
+    - [Demo mode](#demo-mode-)
+    - [Convert mode](#convert-mode-)
 - [Gallery](#gallery)
 - [Contributing](#contributing)
 - [History](#history)
@@ -54,29 +54,33 @@ To get command line help for the usage, simply run
 
     dotnet run
 
-### Render mode
+### Render mode 🌄
 
-You can create your own images throug this mode: it reads an external file describing the scene to render. [Here][5] you can easily learn how to write such a file. In order to use the render mode, you can go to the 5K_JFS/5K_JFS directory and run the following command
+You can create your own images throug this mode: it reads an input file describing the scene to render and then creates the image, using ray tracing. [Here][5] you can easily learn how to write an input file. <br/>
+In order to use the render mode, you can go to the `5K_JFS/5K_JFS` directory and run the following command
 
     dotnet run -- render [arguments] [options]
     
-The only argument for the render command is the path of the input file describing the scene. The user can find here some examples of input files. To view all the possible options just run
+The only required argument for the render command is the path of the input file describing the scene. [Here](https://github.com/simoneboscolo99/5K_JFS/tree/readme/5K_JFS/Examples) you can take a look at some examples  of input files. <br/>
+Feel free to explore all the possible options and to use the most suitable for you
     
     dotnet run -- render -?
     
-    
-All available shapes are explaind in details.    
+All available shapes are explaind in details in the input file [tutorial][5].    
 
-### Demo mode
+### Demo mode 👿
+
+To run the application and visualize a simple image, use the following command
 
     dotnet run -- demo [options]
-    
-some words
+   
+To view all the possible options you can run
     
     dotnet run -- demo -?
+    
+It is also possible to vary the angle of the camera (option -a) in order to obtain an animation like the one shown. For further informations see this file. In order to create the animation [ffmpeg](https://ffmpeg.org) must be installed.
 
-### Convert mode 
-🔄
+### Convert mode 🔄
 
 If you are looking for a way to convert a `.pfm` file into an LDR file this is the mode for you. Just run the command
 
