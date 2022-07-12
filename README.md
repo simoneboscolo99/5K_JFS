@@ -3,7 +3,7 @@
 # 5K JFS
 
 [![license](https://img.shields.io/github/license/simoneboscolo99/5K_JFS?color=orange)](./LICENSE)
-![release](https://img.shields.io/github/v/release/simoneboscolo99/5K_JFS?color=red)
+![release](https://img.shields.io/badge/version-1.0.0-red)
 ![Top Language](https://img.shields.io/github/languages/top/simoneboscolo99/5K_JFS)
 ![OS](https://img.shields.io/badge/OS-Linux%20%7C%20MacOS%20%7C%20Windows-yellow)
 ![Shield](https://img.shields.io/badge/build-passing-brightgreen.svg)
