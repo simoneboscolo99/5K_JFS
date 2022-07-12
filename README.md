@@ -84,7 +84,15 @@ To view all the possible options of the demo command you can run
     
     dotnet run -- demo -?
     
-[comment]: <> (This is a comment, it will not be includedIt is also possible to vary the angle of the camera (option -a) in order to obtain an animation like the one shown. For further informations see this file. In order to create the animation [ffmpeg](https://ffmpeg.org) must be installed.)
+[//]: # (This may be the most platform independent comment. It is also possible to vary the angle of the camera) 
+
+[//]: # (option -a) 
+
+[//]: # (in order to obtain an animation like the one shown. For further informations see this file.) 
+
+[//]: # (In order to create the animation [ffmpeg]https://ffmpeg.org)  
+
+[//]: # (must be installed.)
 
 ### Convert mode 🔄
 
