@@ -12,9 +12,8 @@ public interface ICamera
     Transformation T { get; set; }
     
     /// <summary>
-    /// Fire a ray through the camera's screen, Fire a ray that goes through the screen at the position (u, v). The exact meaning
-    /// of these coordinates depend on the projection used by the camera. coordinates (u,v) represent the
-    /// point of the screen were the ray passes through
+    /// Fire a ray through the camera's screen. Fire a ray that goes through the screen at the position (u, v). The exact meaning
+    /// of these coordinates depend on the projection used by the camera. <br/>
     /// This is an abstract method. You should redefine it in derived classes.
     /// </summary>
     Ray Fire_Ray(float u, float v);
@@ -22,13 +21,13 @@ public interface ICamera
 
 /// <summary>
 /// A camera implementing an orthogonal 3D → 2D projection. <br/>
-///
-/// , axonometric view, all the rays come from infinity with the same direction
+/// This class implements an axonometric view: all the rays come from infinity with the same direction.
 /// </summary>
 public class OrthogonalCamera : ICamera
 {
     /// <summary>
-    /// This parameter defines how larger than the height is the image. For fullscreen images, you should probably set `AspectRatio` to 16/9.
+    /// This parameter defines how larger than the height is the image.
+    /// For fullscreen images, you should probably set <see cref="AspectRatio"/> to 16/9.
     /// </summary>
     public float AspectRatio { get; }
 
@@ -38,10 +37,10 @@ public class OrthogonalCamera : ICamera
     public Transformation T { get; set; }
 
     /// <summary>
-    /// 
+    /// OrthogonalCamera Constructor. Initialize a new instance of the <see cref="OrthogonalCamera"/> camera that has the specified colors.
     /// </summary>
-    /// <param name="aspectRatio"></param>
-    /// <param name="t"></param>
+    /// <param name="aspectRatio"> Defines how larger than the height is the image. </param>
+    /// <param name="t"> Instance of the <see cref="Transformation"/> class: it changes the view direction. </param>
     public OrthogonalCamera(float aspectRatio = 1.0f, Transformation? t = null)
     {
         AspectRatio = aspectRatio;

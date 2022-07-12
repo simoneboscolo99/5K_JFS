@@ -1,11 +1,19 @@
-# Scene's materials
+# Materials
+material lightMaterial(diffuse(uniform(<0, 0, 0>)), uniform(<1, 1, 1>))
 
-material mirrorMaterial(specular(uniform(<0.8,0.8,0.8>)), uniform(<0, 0, 0>)) 
+material checkeredMaterial(diffuse(checkered(<0, 0, 0>, <1, 1, 1>, 10)), uniform(<0, 0, 0>))
 
-material skyMaterial(diffuse(uniform(<>)), uniform(<>))
+material mirrorMaterial(specular(uniform(<0.9, 0.9, 0.9>)), uniform(<0, 0, 0>)) 
+
 
 # Shapes
+box([-6, -5, -3], [7, 5, 3], checkeredMaterial, identity)
+
+sphere(mirrorMaterial, translation([1.5, 1.5, 0.3]))
+sphere(mirrorMaterial, scaling([0.5, 0.5, 0.5]) * translation([1, -0.5, 0.3]))
+
+sphere(lightMaterial, rotationZ(-45) * scaling([0.1, 1, 1]) * translation([-6.2, -5, -2.5]))
 
 # Camera
-camera(perspective, translation([-4, 0, 0]), 1, 1) 
+camera(perspective, rotationY(10) * rotationZ(-15) * translation([-0.5, 0, 0]), 1.78, 1) 
 

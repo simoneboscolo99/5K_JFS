@@ -188,7 +188,7 @@ public class CsgDifference : Shape
 
 /// <summary>
 /// Constructive Solid Geometry (CSG). <br/>
-/// A 3D shape given by the intersection of two shapes: <see cref="S1"/> ∩ <see cref="S2"/>.
+/// A 3D shape given by the intersection of two shapes: <see cref="S1"/> f <see cref="S2"/>.
 /// </summary>
 public class CsgIntersection : Shape
 {

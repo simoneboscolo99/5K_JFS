@@ -1,0 +1,43 @@
+# MATERIALS
+
+material skyMaterial(           
+    diffuse(uniform(<0,0,0>)),  
+    uniform(<0.3, 0.7, 1>)
+) 
+
+
+material groundMaterial(
+    diffuse(checkered(<0.7, 0.1, 0>, 
+                      <0.4, 0.4, 0>,
+                       2)),
+    uniform(<0,0,0>)
+)
+
+material sphereMaterial(
+    diffuse(uniform(<0.3, 0.4, 0.8>)),
+    uniform(<0,0,0>)
+)
+
+material boxMaterial(
+    diffuse(uniform(<1, 0.3, 0>)),
+    uniform(<0, 0, 0>)
+)
+
+# SHAPES
+
+sphere(skyMaterial, scaling([200, 200, 200]) * translation([0, 0, 0.4]))
+
+#sphere(sphereMaterial, translation([0, 0, 1]))
+
+difference(
+    box([-1, -1, -1], [1, 1, 1], boxMaterial, identity),
+    sphere(sphereMaterial, translation([0, 0.8, 0]) * scaling([0.6, 0.6, 0.6])),
+    rotationZ(60) * translation([2, 0, 1])
+) 
+
+plane(groundMaterial, identity)
+
+
+# CAMERA
+
+camera(perspective, translation([-2, 0, 1]), 1.78, 1.0)
