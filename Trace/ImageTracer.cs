@@ -1,5 +1,4 @@
 using ShellProgressBar;
-//using System.Threading;
 
 namespace Trace;
 
@@ -71,8 +70,8 @@ public class ImageTracer
         };
         using (var pbar = new ProgressBar(maxTicks, "Starting", options))
         {
-            DateTime mDataOraStart = DateTime.Now;
-            //for (int row = 0; row < Image.Height; row++)
+            //DateTime mDataOraStart = DateTime.Now;
+            //for (int i = 0; i < Image.Height; i++)
             Parallel.For(0, Image.Height, i =>
             {
                 for (int col = 0; col < Image.Width; col++)
@@ -109,19 +108,4 @@ public class ImageTracer
             });
         }
     }
-    
-    /*private static string CalcolaEta(DateTime dataOraInizio, int tickTot, int tickAttuale)
-    {
-        if (tickAttuale <= 0)
-            return "-- %";
-
-        TimeSpan tsDiff=DateTime.Now.Subtract(dataOraInizio);
-        int secAllaFine = (int)((tsDiff.TotalSeconds / tickAttuale) * tickTot);
-        TimeSpan t = TimeSpan.FromSeconds(secAllaFine);
-
-        return string.Format("{0:D2}h:{1:D2}m:{2:D2}s",
-            t.Hours,
-            t.Minutes,
-            t.Seconds);
-    }*/
 }

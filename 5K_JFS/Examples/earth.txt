@@ -1,0 +1,14 @@
+# MATERIALS
+
+material earthMaterial(           
+    diffuse(image("/Users/matteo_macchini/Desktop/5K_JFS/5K_JFS/Pfm/earth.pfm")),  
+    uniform(<0, 0, 0>)
+) 
+
+# SHAPES
+
+sphere(earthMaterial, rotationY(-20) * rotationZ(-20))
+
+# CAMERA
+
+camera(perspective, translation([-0.7, 0, 0]), 1.0, 1.0)

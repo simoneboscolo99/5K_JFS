@@ -425,7 +425,9 @@ app.Command("render", command =>
             Console.WriteLine($"Aspect ratio: {((PerspectiveCamera) scene.Camera!).AspectRatio}");
             Console.WriteLine($"Distance: {((PerspectiveCamera) scene.Camera!).Distance}");
             
-            Console.WriteLine($"SkyMaterial: { ((UniformPigment) scene.Materials["skyMaterial"].EmittedRadiance).C.ToString()}");
+            // Debugging floats
+            Console.WriteLine($"Number of float variables: {scene.FloatVariables.Count}");
+
             var tracer = new ImageTracer(image, scene.Camera!, Parameters.SamplesPerSide);
             
             // Rendering
