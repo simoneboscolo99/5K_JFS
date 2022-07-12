@@ -105,6 +105,11 @@ To view all the possible options you can run
 
 <p float="center">
  <img src="./5K_JFS/Images/Cornell.png" height="300" />
+ <img src="./5K_JFS/Images/Earth.png" height="300" />
+</p>
+
+<p float="center">
+ <img src="./5K_JFS/Images/Mirror.png" height="300" />
 </p>
 
 ## Contributing
