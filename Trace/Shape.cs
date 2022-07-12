@@ -679,28 +679,28 @@ public class Box : Shape
         Vec2D uv;
         // Left face
         if (Functions.Are_Close(p.X, Bounds[0].X))
-           // uv = new Vec2D(Coord(2, false, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
-            uv = new Vec2D(Coord(2, false, p), Coord(1, false, p));
+            uv = new Vec2D(Coord(2, false, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+            //uv = new Vec2D(Coord(2, false, p), Coord(1, false, p));
         // Right face
         else if (Functions.Are_Close(p.X, Bounds[1].X))
-           // uv = new Vec2D(0.5f + Coord(2, true, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
-            uv = new Vec2D( Coord(2, true, p), Coord(1, false, p));
+            uv = new Vec2D(0.5f + Coord(2, true, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+            //uv = new Vec2D( Coord(2, true, p), Coord(1, false, p));
         // Down face
         else if (Functions.Are_Close(p.Y, Bounds[0].Y))
-           // uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, 2/3.0f + Coord(2, false, p)/3.0f);
-            uv = new Vec2D(Coord(0, false, p), Coord(2, false, p));
+            uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, 2/3.0f + Coord(2, false, p)/3.0f);
+            //uv = new Vec2D(Coord(0, false, p), Coord(2, false, p));
         // Up face
         else if (Functions.Are_Close(p.Y, Bounds[1].Y))
-           // uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, Coord(2, true, p)/3.0f);
-            uv = new Vec2D(Coord(0, false, p), Coord(2, true, p));
+            uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, Coord(2, true, p)/3.0f);
+            //uv = new Vec2D(Coord(0, false, p), Coord(2, true, p));
         // Back face
         else if (Functions.Are_Close(p.Z, Bounds[0].Z))
-           // uv = new Vec2D(0.75f + Coord(0, true, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
-            uv = new Vec2D( Coord(0, true, p), Coord(1, false, p));
+            uv = new Vec2D(0.75f + Coord(0, true, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+            //uv = new Vec2D( Coord(0, true, p), Coord(1, false, p));
         // Front face
         else 
-           // uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
-            uv = new Vec2D(Coord(0, false, p), Coord(1, false, p));
+            uv = new Vec2D(0.25f + Coord(0, false, p) * 0.25f, 1/3.0f + Coord(1, false, p)/3.0f);
+            //uv = new Vec2D(Coord(0, false, p), Coord(1, false, p));
         return uv;
     }
     
