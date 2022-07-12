@@ -74,11 +74,13 @@ Beware that it will take a very long time to produce the image! 🕛🕒🕕🕘
 
 ### Demo mode 👿
 
+<img align="right" width="300" src="./5K_JFS/Images/demo.png">
+
 Use this mode to create a simple image, quickly checking that everything is still working. For example, running the following command
 
     dotnet run -- demo [options]
    
-the image ... will be generated. 
+the image on the right will be generated. [demo.txt](https://github.com/simoneboscolo99/5K_JFS/blob/readme/5K_JFS/Examples/demo.txt)
 
 To view all the possible options of the demo command you can run
     
@@ -106,10 +108,6 @@ To view all the possible options you can run
     dotnet run -- convert -?
     
 ## Gallery
-
- <p float="center">
-  <img src="./5K_JFS/Images/demo.png" height="300" />
-</p>
 
 <p float="center">
  <img src="./5K_JFS/Images/Cornell.png" height="300" />
