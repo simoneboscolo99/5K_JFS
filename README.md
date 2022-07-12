@@ -80,7 +80,7 @@ Use this mode to create a simple image, quickly checking that everything is stil
 
     dotnet run -- demo [options]
    
-the image on the right will be generated. [demo.txt](https://github.com/simoneboscolo99/5K_JFS/blob/readme/5K_JFS/Examples/demo.txt)
+the image on the right will be generated. The same image is obtained in render mode from the input file [demo.txt](https://github.com/simoneboscolo99/5K_JFS/blob/readme/5K_JFS/Examples/demo.txt).
 
 To view all the possible options of the demo command you can run
     
