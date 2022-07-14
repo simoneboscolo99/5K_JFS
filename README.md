@@ -61,7 +61,7 @@ In order to use the render mode, you must go to the `5K_JFS/5K_JFS` directory an
 
     dotnet run -- render [arguments] [options]
     
-The only required argument for the render command is the path of the input file. [Here](https://github.com/simoneboscolo99/5K_JFS/tree/readme/5K_JFS/Examples) you can take a look at some examples of input files. <br/>
+The only required argument for the render command is the path of the input file. [Here](https://github.com/simoneboscolo99/5K_JFS/tree/master/5K_JFS/Examples) you can take a look at some examples of input files. <br/>
 Feel free to explore all the possible options and to use the most suitable for you. To view all the possible options you can run
     
     dotnet run -- render -?
@@ -80,7 +80,7 @@ Use this mode to create a simple image, quickly checking that everything is stil
 
     dotnet run -- demo [options]
    
-the image on the right will be generated. The same image is obtained in render mode from the input file [demo.txt](https://github.com/simoneboscolo99/5K_JFS/blob/readme/5K_JFS/Examples/demo.txt).
+the image on the right will be generated. The same image is obtained in render mode from the input file [demo.txt](https://github.com/simoneboscolo99/5K_JFS/blob/master/5K_JFS/Examples/demo.txt).
 
 To view all the possible options of the demo command you can run
     
@@ -132,4 +132,4 @@ The code is released under GNU General Public License. See the file [LICENSE](./
 [2]: https://github.com/simoneboscolo99
 [3]: https://github.com/GabrieleCrespi
 [4]: https://github.com/MatteoMacchini
-[5]: https://github.com/simoneboscolo99/5K_JFS/blob/readme/5K_JFS/Examples/Tutorial.md
+[5]: https://github.com/simoneboscolo99/5K_JFS/blob/master/5K_JFS/Examples/Tutorial.md
