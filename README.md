@@ -106,6 +106,8 @@ Available formats of the output file are: `.png`, `.jpg`, `.gif`, `.bmp` or `.pb
 To view all the possible options you can run
     
     dotnet run -- convert -?
+
+Default values for `gamma` and `f-factor` are 1 and 0,2 respectively.
     
 ## Gallery
 
