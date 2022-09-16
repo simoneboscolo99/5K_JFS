@@ -6,6 +6,7 @@ namespace Trace;
 
 /// <summary>
 /// PCG Uniform Pseudo-random Number Generator
+/// Returns a float 32_bit number between 0 and 1
 /// </summary>
 public class Pcg
 {
@@ -34,8 +35,11 @@ public class Pcg
     /// <returns> Random 32-bit unsigned integer number </returns>
     public uint Random()
     {
+        //takes old state of previous PCG member
+        //6364136223846793005 MMIX by Donald Knuth is the incremental factor
         var oldState = State;
         State = oldState * 6364136223846793005 + Inc;
+        
         
         // Right-shift operator >>: shifts its left-hand operand right by the number of bits defined by its right-hand operand
         // the high-order empty bit positions are always set to zero (when the left-hand operand is of type uint or ulong)
