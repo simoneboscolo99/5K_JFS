@@ -180,7 +180,7 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {samplesPerPixel}, it must be an integer.");
+            throw new RuntimeException($"Invalid factor {samplesPerPixel}, it must be a perfect square.");
         }
         
         OutputFileName = Convert.ToString(output);
