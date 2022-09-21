@@ -50,7 +50,7 @@ To check that the code works as expected, you can run the suite of tests using t
 
     dotnet test
 
-To get command line help for the usage, simply run
+To get command line help for the usage, and see all the commands for the different use mode, simply run
 
     dotnet run
 
