@@ -22,7 +22,7 @@ public class World
     }
 
     /// <summary>
-    /// 
+    /// using List(T).Add method, adding an object to the end of the list
     /// </summary>
     /// <param name="shape"></param>
     public void Add(Shape shape)

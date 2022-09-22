@@ -127,9 +127,16 @@ app.Command("demo", command =>
             
             // Demo image
             var skyMaterial = new Material(
-                new DiffuseBrdf(new UniformPigment(new Color())), 
-                new UniformPigment(new Color(0.1f, 0.5f, 0.9f))
+                new DiffuseBrdf(new UniformPigment(new Color(0.2f,0.2f,0.2f))), 
+                    new UniformPigment(new Color(0.05f, 0.05f, 0.05f))
+                //, 
+               // new UniformPigment(new Color(0.1f, 0.1f, 0.1f
+                );
+            var lampMaterial = new Material(
+                new DiffuseBrdf(new UniformPigment(new Color(0.5f,0.5f,0.5f))), 
+                new UniformPigment(new Color(1.0f, 1.0f, 1.0f))
             );
+            
             var groundMaterial = new Material(
                 new DiffuseBrdf(
                     new CheckeredPigment(
@@ -138,8 +145,14 @@ app.Command("demo", command =>
                     )
                 )
             );
+            var earthMaterial = new Material(
+                new DiffuseBrdf(
+                    new ImagePigment(new HdrImage("./Pfm/earth.pfm"))),
+                new UniformPigment(new Color())
+            );
+
             var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
-            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));            
+            var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
             
             world.Add(new Sphere(
                     Transformation.Scale(new Vec(200f, 200f, 200f)) * Transformation.Translation(new Vec(0.0f, 0.0f, 0.4f)),
@@ -147,9 +160,11 @@ app.Command("demo", command =>
                 )
             );
             world.Add(new Plane(m: groundMaterial));
+            world.Add(new Disk(Transformation.Translation(new Vec(0.0f, 0.0f, 3.0f)), lampMaterial));
+            
             world.Add(new Sphere(
                     Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
-                    sphereMaterial
+                    earthMaterial
                 )
             );
             world.Add(new Sphere(
@@ -193,7 +208,7 @@ app.Command("demo", command =>
             // Creating the camera
             ICamera camera;
             if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.0f, 0.0f, 0.5f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.3f, 0.3f, 0.5f)));
             
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
@@ -302,9 +317,9 @@ app.Command("convert", command =>
 // ===========================================================================
 
 
-// ===========================================================================
-// ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER === 
-// ===========================================================================
+// ===============================================================================================================================================
+// ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER === 
+// =================================================================================================================================================
 
 // This is a command with no arguments - it just does default action.
 app.Command("render", command =>
@@ -479,9 +494,9 @@ app.Command("render", command =>
 });
 
 
-// ===========================================================================
+// ====================================================================================================================================================
 // === END === END === END === END === END === END === END === END === END ==
-// ===========================================================================
+// ====================================================================================================================================================
 
 
 

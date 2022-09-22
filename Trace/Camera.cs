@@ -26,7 +26,7 @@ public interface ICamera
 public class OrthogonalCamera : ICamera
 {
     /// <summary>
-    /// This parameter defines how larger than the height is the image.
+    /// This parameter defines how larger than heighter is the image.
     /// For fullscreen images, you should probably set <see cref="AspectRatio"/> to 16/9.
     /// </summary>
     public float AspectRatio { get; }
@@ -89,10 +89,11 @@ public class PerspectiveCamera : ICamera
     /// <param name="distance"></param>
     /// <param name="aspectRatio"></param>
     /// <param name="t"></param>
-    public PerspectiveCamera(float distance = 1.0f, float aspectRatio = 1.0f, Transformation? t = null)
+    public PerspectiveCamera(float distance = 1.0f, float? aspectRatio = null, Transformation? t = null)
     {
         Distance = distance;
-        AspectRatio = aspectRatio;
+        if (aspectRatio != null) AspectRatio = (float) aspectRatio;
+        else AspectRatio = 1.0f;
         T = t ?? Transformation.Identity();
     }
     
