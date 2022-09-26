@@ -37,6 +37,11 @@ public class HitRecord
         Mt = material;
     }
 
+    public HitRecord()
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Check whether two `HitRecord` represent the same hit event or not
     /// </summary>

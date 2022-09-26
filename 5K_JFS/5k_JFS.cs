@@ -103,7 +103,7 @@ app.Command("demo", command =>
             
             var obsRot = Transformation.Rotation_Z(Parameters.AngleDeg);
             var aspectRatio = (float) Parameters.Width / Parameters.Height;
-    
+
             var image = new HdrImage(Parameters.Width, Parameters.Height);
             
             var world = new World();
@@ -208,7 +208,7 @@ app.Command("demo", command =>
             // Creating the camera
             ICamera camera;
             if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Z(30.0f) * Transformation.Translation(new Vec(-10.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.3f, 0.7f, 0.5f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio,  t:  obsRot * Transformation.Translation(new Vec(-1.3f, 0.0f, 0.5f)));
             
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
@@ -317,8 +317,8 @@ app.Command("convert", command =>
 // ===========================================================================
 
 
-// ===============================================================================================================================================
-// ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER === 
+// =================================================================================================================================================
+// ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER ==== RENDER === RENDER === RENDER === 
 // =================================================================================================================================================
 
 // This is a command with no arguments - it just does default action.
