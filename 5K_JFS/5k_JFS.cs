@@ -19,9 +19,9 @@ var app = new CommandLineApplication
 // Set the arguments to display the description and help text
 app.HelpOption("-?|-h|--help");
 
-// ===========================================================================
-// === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO ===
-// ===========================================================================
+// ===============================================================================================================================================
+// === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO === DEMO
+// ===============================================================================================================================================
 
 // This is a command with no arguments - it just does default action.
 app.Command("demo", command =>
@@ -127,7 +127,7 @@ app.Command("demo", command =>
             
             // Demo image
             var skyMaterial = new Material(
-                new DiffuseBrdf(new UniformPigment(new Color(0.2f,0.2f,0.2f))), 
+                new DiffuseBrdf(new UniformPigment(new Color(0.1f,0.1f,0.1f))), 
                     new UniformPigment(new Color(0.05f, 0.05f, 0.05f))
                 //, 
                // new UniformPigment(new Color(0.1f, 0.1f, 0.1f
@@ -145,11 +145,11 @@ app.Command("demo", command =>
                     )
                 )
             );
-            var earthMaterial = new Material(
+            /*var earthMaterial = new Material(
                 new DiffuseBrdf(
                     new ImagePigment(new HdrImage("./Pfm/earth.pfm"))),
                 new UniformPigment(new Color())
-            );
+            );*/
 
             var sphereMaterial = new Material(new DiffuseBrdf(new UniformPigment(new Color(0.3f, 0.4f, 0.8f))));
             var mirrorMaterial = new Material(new SpecularBrdf(new UniformPigment(new Color(0.6f, 0.2f, 0.3f))));
@@ -164,7 +164,7 @@ app.Command("demo", command =>
             
             world.Add(new Sphere(
                     Transformation.Translation(new Vec(0.0f, 0.0f, 1.0f)),
-                    earthMaterial
+                    sphereMaterial
                 )
             );
             world.Add(new Sphere(
@@ -207,8 +207,8 @@ app.Command("demo", command =>
             
             // Creating the camera
             ICamera camera;
-            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Y(30.0f) * Transformation.Translation(new Vec(-1.0f, -0.0f, 0.0f)));
-            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.3f, 0.3f, 0.5f)));
+            if (Parameters.Orthogonal) camera = new OrthogonalCamera(aspectRatio: aspectRatio, t: obsRot * Transformation.Rotation_Z(30.0f) * Transformation.Translation(new Vec(-10.0f, -0.0f, 0.0f)));
+            else camera = new PerspectiveCamera(aspectRatio: aspectRatio, t:  obsRot * Transformation.Rotation_Y(25.0f) * Transformation.Translation(new Vec(-1.3f, 0.7f, 0.5f)));
             
             var tracer = new ImageTracer(image, camera, Parameters.SamplesPerSide);
             
@@ -260,14 +260,14 @@ app.Command("demo", command =>
         return 0; // return 0 on a successful execution
     });
 });
-// ===========================================================================
-// === END === END === END === END === END === END === END === END === END ===
-// ===========================================================================
+// ====================================================================================================================================
+// === END === END === END === END === END === END === END === END === END === END === END === END === END === END === END === END === 
+// ====================================================================================================================================
 
 
-// ===========================================================================
-// === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === 
-// ===========================================================================
+// ====================================================================================================================================
+// === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT === CONVERT 
+// ====================================================================================================================================
 
 // Arguments are basic arguments, that are parsed in the order they are given
 // e.g ConsoleArgs "first value" "second value"
