@@ -12,7 +12,7 @@ public abstract class Solver
     public World Wd;
     
     /// <summary>
-    /// colore del background (è il colore che ho se il raggio non colpisce niente): utile per debugging
+    /// Color of the ray freely hitting the display coming from the background, very useful for debugging
     /// </summary>
     public Color BackgroundColor;
 

@@ -125,7 +125,7 @@ public class Parameters
         var g = gamma ?? "1";
         var f = factor ?? "0,2";
         var output = outputFilename ?? "Demo.png";
-        var ssp = samplesPerPixel ?? "0";
+        var spp = samplesPerPixel ?? "0";
 
         try
         {
@@ -174,7 +174,8 @@ public class Parameters
         
         try
         {
-            var samples = Convert.ToInt32(ssp);
+            //Convert the string spp
+            var samples = Convert.ToInt32(spp);
             SamplesPerSide = (int) Math.Sqrt(samples);
             if (SamplesPerSide * SamplesPerSide != samples) throw new RankException($"Error, the number of samples per pixel ({samplesPerPixel}) must be a perfect square");
         }
@@ -187,9 +188,9 @@ public class Parameters
         Format = Path.GetExtension(OutputFileName);
     }
     
-    // ============================================================================
-    // === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER
-    // ============================================================================
+    // ===========================================================================================================================================
+    // === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER === RENDER
+    // ===========================================================================================================================================
     
     /// <summary>
     /// Path of the output hdr file
@@ -246,7 +247,7 @@ public class Parameters
     /// <exception cref="RuntimeException"> invalid format of the parameters. </exception>
     public static void Parse_Command_Line_Render(string? width = null, string? height = null, string? angle = null, string? gamma = null,
         string? factor = null, string? outputFilename = null, string? samplesPerPixel = null, string? initSeq = null, string? initState = null, string? maxDepth = null, string? pfmoutputFilename = null, 
-        List<string>? declareFloat = null, string? numOfRays =null, string? input = null)
+        List<string>? declareFloat = null, string? numOfRays = null, string? input = null)
     {
         var w = width ?? "480";
         var h = height ?? "480";
@@ -316,7 +317,7 @@ public class Parameters
         }
         catch
         {
-            throw new RuntimeException($"Invalid factor {samplesPerPixel}, it must be an integer.");
+            throw new RuntimeException($"Error, {samplesPerPixel} must be a perfect square.");
         }
         
         try

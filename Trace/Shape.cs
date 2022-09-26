@@ -101,8 +101,9 @@ public class Sphere : Shape
     /// </summary>
     /// <param name="T"> The transformation associated to the sphere. </param>
     /// <param name="m"> The material of the sphere. </param>
-    public Sphere(Transformation? T = null, Material? m = null) : base(T,m) { }
-    
+    public Sphere(Transformation? T = null, Material? m = null) : base(T, m) { }
+
+
     /// <summary>
     /// Convert a 3D point on the surface of the unit sphere into a (u, v) 2D point.
     /// </summary>
@@ -117,7 +118,7 @@ public class Sphere : Shape
     }
 
     /// <summary>
-    /// Compute the normal of a unit sphere. The normal is computed for <paramref name="point"/> (a point on the surface of
+    /// Compute the normal of a UNIT sphere. The normal is computed for <paramref name="point"/> (a point on the surface of
     /// the sphere), and it is chosen so that it is always in the opposite direction with respect to <paramref name="rayDir"/>.
     /// </summary>
     /// <param name="point"> The point. </param>
@@ -126,7 +127,7 @@ public class Sphere : Shape
     private Normal Sphere_Normal(Point point, Vec rayDir)
     {
         var result = new Normal(point.X, point.Y, point.Z);
-        if (point.To_Vec().Dot(rayDir) > 0.0f) result = -result;
+        if (point.To_Vec().Dot(rayDir) > 0.0f) result = -result;    
         return result;
     }
     
@@ -253,9 +254,196 @@ public class Sphere : Shape
     }
 }
 
-// ===========================================================================
-// === END === END === END === END === END === END === END === END === END ===
-// ===========================================================================
+// ======================================================================================================================================================
+// === END === END === END === END === END === END === END === END === END === END === END === END === END === END ===END === END === END === END === END
+// ======================================================================================================================================================
+
+//====================================================== SPHERE-WITHOUT-TRANSFORMATION ==================================================================
+public class SphereWithoutTransformation : Shape
+{
+    public float Radius;
+    public Point Center;
+    public SphereWithoutTransformation() {}
+
+    /// <summary>
+    /// Sphere constructor. Initialize a new instance of the <see cref="SphereWithoutTransformation"/> class, potentially associating a transformation to it.
+    /// </summary>
+    /// <param name="radius"></param>
+    /// <param name="center"></param>
+    public SphereWithoutTransformation(float? radius = null, Point? center = null)
+    {
+        Radius = radius ?? 1.0f;
+        Center = center ?? new Point();
+    }
+    
+    
+    /// <summary>
+    /// Convert a 3D point on the surface of the unit sphere into a (u, v) 2D point.
+    /// </summary>
+    /// <param name="p"> The 3D point. </param>
+    /// <returns> A <see cref="Vec2D"/> containing the coordinates of the surface point of the sphere. </returns>
+    private Vec2D Sphere_Point_To_UV(Point p)
+    {
+        var u = (float)(Math.Atan2(p.Y, p.X) / (2.0 * Math.PI));
+        if (u < 0) u += 1.0f;
+        var vec = new Vec2D(u, (float) Math.Acos(p.Z)/ (float) Math.PI );
+        return vec;
+    }
+
+    
+    /// <summary>
+    /// Compute the normal of a UNIT sphere. The normal is computed for <paramref name="point"/> (a point on the surface of
+    /// the sphere), and it is chosen so that it is always in the opposite direction with respect to <paramref name="rayDir"/>.
+    /// </summary>
+    /// <param name="point"> The point. </param>
+    /// <param name="rayDir"> The direction of the ray. </param>
+    /// <returns> The normal. </returns>
+    private Normal Sphere_Normal(Point point, Vec rayDir)
+    {
+        var result = new Normal(point.X, point.Y, point.Z);
+        if (point.To_Vec().Dot(rayDir) > 0.0f) result = -result;    
+        return result;
+    }
+
+    /// <summary>
+    /// Check if a ray intersects the sphere.
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The <see cref="HitRecord"/>, or <see langword="null"/> if no intersection was found. </returns>
+    public override HitRecord? Ray_Intersection(Ray r)
+    {
+        var originToCenter = r.Origin - Center;
+        //var originVec = invRay.Origin.To_Vec();
+        var a = r.Dir.Squared_Norm();
+        var halfB = originToCenter.Dot(r.Dir);
+        var c = originToCenter.Squared_Norm() - Math.Pow(Radius, 2);
+
+        var delta = halfB * halfB - a * c;
+
+        if (delta <= 0.0f) return null;
+        // delta = 0 is equal to a tangent ray, unnecessary
+        // 
+        var sqrtDelta = (float) Math.Sqrt(delta);
+        var tmin = (-halfB - sqrtDelta) / a;
+        if (tmin < r.TMin || r.TMax < tmin)
+        {
+            tmin = (-halfB - sqrtDelta) / a;
+            if (tmin < r.TMin || r.TMax < tmin)
+                return null;
+        }
+        var hit = new HitRecord();
+        hit.T = tmin;
+        hit.WorldPoint = r.At(hit.T);
+        var nor = (hit.WorldPoint.To_Vec() - Center.To_Vec()) * (1.0f / Radius);
+        hit.N = nor.ToNormal();
+        hit.SurfacePoint = Sphere_Point_To_UV(hit.WorldPoint);
+        return hit;
+    }
+
+
+    /*var tmax = (-half_b + sqrtDelta) / (2.0f * a);
+        float firstHitT;
+
+        if (tmin < invRay.TMax && tmin > invRay.TMin) firstHitT = tmin;
+        else if (tmax < invRay.TMax && tmax > invRay.TMin) firstHitT = tmax;
+        else return null;
+
+        var hitPoint = invRay.At(firstHitT);
+        // point of intersection and normal are calculated in the sphere's frame of reference
+        // I have to go back to the world frame by direct transformation
+        return new HitRecord(
+            Tr * hitPoint,
+            Tr * Sphere_Normal(hitPoint, invRay.Dir),
+            firstHitT,
+            r,
+            Sphere_Point_To_UV(hitPoint),
+            Mt
+            );
+    }*/
+
+    /// <summary>
+    /// Check if a ray intersects the sphere by computing a list of all possible intersections.
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns> The list of <see cref="HitRecord"/> of intersections, ordered by the distance from the origin of the ray.
+    /// If no intersection is found, <see langword="null"/> is returned. </returns>
+    public override List<HitRecord>? Ray_Intersection_List(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        var originVec = invRay.Origin.To_Vec();
+        var a = invRay.Dir.Squared_Norm();
+        var b = 2.0f * originVec.Dot(invRay.Dir);
+        var c = originVec.Squared_Norm() - 1.0f;
+
+        var delta = b * b - 4.0f * a * c;
+        
+        if (delta <= 0.0f) return null;
+        
+        var sqrtDelta = (float)Math.Sqrt(delta);
+        var tmin = (-b - sqrtDelta) / (2.0f * a);
+        var tmax = (-b + sqrtDelta) / (2.0f * a);
+        var intersections = new List<HitRecord>();
+        var hitPoint1 = invRay.At(tmin);
+        var hitPoint2 = invRay.At(tmax);
+        if (tmin < invRay.TMax && tmin > invRay.TMin) {
+            intersections.Add(new HitRecord(
+                Tr * hitPoint1,
+                Tr * Sphere_Normal(hitPoint1, invRay.Dir),
+                tmin,
+                r,
+                Sphere_Point_To_UV(hitPoint1),
+                Mt
+            ));
+        }
+
+        if (tmax < invRay.TMax && tmax > invRay.TMin) {
+            intersections.Add(new HitRecord(
+                Tr * hitPoint2,
+                Tr * Sphere_Normal(hitPoint2, invRay.Dir), 
+                tmax, 
+                r, 
+                Sphere_Point_To_UV(hitPoint2), 
+                Mt
+                ));
+        }
+
+        return intersections.Count == 0 ? null : intersections;
+    }
+
+    /// <summary>
+    /// Quickly check if a ray intersects the sphere.
+    /// </summary>
+    /// <param name="r"> The ray. </param>
+    /// <returns> True if there is intersection, false otherwise. </returns>
+    public override bool Quick_Ray_Intersection(Ray r)
+    {
+        var invRay = Tr.Inverse * r;
+        var originVec = invRay.Origin.To_Vec();
+        var a = invRay.Dir.Squared_Norm();
+        var b = 2.0f * originVec.Dot(invRay.Dir);
+        var c = originVec.Squared_Norm() - 1.0f;
+
+        var delta = b * b - 4.0f * a * c;
+        if (delta <= 0.0f) return false;
+        var sqrtDelta = Math.Sqrt(delta);
+        var tmin = (-b - sqrtDelta) / (2.0 * a);
+        var tmax = (-b + sqrtDelta) / (2.0 * a);
+        
+        return (tmin > invRay.TMin && tmin < invRay.TMax) || (tmax > invRay.TMin  && tmax < invRay.TMax);
+    }
+
+    /// <summary>
+    /// Check if a point is inside the sphere.
+    /// </summary>
+    /// <param name="p"> The point. </param>
+    /// <returns> True if the point is inside the sphere, false otherwise. </returns>
+    public override bool Is_Internal(Point p)
+    {
+        p = Tr.Inverse * p;
+        return p.To_Vec().Squared_Norm() < 1.0f;
+    }
+}
+
 
 // ===========================================================================
 // ==== PLANE === PLANE === PLANE === PLANE === PLANE === PLANE === PLANE ====

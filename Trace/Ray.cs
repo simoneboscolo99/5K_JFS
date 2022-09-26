@@ -24,5 +24,5 @@ public struct Ray
 
     public Point At(float t) //returns the point reached by the ray at a distance t, measured in units length of Dir
         => Origin + Dir * t;
-
+    
 }

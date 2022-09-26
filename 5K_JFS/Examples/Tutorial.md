@@ -8,7 +8,7 @@ First of all, we note that all lines starting with the `#` symbol are considered
 
 We can define float variables as follows:
 ```diff
-- float name(value)
+float name(value)
 ``` 
 where `value` is a floating-point number, while `name` is just the name of the variabile. Example: `float angle(35.2)` <br/>
 Defining float variables is useful for particular transformations, as we will see later.
@@ -17,7 +17,7 @@ Defining float variables is useful for particular transformations, as we will se
 
 A material characterizes the color of an object and is declared in the following way: 
 ```diff
-- material name = (Brdf, Pigment)
+material name = (Brdf, Pigment)
 ```
 where `name` is a just the name assigned to the material. Then we must specify the BRDF type, which in turn needs a pigment. Finally, we need a Pigment type to specify the emitted radiance.
 
