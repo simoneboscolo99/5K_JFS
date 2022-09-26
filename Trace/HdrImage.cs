@@ -80,7 +80,7 @@ public class HdrImage
         => col >= 0 && col < Width && row < Height && row >= 0;
 
     /// <summary>
-    /// Pixel_Offset
+    /// Pixel_Offse
     /// </summary>: Returns ordinal position of pixel in (x,y)
     /// <param name="col"></param>
     /// <param name="row"></param>
@@ -90,7 +90,7 @@ public class HdrImage
 
     /// <summary>
     /// Get_Pixel
-    /// </summary>: Returns the Color of indexes (row,col)
+    /// </summary>: Returns the Color of indexes (row,col), using  Pixel-Offset
     /// <param name="col"></param>
     /// <param name="row"></param>
     /// <returns></returns>
